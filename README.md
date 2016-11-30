@@ -32,11 +32,16 @@ TactosyManager.SendSignal("PathFeedback", PositionType.All, new List<PathPoint>
 
 
 * Use Custom Signal 
-   * Make haptic feedback using [tactosy studio](https://studio.bhaptics.com)
-   * Then download tactosy file
-   * Set up feedback mapping as below at unity inspector
-   ![image](https://github.com/bhaptics/tactosy-unity/raw/master/Images/feedback_mapping.png)
-   * Play feedback with key
+  
+  * Make haptic feedback using [tactosy studio](https://studio.bhaptics.com), and download tactosy file
+  
+   
+  * Set up feedback mapping as below at unity inspector
+        ![image](https://github.com/bhaptics/tactosy-unity/raw/master/Images/feedback_mapping.png)
+ 
+ 
+ 
+   * Play feedback with key
 ```
 TactosyManager.SendSignal("reload", Intensity, Duration);
 TactosyManager.SendSignal("Electricgun");

@@ -395,8 +395,6 @@ namespace TactosyCommon.Unity
                 bytes[3 * i + 1] = (byte)Mathf.Min(40f, Mathf.Max(0f, (float)points[i].X * 40f)); // x
                 bytes[3 * i + 2] = (byte)Mathf.Min(30f, Mathf.Max(0f, (float)points[i].Y * 40f)); // y
                 bytes[3 * i + 3] = (byte)Mathf.Min(100f, Mathf.Max(0f, (float)points[i].Intensity * 100f)); // z
-
-                Debug.Log(bytes[3 * i + 1] + " " + bytes[3 * i + 2] + " " + bytes[3 * i + 3]);
             }
 
             TactosyFeedback feedback = new TactosyFeedback(position, bytes, FeedbackMode.PATH_MODE);

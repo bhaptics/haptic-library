@@ -22,7 +22,6 @@ namespace TactosyCommon.Unity
         }
 
         public bool Enable = true;
-        public string PathPrefix = "Assets/Tactosy/Feedbacks/";
         public List<SignalMapping> FeedbackMappings = new List<SignalMapping>();
 
         private Dictionary<string, FeedbackSignal> _registeredSignals;
@@ -44,16 +43,19 @@ namespace TactosyCommon.Unity
         void Awake()
         {
             _registeredSignals = new Dictionary<string, FeedbackSignal>();
+            
             foreach (var feedbackMapping in FeedbackMappings)
             {
+                string streamingPath = Application.streamingAssetsPath;
+                string filePath = "";
                 try
                 {
-                    string filePath = Path.Combine(PathPrefix, feedbackMapping.Path);
+                    filePath = Path.Combine(streamingPath, feedbackMapping.Path);
                     _registeredSignals[feedbackMapping.Key] = new FeedbackSignal(filePath);
                 }
                 catch (Exception)
                 {
-                    Debug.LogError("failed to read feedback file " + feedbackMapping.Path);
+                    Debug.LogError("failed to read feedback file " + filePath);
                 }
                 
             }

@@ -1,4 +1,8 @@
 # tactosy-unity-plugin
+## Prerequisite
+* tactosy app installed (window and Mac)
+   * http://bhaptics.com/app.html
+
 ## How to install
 * from unity asset store 
    * download link from here : 	https://www.assetstore.unity3d.com/#!/content/76647

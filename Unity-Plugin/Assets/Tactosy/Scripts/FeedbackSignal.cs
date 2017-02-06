@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using TactosyCommon.Models;
@@ -24,7 +23,6 @@ namespace TactosyCommon.Unity
                 TactosyFeedback[] feedbacks;
                 if (feedback.Position == PositionType.All)
                 {
-
                     TactosyFeedback left = new TactosyFeedback(PositionType.Left, feedback.Values, feedback.Mode);
                     TactosyFeedback right = new TactosyFeedback(PositionType.Right, feedback.Values, feedback.Mode);
                     feedbacks = new[] {left, right};
@@ -77,7 +75,7 @@ namespace TactosyCommon.Unity
             }
             
 
-            TactosyFile tactosyFile = TactosyUtils.Convert(json);
+            TactosyFile tactosyFile = TactosyUtils.ConvertJsonStringToTactosyFile(json);
             EndTime = tactosyFile.durationMillis;
             HapticFeedback = tactosyFile.feedback;
         }

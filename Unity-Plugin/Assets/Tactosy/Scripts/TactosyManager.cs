@@ -12,6 +12,7 @@ namespace TactosyCommon.Unity
     /// <remarks>
     /// TactosyManager
     /// </remarks>
+    [ExecuteInEditMode]
     public class TactosyManager : MonoBehaviour
     {
         [Serializable]
@@ -21,11 +22,19 @@ namespace TactosyCommon.Unity
             public string Path;
         }
 
-        public bool Enable = true;
-        public List<SignalMapping> FeedbackMappings = new List<SignalMapping>();
+        [Tooltip("Tactosy Feedback Enabled")]
+        [SerializeField] private bool enable = true;
 
-        private Dictionary<string, FeedbackSignal> _registeredSignals;
-        private Dictionary<string, FeedbackSignal> _activeSignals;
+        [Tooltip("Tactosy File Prefix")]
+        [SerializeField] private string PathPrefix = "Assets/Tactosy/Feedbacks/";
+        
+        [Tooltip("Tactosy Feedback Mapping Infos")]
+        [SerializeField] internal List<SignalMapping> FeedbackMappings = new List<SignalMapping>();
+
+        internal Dictionary<string, FeedbackSignal> _registeredSignals = new Dictionary<string, FeedbackSignal>();
+        private Dictionary<string, FeedbackSignal> _activeSignals = new Dictionary<string, FeedbackSignal>();
+
+
         private int _currentTime;
         private int _interval = 20;
         private int _motorSize = 20;
@@ -42,32 +51,24 @@ namespace TactosyCommon.Unity
 
         void Awake()
         {
-            _registeredSignals = new Dictionary<string, FeedbackSignal>();
-            
             foreach (var feedbackMapping in FeedbackMappings)
             {
-                string streamingPath = Application.streamingAssetsPath;
-                string filePath = "";
                 try
                 {
-                    filePath = Path.Combine(streamingPath, feedbackMapping.Path);
+                    string filePath = Path.Combine(PathPrefix, feedbackMapping.Path);
                     _registeredSignals[feedbackMapping.Key] = new FeedbackSignal(filePath);
                 }
                 catch (Exception)
                 {
-                    Debug.LogError("failed to read feedback file " + filePath);
+                    Debug.LogError("failed to read feedback file " + Path.Combine(PathPrefix, feedbackMapping.Path));
                 }
                 
             }
-
-            _activeSignals = new Dictionary<string, FeedbackSignal>();
 
             Debug.Log(_registeredSignals.Count + " Tactosy Feedback registred.");
             _currentTime = 0;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
-            Debug.Log("STANDALONE MODE");
-
             _webSocket = new WebSocket(WebsocketUrl);
 
             _webSocket.OnMessage += (sender, e) =>
@@ -328,7 +329,7 @@ namespace TactosyCommon.Unity
         /// <param name="feedback"> TactosyFeedback</param>
         private void PlayFeedback(TactosyFeedback feedback)
         {
-            if (!Enable)
+            if (!enable)
             {
                 feedback.Mode = FeedbackMode.DOT_MODE;
                 feedback.Values = new byte[20];
@@ -379,7 +380,7 @@ namespace TactosyCommon.Unity
         /// <param name="position"> position of tactosy</param>
         /// <param name="points"> points array with x = [0, 1], y = [0, 1], intensity = [0, 1]</param>
         /// <param name="durationMillis"> duration millis</param>
-        public void SendSignal(string key, PositionType position, List<PathPoint> points, int durationMillis)
+        public void SendSignal(string key, PositionType position, List<Point> points, int durationMillis)
         {
             if (points.Count > 6 || points.Count <= 0)
             {
@@ -487,7 +488,7 @@ namespace TactosyCommon.Unity
         public void ToggleEnable()
         {
             TurnOff();
-            Enable = !Enable;
+            enable = !enable;
         }
 
         public void Log(string msg)

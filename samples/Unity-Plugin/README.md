@@ -1,66 +1,65 @@
-# tactosy-unity-plugin
+# Unity plugin to activate tactosy
+This project is to use Tactosy in unity. 
 ## Prerequisite
-* tactosy app installed (window and Mac)
-   * http://bhaptics.com/app.html
+* Tactosy app installed (Window or Mac)
+   * [bHaptics](http://bhaptics.com/app.html)
 
 ## How to install
-* download package file
-   * https://github.com/bhaptics/tactosy-unity/releases/latest
-* from github repository 
-    ```
-    git clone https://github.com/bhaptics/tactosy-unity.git
-    ```
+* Download package file then import package in unity
+   * https://github.com/bhaptics/tactosy-sharp/releases
+  ### or
+* Get from github repository then open it in unity
 
+    ```
+    git clone https://github.com/bhaptics/tactosy-sharp.git
+    ```
+    
 ## How to use
-* Manage individual motors 
-```
-// Turn on 1st, 2nd and 3rd motors of left hand tactosy with intensity 100
-byte[] bytes = new byte[20];
-bytes[0] = 100;
-bytes[1] = 100;
-bytes[2] = 100;
-TactosyManager.SendSignal("dot", PositionType.Left, bytes, 500);
-```
-* Manage individual motors 
-```
-// Turn on feedback with logical coordinate [0, 1]
-TactosyManager.SendSignal("PathFeedback", PositionType.All, new List<PathPoint>
-{
-    new PathPoint(0.5, 0.2, 0.5),
-    new PathPoint(1, 1, 1)
-}, 2000);
+* Test Default scene 
+    
+    >Go to Assets > Tactosy > Example > open Default    
+    Select [Tactosy] Prefab<br/>
+    There are 2 feedbacks, which already set for test.      
+    You can check it by pushing the button
+    
+* Apply more feedbacks 
+    
+    >You can create Tactosy feebacks via https://studio.bhaptics.com<br/>
+    For more detail, you can find in http://bhaptics.com/studio.html
+    
+* Initialize TactosyPlayer 
+    ```
+     public TactosyPlayer TactosyPlayer;
+     private ISender sender;
+     private ITimer timer;
+     
+     sender = new WebSocketSender();
+     timer = GetComponent<UnityTimer>();
+     TactosyPlayer = new TactosyPlayer(sender, timer);
+    ```
 
-```
-
-
-* Use Custom Signal 
-  
-  * Make haptic feedback using [tactosy studio](https://studio.bhaptics.com), and download tactosy file
-  
-   
-  * Set up feedback mapping as below at unity inspector
-        ![image](https://github.com/bhaptics/tactosy-unity/raw/master/Images/feedback_mapping.png)
- 
- 
- 
-   * Play feedback with key
-```
-TactosyManager.SendSignal("reload", Intensity, Duration);
-TactosyManager.SendSignal("Electricgun");
-```
+* Play registered tactosy feedbacks with key
+    ```
+    TactosyPlayer.SendSignal("ArrowRelease", .2f); // play from specific feedback point
+    TactosyPlayer.SendSignal("Fireball");
+    ```
 
 * TurnOff Signal 
-```
-TactosyManager.TurnOff();
-TactosyManager.TurnOff("reload);
-```
+    ```
+    TactosyPlayer.TurnOff(); // turn off all tactosy feedback
+
+    TactosyPlayer.TurnOff("Fireball);  // turn off feedback by key
+    ```
 
 * Check if Playing
-```
-bool isReloadFeedbackPlaying = TactosyManager.IsPlaying("reload");
-bool isAnyFeedbackPlaying = TactosyManager.IsPlaying();
-```
-
+    ```
+    bool isFireballFeedbackPlaying = TactosyPlayer.IsPlaying("Fireball");
+    bool isAnyFeedbackPlaying = TactosyPlayer.IsPlaying();
+    ```    
 ## Dependencies 
-* websocket sharp : https://github.com/sta/websocket-sharp
-* json parser : http://www.newtonsoft.com/json
+> websocket sharp : https://github.com/sta/websocket-sharp
+>
+> json parser : http://www.newtonsoft.com/json
+#####
+
+Copyright 2017 bHaptics Co., Ltd.

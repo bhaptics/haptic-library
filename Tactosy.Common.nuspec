@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Tactosy.Common</id>
+    <version>1.1.0-rc1</version>
+    <title>Tactosy.Common</title>
+    <authors>sangwon.choi</authors>
+    <owners>bhaptics</owners>
+    <licenseUrl>https://github.com/bhaptics/tactosy-sharp</licenseUrl>
+    <projectUrl>https://github.com/bhaptics/tactosy-sharp</projectUrl>
+    <iconUrl>http://bhaptics.com/images/web_design_source_all-01.svg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is tactosy sharp plugin</description>
+    <releaseNotes>tactosy library</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>tactosy haptic</tags>
+	
+	<dependencies>
+		<dependency id="Newtonsoft.Json" version="10.0.2"/>
+		<dependency id="WebSocketSharp" version="1.0.3-rc11"/>
+    </dependencies>
+  </metadata>
+</package>

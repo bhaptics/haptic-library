@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Tactosy.Common
 {
@@ -72,7 +71,7 @@ namespace Tactosy.Common
             hapticFeedback = new Dictionary<int, HapticFeedbackData>();
             try
             {
-                List<HapticFeedbackData> items = JsonConvert.DeserializeObject<List<HapticFeedbackData>>(json);
+                List<HapticFeedbackData> items = SimpleJson.DeserializeObject<List<HapticFeedbackData>>(json);
                 foreach (HapticFeedbackData data in items)
                 {
                     hapticFeedback.Add(data.Time, data);
@@ -126,17 +125,14 @@ namespace Tactosy.Common
         /// <returns></returns>
         public static TactosyFile ConvertJsonStringToTactosyFile(string json)
         {
-            try
-            {
-                TactosyFile obj = JsonConvert.DeserializeObject<TactosyFile>(json);
+            return Parse(json);
+        }
 
-                return obj;
-            }
-            catch (Exception exception)
-            {
-                Debug.WriteLine("ConvertJsonStringToTactosyFile() : " + exception.Message);
-                return null;
-            }
+        private static TactosyFile Parse(string json)
+        {
+            var obj = SimpleJson.DeserializeObject<TactosyFileBridge>(json);
+
+            return TactosyFileBridge.AsTactosyFile(obj);
         }
 
         /// <summary>
@@ -150,9 +146,7 @@ namespace Tactosy.Common
             {
                 string json = FileUtils.ReadString(path);
 
-                TactosyFile obj = JsonConvert.DeserializeObject<TactosyFile>(json);
-
-                return obj;
+                return Parse(json);
             }
             catch (Exception exception)
             {

@@ -11,6 +11,7 @@
     <AssemblyName>Tactosy.Common</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,19 +31,89 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net35\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomWebSocketSharp\ByteOrder.cs" />
+    <Compile Include="CustomWebSocketSharp\CloseEventArgs.cs" />
+    <Compile Include="CustomWebSocketSharp\CloseStatusCode.cs" />
+    <Compile Include="CustomWebSocketSharp\CompressionMethod.cs" />
+    <Compile Include="CustomWebSocketSharp\ErrorEventArgs.cs" />
+    <Compile Include="CustomWebSocketSharp\Ext.cs" />
+    <Compile Include="CustomWebSocketSharp\Fin.cs" />
+    <Compile Include="CustomWebSocketSharp\HttpBase.cs" />
+    <Compile Include="CustomWebSocketSharp\HttpRequest.cs" />
+    <Compile Include="CustomWebSocketSharp\HttpResponse.cs" />
+    <Compile Include="CustomWebSocketSharp\LogData.cs" />
+    <Compile Include="CustomWebSocketSharp\Logger.cs" />
+    <Compile Include="CustomWebSocketSharp\LogLevel.cs" />
+    <Compile Include="CustomWebSocketSharp\Mask.cs" />
+    <Compile Include="CustomWebSocketSharp\MessageEventArgs.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\AuthenticationBase.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\AuthenticationChallenge.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\AuthenticationResponse.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\AuthenticationSchemes.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\Chunk.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\ChunkedRequestStream.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\ChunkStream.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\ClientSslConfiguration.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\Cookie.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\CookieCollection.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\CookieException.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\EndPointListener.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\EndPointManager.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpBasicIdentity.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpConnection.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpDigestIdentity.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpHeaderInfo.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpHeaderType.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpListener.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpListenerAsyncResult.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpListenerContext.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpListenerException.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpListenerPrefix.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpListenerPrefixCollection.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpListenerRequest.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpListenerResponse.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpRequestHeader.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpResponseHeader.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpStatusCode.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpStreamAsyncResult.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpUtility.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\HttpVersion.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\InputChunkState.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\InputState.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\LineState.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\NetworkCredential.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\QueryStringCollection.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\ReadBufferState.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\RequestStream.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\ResponseStream.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\ServerSslConfiguration.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\SslConfiguration.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\WebHeaderCollection.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\WebSockets\HttpListenerWebSocketContext.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\WebSockets\TcpListenerWebSocketContext.cs" />
+    <Compile Include="CustomWebSocketSharp\Net\WebSockets\WebSocketContext.cs" />
+    <Compile Include="CustomWebSocketSharp\Opcode.cs" />
+    <Compile Include="CustomWebSocketSharp\PayloadData.cs" />
+    <Compile Include="CustomWebSocketSharp\Rsv.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\HttpRequestEventArgs.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\HttpServer.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\IWebSocketSession.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\ServerState.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\WebSocketBehavior.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\WebSocketServer.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\WebSocketServiceHost.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\WebSocketServiceHost`1.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\WebSocketServiceManager.cs" />
+    <Compile Include="CustomWebSocketSharp\Server\WebSocketSessionManager.cs" />
+    <Compile Include="CustomWebSocketSharp\WebSocket.cs" />
+    <Compile Include="CustomWebSocketSharp\WebSocketException.cs" />
+    <Compile Include="CustomWebSocketSharp\WebSocketFrame.cs" />
+    <Compile Include="CustomWebSocketSharp\WebSocketState.cs" />
     <Compile Include="FeedbackSignal.cs" />
     <Compile Include="FileUtils.cs" />
     <Compile Include="HapticFeedbackItem.cs" />
@@ -51,6 +122,7 @@
     <Compile Include="Plugin\ITactosyPlugin.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleJson.cs" />
     <Compile Include="TactosyConfig.cs" />
     <Compile Include="TactosyException.cs" />
     <Compile Include="TactosyFeedback.cs" />
@@ -60,7 +132,6 @@
     <Compile Include="TactosyUtils.cs" />
     <Compile Include="Sender\WebSocketSender.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>

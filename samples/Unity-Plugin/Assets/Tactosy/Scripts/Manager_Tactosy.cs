@@ -63,11 +63,11 @@ namespace Tactosy.Unity
                     }
                     TactosyPlayer.RegisterFeedback(feedbackMapping.Key, new FeedbackSignal(json));
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Debug.LogError("failed to read feedback file " + Path.Combine(PathPrefix, feedbackMapping.Path));
+                    Debug.LogError(e.Message);
+                    Debug.LogError("failed to read feedback file " + Path.Combine(PathPrefix, feedbackMapping.Path) + " : " + e.Message);
                 }
-
             }
 
             TactosyPlayer.Start();

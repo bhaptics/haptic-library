@@ -1,7 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Tactosy.Common
 {
+    public class TactosyEvent
+    {
+        public delegate void ValueChangeEvent(TactosyFeedback feedback);
+    }
+
     /// <summary>
     /// ITactosyManager
     /// </summary>
@@ -92,5 +98,7 @@ namespace Tactosy.Common
         /// Stops this instance.
         /// </summary>
         void Stop();
+
+        event TactosyEvent.ValueChangeEvent ValueChanged;
     }
 }

@@ -40,6 +40,8 @@ namespace Tactosy.Unity
             timer = GetComponent<UnityTimer>();
             TactosyPlayer = new TactosyPlayer(sender, timer);
 
+            TactosyPlayer.ValueChanged += TactosyPlayerOnValueChanged;
+
             foreach (var feedbackMapping in FeedbackMappings)
             {
                 try
@@ -71,6 +73,12 @@ namespace Tactosy.Unity
             }
 
             TactosyPlayer.Start();
+        }
+
+        private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
+        {
+            
+            Debug.Log(TactosyUtils.ConvertByteArrayToString(feedback.Values));
         }
 
         public void Play(string key)

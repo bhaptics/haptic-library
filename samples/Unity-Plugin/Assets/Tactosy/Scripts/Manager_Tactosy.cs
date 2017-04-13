@@ -49,11 +49,9 @@ namespace Tactosy.Unity
             
             TactosyPlayer = new TactosyPlayer(sender, timer);
 
-<<<<<<< HEAD
             TactosyPlayer.ValueChanged += TactosyPlayerOnValueChanged;
-=======
             FeedbackSignalMappings = new Dictionary<string, FeedbackSignal>();
->>>>>>> Get FeedbackSignalMappings using delegate
+
 
             foreach (var feedbackMapping in FeedbackMappings)
             {
@@ -104,7 +102,7 @@ namespace Tactosy.Unity
                 return;
             }
             TactosyPlayer.SendSignal(key);
-            sendFeedbackSignal(FeedbackSignalMappings[key]);
+            //sendFeedbackSignal(FeedbackSignalMappings[key]);
 
         }
 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+  <members>
+    
+    <member name="M:UnityEngine.Animation.CrossFadeQueued" minimalUnityVersion="450">
+      <exception cref="T:UnityEngine.UnityException">
+        After the animation has finished playing it will automatically clean itself up. 
+        Using the duplicated animation state after it has finished will result in an exception.
+      </exception>
+    </member>
+    
+    <member name="M:UnityEngine.Animation.PlayQueued" minimalUnityVersion="450">
+      <exception cref="T:UnityEngine.UnityException">
+        After the animation has finished playing it will automatically clean itself up.
+        Using the duplicated animation state after it has finished will result in an exception.
+      </exception>
+    </member>
+    
+    <member name="M:UnityEngine.Camera.GetAllCameras" minimalUnityVersion="450">
+      <exception cref="T:System.ArgumentException">
+        Thrown when the array size is smaller than the Camera.allCamerasCount value.
+      </exception>
+      <exception cref="T:System.NullReferenceException">
+        Thrown when the array argument passed in is null.
+      </exception>
+    </member>
+
+    <member name="M:UnityEngine.GameObject.FindWithTag" minimalUnityVersion="450">
+      <exception cref="T:UnityEngine.UnityException">
+        Thrown if the tag does not exist or an empty string or <c>null</c> is passed as the tag.
+      </exception>
+    </member>
+    
+    <member name="M:UnityEngine.GameObject.FindGameObjectsWithTag" minimalUnityVersion="450">
+      <exception cref="T:UnityEngine.UnityException">
+        Thrown if the tag does not exist or an empty string or <c>null</c> is passed as the tag.
+      </exception>
+    </member>
+
+    <member name="P:UnityEngine.Sprite.textureRect" minimalUnityVersion="450">
+      <exception cref="T:UnityEngine.UnityException">
+        Thrown if this sprite is tightly packed in an atlas.
+      </exception>
+    </member>
+    
+  </members>
+</data>

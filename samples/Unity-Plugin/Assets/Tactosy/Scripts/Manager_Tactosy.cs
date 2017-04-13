@@ -136,6 +136,7 @@ namespace Tactosy.Unity
             }
 
             TactosyPlayer.Start();
+
             if (visualizeFeedbacks)
             {
 

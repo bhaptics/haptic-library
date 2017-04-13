@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using UnityEngine;
 using Tactosy.Common;
 using Tactosy.Common.Sender;
+using UnityEngine.UI;
 
 namespace Tactosy.Unity
 {
@@ -16,8 +18,29 @@ namespace Tactosy.Unity
             public string Path;
         }
 
+        public class Feedback
+        {
+            public Transform transform;
+            public int power;
+            public Color color;
+
+            public Feedback(Color color)
+            {
+                this.color = color;
+            }
+        }
+
         [SerializeField]
-        public bool visualizeMotors;
+        private Transform feedbackModelPrefab, feedbackModelParent;
+
+        private int numOfFeedbackRow = 4;
+        private int numOfFeedbackColumn = 5;
+        private Feedback[] feedbacks;
+        
+        public event EventHandler Elapsed;
+        
+        [SerializeField]
+        public bool visualizeFeedbacks;
 
         [Tooltip("Tactosy File Prefix")]
         [SerializeField]
@@ -29,8 +52,8 @@ namespace Tactosy.Unity
 
         private Dictionary<string, FeedbackSignal> FeedbackSignalMappings;
 
-        public delegate void SendFeedbackSignal(FeedbackSignal fbSignal);
-        public static event SendFeedbackSignal sendFeedbackSignal;
+        //public delegate void SendFeedbackSignal(FeedbackSignal fbSignal);
+        //public static event SendFeedbackSignal sendFeedbackSignal;
 
         public TactosyPlayer TactosyPlayer;
         private ISender sender;
@@ -38,7 +61,35 @@ namespace Tactosy.Unity
 
         void OnEnable()
         {
+            feedbacks = new Feedback[numOfFeedbackColumn * numOfFeedbackRow];
+            InitializeFeedbacks(feedbacks);
             InitPlayer();
+        }
+
+        void InitializeFeedbacks(Feedback[] feedbacks)
+        {
+            for (int i = 0; i < numOfFeedbackRow; i++)
+            {
+                for (int j = 0; j < numOfFeedbackColumn; j++)
+                {
+                    feedbacks[i + j] = new Feedback(Color.black);
+                    feedbacks[i + j].transform = Instantiate(feedbackModelPrefab, feedbackModelParent);
+                    var x = j * feedbacks[i + j].transform.localScale.magnitude; // + distanceBetweenMotors;
+                    var y = i * feedbacks[i + j].transform.localScale.magnitude; // + distanceBetweenMotors;
+                    var z = feedbacks[i + j].transform.localScale.z;
+
+                    feedbacks[i + j].transform.position = new Vector3(x, y, z);
+                    feedbacks[i + j].transform.parent = feedbackModelParent;
+                }
+            }
+        }
+
+        void UpdateFeedbacks(TactosyFeedback tactosyFeedback)
+        {
+            for (int i = 0; i < tactosyFeedback.Values.Length; i++)
+            {
+                feedbacks[i].transform.localScale = new Vector3(tactosyFeedback.Values[i], tactosyFeedback.Values[i], tactosyFeedback.Values[i]);
+            }
         }
 
         private void InitPlayer()
@@ -86,12 +137,19 @@ namespace Tactosy.Unity
             }
 
             TactosyPlayer.Start();
+            if (visualizeFeedbacks)
+            {
+
+            }
+            else if (feedbacks != null)
+            {
+                
+            }
         }
 
         private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
         {
-            
-            Debug.Log(TactosyUtils.ConvertByteArrayToString(feedback.Values));
+            UpdateFeedbacks(feedback);
         }
 
         public void Play(string key)
@@ -102,9 +160,8 @@ namespace Tactosy.Unity
                 return;
             }
             TactosyPlayer.SendSignal(key);
-            //sendFeedbackSignal(FeedbackSignalMappings[key]);
-
         }
+        
 
         public void TurnOff()
         {
@@ -145,7 +202,7 @@ namespace Tactosy.Unity
                     0, 0, 100, 100, 0,
                     0, 0, 0, 0, 0
                 };
-//                TactosyPlayer.SendSignal("test", PositionType.All, bytes, 100);
+                //TactosyPlayer.SendSignal("test", PositionType.All, bytes, 100);
 
                 TactosyPlayer.SendSignal("Fireball", 0.2f);
             }

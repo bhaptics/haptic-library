@@ -84,13 +84,13 @@ public class MotorGenerator : MonoBehaviour , ITimer
 
     private void OnEnable()
     {
-        Manager_Tactosy.sendFeedbackSignal += VisualizeFeedbackSignal;
+        //Manager_Tactosy.sendFeedbackSignal += VisualizeFeedbackSignal;
         
     }
 
     private void OnDisable()
     {
-        Manager_Tactosy.sendFeedbackSignal -= VisualizeFeedbackSignal;        
+        //Manager_Tactosy.sendFeedbackSignal -= VisualizeFeedbackSignal;        
     }
 
     void VisualizeFeedbackSignal(FeedbackSignal fbSignal)

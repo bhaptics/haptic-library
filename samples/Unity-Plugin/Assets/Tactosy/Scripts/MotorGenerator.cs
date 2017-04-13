@@ -1,15 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Tactosy.Unity;
+using Tactosy.Common;
+using Tactosy.Common.Sender;
 using UnityEngine;
+using System;
 
-public class MotorGenerator : MonoBehaviour
+public class MotorGenerator : MonoBehaviour , ITimer
 {
     [SerializeField] private float distanceBetweenMotors;
     [SerializeField] private Transform motorPrefab, motorParent;
     [SerializeField] private int numberOfRows; // numberOfRows * numberOfColumns == size of feedback
     [SerializeField] private int numberOfColumns;
-    [SerializeField] private float ratio = 1;
+    [SerializeField] private int defaultScale = 1;
+
+    private int defInterval = 20;
+    private int duration;
+
+    //private Dictionary<string, FeedbackSignal> FeedbackSignalMappings; // Temp 
+
+    public event EventHandler Elapsed;
 
     public enum HandType
     {
@@ -21,15 +31,14 @@ public class MotorGenerator : MonoBehaviour
         public HandType handType;
         public Vector3 position;
         public Vector3 scale;
-        public float power;
+        public List<float[]> power;
         public Color color;
 
-        public MotorInfo(HandType handType, Vector3 position, Vector3 scale, float power, Color color)
+        public MotorInfo(HandType handType, Vector3 position, Vector3 scale, Color color)
         {
             this.handType = handType;
             this.position = position;
             this.scale = scale;
-            this.power = power;
             this.color = color;
         }
     }
@@ -38,7 +47,7 @@ public class MotorGenerator : MonoBehaviour
     {
         for (int i = 0; i < mInfos.Length; i++)
         {
-            mInfos[i] = new MotorInfo(HandType.All, new Vector3(0, 0, 0), new Vector3(1, 1, 1), 100, Color.black);
+            mInfos[i] = new MotorInfo(HandType.All, new Vector3(0, 0, 0), new Vector3(1, 1, 1), Color.black);
         }
     }
     
@@ -71,5 +80,45 @@ public class MotorGenerator : MonoBehaviour
     void Awake()
     {
         VisualizeMotors();
+    }
+
+    private void OnEnable()
+    {
+        Manager_Tactosy.sendFeedbackSignal += VisualizeFeedbackSignal;
+        
+    }
+
+    private void OnDisable()
+    {
+        Manager_Tactosy.sendFeedbackSignal -= VisualizeFeedbackSignal;        
+    }
+
+    void VisualizeFeedbackSignal(FeedbackSignal fbSignal)
+    {
+        foreach (var hapticFeedback in fbSignal.HapticFeedback)
+        {
+            // use as elapsedTime.
+            // using default interval, you can get index by division
+            int key = hapticFeedback.Key; 
+            foreach (var lowLevelData in hapticFeedback.Value)
+            {
+                
+            }
+        }
+    }
+
+    public void StartTimer()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StopTimer()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
     }
 }

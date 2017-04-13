@@ -27,6 +27,11 @@ namespace Tactosy.Unity
         [SerializeField]
         internal List<SignalMapping> FeedbackMappings;
 
+        private Dictionary<string, FeedbackSignal> FeedbackSignalMappings;
+
+        public delegate void SendFeedbackSignal(FeedbackSignal fbSignal);
+        public static event SendFeedbackSignal sendFeedbackSignal;
+
         public TactosyPlayer TactosyPlayer;
         private ISender sender;
         private ITimer timer;
@@ -41,9 +46,14 @@ namespace Tactosy.Unity
             // Setup Tactosy Player
             sender = new WebSocketSender();
             timer = GetComponent<UnityTimer>();
+            
             TactosyPlayer = new TactosyPlayer(sender, timer);
 
+<<<<<<< HEAD
             TactosyPlayer.ValueChanged += TactosyPlayerOnValueChanged;
+=======
+            FeedbackSignalMappings = new Dictionary<string, FeedbackSignal>();
+>>>>>>> Get FeedbackSignalMappings using delegate
 
             foreach (var feedbackMapping in FeedbackMappings)
             {
@@ -67,6 +77,8 @@ namespace Tactosy.Unity
                         json = File.ReadAllText(filePath);
                     }
                     TactosyPlayer.RegisterFeedback(feedbackMapping.Key, new FeedbackSignal(json));
+                    FeedbackSignalMappings.Add(feedbackMapping.Key, new FeedbackSignal(json));
+                    
                 }
                 catch (Exception e)
                 {
@@ -92,6 +104,8 @@ namespace Tactosy.Unity
                 return;
             }
             TactosyPlayer.SendSignal(key);
+            sendFeedbackSignal(FeedbackSignalMappings[key]);
+
         }
 
         public void TurnOff()

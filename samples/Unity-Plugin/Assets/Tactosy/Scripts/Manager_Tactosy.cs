@@ -17,25 +17,13 @@ namespace Tactosy.Unity
             public string Key;
             public string Path;
         }
-
-        public class Feedback
-        {
-            public Transform transform;
-            public int power;
-            public Color color;
-
-            public Feedback(Color color)
-            {
-                this.color = color;
-            }
-        }
-
+        
         [SerializeField]
         private Transform feedbackModelPrefab, feedbackModelParent;
 
         private int numOfFeedbackRow = 4;
         private int numOfFeedbackColumn = 5;
-        private Feedback[] feedbacks;
+        private GameObject[] feedbacks;
         
         public event EventHandler Elapsed;
         
@@ -61,34 +49,45 @@ namespace Tactosy.Unity
 
         void OnEnable()
         {
-            feedbacks = new Feedback[numOfFeedbackColumn * numOfFeedbackRow];
-            InitializeFeedbacks(feedbacks);
+            InitializeFeedbacks();
             InitPlayer();
         }
 
-        void InitializeFeedbacks(Feedback[] feedbacks)
+        
+        void InitializeFeedbacks()
         {
-            for (int i = 0; i < numOfFeedbackRow; i++)
+            if (feedbacks == null)
             {
-                for (int j = 0; j < numOfFeedbackColumn; j++)
-                {
-                    feedbacks[i + j] = new Feedback(Color.black);
-                    feedbacks[i + j].transform = Instantiate(feedbackModelPrefab, feedbackModelParent);
-                    var x = j * feedbacks[i + j].transform.localScale.magnitude; // + distanceBetweenMotors;
-                    var y = i * feedbacks[i + j].transform.localScale.magnitude; // + distanceBetweenMotors;
-                    var z = feedbacks[i + j].transform.localScale.z;
+                feedbacks = new GameObject[numOfFeedbackColumn * numOfFeedbackRow];
+            }
 
-                    feedbacks[i + j].transform.position = new Vector3(x, y, z);
-                    feedbacks[i + j].transform.parent = feedbackModelParent;
+            for (int i = 0; i < numOfFeedbackRow; i++)          //4
+            {
+                for (int j = 0; j < numOfFeedbackColumn; j++)   //5
+                {
+                    int index = i * numOfFeedbackColumn + j;
+                    feedbacks[index] = Instantiate(feedbackModelPrefab, feedbackModelParent).gameObject;
+                    var x = j * feedbacks[index].transform.localScale.magnitude; // + distanceBetweenMotors;
+                    var y = i * feedbacks[index].transform.localScale.magnitude; // + distanceBetweenMotors;
+                    var z = feedbacks[index].transform.localScale.z;
+
+                    feedbacks[index].transform.position = new Vector3(x, y, z);
+                    feedbacks[index].transform.parent = transform;
                 }
             }
+
+            Debug.Log(feedbacks);
         }
 
         void UpdateFeedbacks(TactosyFeedback tactosyFeedback)
         {
-            for (int i = 0; i < tactosyFeedback.Values.Length; i++)
+            for (int i = 0; i < feedbacks.Length; i++)
             {
-                feedbacks[i].transform.localScale = new Vector3(tactosyFeedback.Values[i], tactosyFeedback.Values[i], tactosyFeedback.Values[i]);
+                var scale = tactosyFeedback.Values[i] / 200f;
+                if (feedbacks[i] != null)
+                {
+                    feedbacks[i].transform.localScale = Vector3.one * scale;
+                }
             }
         }
 
@@ -149,6 +148,7 @@ namespace Tactosy.Unity
 
         private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
         {
+            Debug.Log("value changed");
             UpdateFeedbacks(feedback);
         }
 
@@ -177,6 +177,10 @@ namespace Tactosy.Unity
         void OnDisable()
         {
             TactosyPlayer.Stop();
+            if (feedbacks != null)
+            {
+                feedbacks = null;
+            }
         }
 
         void OnApplicationPause(bool pauseState)

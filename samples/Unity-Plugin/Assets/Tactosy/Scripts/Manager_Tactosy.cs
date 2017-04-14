@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using Tactosy.Common;
 using Tactosy.Common.Sender;
@@ -17,17 +19,12 @@ namespace Tactosy.Unity
             public string Key;
             public string Path;
         }
-        
-        [SerializeField]
-        private Transform feedbackModelPrefab, feedbackModelParent;
 
-        private int numOfFeedbackRow = 4;
-        private int numOfFeedbackColumn = 5;
-        private GameObject[] feedbacks;
+        [SerializeField]
+        private GameObject leftHandModel, rightHandMoadel;
         
         public event EventHandler Elapsed;
-        
-        [SerializeField]
+
         public bool visualizeFeedbacks;
 
         [Tooltip("Tactosy File Prefix")]
@@ -38,10 +35,7 @@ namespace Tactosy.Unity
         [SerializeField]
         internal List<SignalMapping> FeedbackMappings;
 
-        private Dictionary<string, FeedbackSignal> FeedbackSignalMappings;
-
-        //public delegate void SendFeedbackSignal(FeedbackSignal fbSignal);
-        //public static event SendFeedbackSignal sendFeedbackSignal;
+        //private Dictionary<string, FeedbackSignal> FeedbackSignalMappings;
 
         public TactosyPlayer TactosyPlayer;
         private ISender sender;
@@ -52,41 +46,51 @@ namespace Tactosy.Unity
             InitializeFeedbacks();
             InitPlayer();
         }
-
         
         void InitializeFeedbacks()
         {
-            if (feedbacks == null)
+            if (leftHandModel != null && rightHandMoadel != null)
             {
-                feedbacks = new GameObject[numOfFeedbackColumn * numOfFeedbackRow];
-            }
+                leftHandModel.gameObject.SetActive(false);
+                rightHandMoadel.gameObject.SetActive(false);
 
-            for (int i = 0; i < numOfFeedbackRow; i++)          //4
-            {
-                for (int j = 0; j < numOfFeedbackColumn; j++)   //5
+                if (visualizeFeedbacks)
                 {
-                    int index = i * numOfFeedbackColumn + j;
-                    feedbacks[index] = Instantiate(feedbackModelPrefab, feedbackModelParent).gameObject;
-                    var x = j * feedbacks[index].transform.localScale.magnitude; // + distanceBetweenMotors;
-                    var y = i * feedbacks[index].transform.localScale.magnitude; // + distanceBetweenMotors;
-                    var z = feedbacks[index].transform.localScale.z;
+                    leftHandModel.gameObject.SetActive(true);
+                    rightHandMoadel.gameObject.SetActive(true);
 
-                    feedbacks[index].transform.position = new Vector3(x, y, z);
-                    feedbacks[index].transform.parent = transform;
                 }
             }
-
-            Debug.Log(feedbacks);
         }
 
         void UpdateFeedbacks(TactosyFeedback tactosyFeedback)
         {
-            for (int i = 0; i < feedbacks.Length; i++)
+            if (tactosyFeedback.Position == PositionType.Left)
+            {
+                UpdateFeedbacks(leftHandModel, tactosyFeedback);
+            }
+            else if (tactosyFeedback.Position == PositionType.Right)
+            {
+                UpdateFeedbacks(rightHandMoadel, tactosyFeedback);
+            }
+            else if (tactosyFeedback.Position == PositionType.All)
+            {
+                UpdateFeedbacks(leftHandModel, tactosyFeedback);
+                UpdateFeedbacks(rightHandMoadel, tactosyFeedback);
+            }
+        }
+
+        private void UpdateFeedbacks(GameObject handModel, TactosyFeedback tactosyFeedback)
+        {
+            Debug.Log("test");
+            var container = handModel.transform.GetChild(1);
+
+            for (int i = 0; i < container.childCount; i++)
             {
                 var scale = tactosyFeedback.Values[i] / 200f;
-                if (feedbacks[i] != null)
+                if (container.transform.GetChild(i) != null)
                 {
-                    feedbacks[i].transform.localScale = Vector3.one * scale;
+                    container.transform.GetChild(i).localScale = Vector3.one * scale;
                 }
             }
         }
@@ -100,7 +104,7 @@ namespace Tactosy.Unity
             TactosyPlayer = new TactosyPlayer(sender, timer);
 
             TactosyPlayer.ValueChanged += TactosyPlayerOnValueChanged;
-            FeedbackSignalMappings = new Dictionary<string, FeedbackSignal>();
+            //FeedbackSignalMappings = new Dictionary<string, FeedbackSignal>();
 
 
             foreach (var feedbackMapping in FeedbackMappings)
@@ -125,7 +129,7 @@ namespace Tactosy.Unity
                         json = File.ReadAllText(filePath);
                     }
                     TactosyPlayer.RegisterFeedback(feedbackMapping.Key, new FeedbackSignal(json));
-                    FeedbackSignalMappings.Add(feedbackMapping.Key, new FeedbackSignal(json));
+                    //FeedbackSignalMappings.Add(feedbackMapping.Key, new FeedbackSignal(json));
                     
                 }
                 catch (Exception e)
@@ -136,15 +140,6 @@ namespace Tactosy.Unity
             }
 
             TactosyPlayer.Start();
-
-            if (visualizeFeedbacks)
-            {
-
-            }
-            else if (feedbacks != null)
-            {
-                
-            }
         }
 
         private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
@@ -178,10 +173,6 @@ namespace Tactosy.Unity
         void OnDisable()
         {
             TactosyPlayer.Stop();
-            if (feedbacks != null)
-            {
-                feedbacks = null;
-            }
         }
 
         void OnApplicationPause(bool pauseState)
@@ -189,10 +180,6 @@ namespace Tactosy.Unity
             if (pauseState)
             {
                 OnDisable();
-            }
-            else
-            {
-                OnEnable();
             }
         }
 

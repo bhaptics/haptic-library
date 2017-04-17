@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Timers;
-using WebSocketSharp;
+using CustomWebSocketSharp;
 
 namespace Tactosy.Common.Sender
 {

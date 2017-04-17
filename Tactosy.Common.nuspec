@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Tactosy.Common</id>
-    <version>1.1.0-rc1</version>
+    <version>1.1.0</version>
     <title>Tactosy.Common</title>
     <authors>sangwon.choi</authors>
     <owners>bhaptics</owners>
@@ -14,10 +14,5 @@
     <releaseNotes>tactosy library</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>tactosy haptic</tags>
-	
-	<dependencies>
-		<dependency id="Newtonsoft.Json" version="10.0.2"/>
-		<dependency id="WebSocketSharp" version="1.0.3-rc11"/>
-    </dependencies>
   </metadata>
 </package>

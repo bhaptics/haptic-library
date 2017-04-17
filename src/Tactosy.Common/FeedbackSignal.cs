@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Tactosy.Common
 {
@@ -22,9 +23,21 @@ namespace Tactosy.Common
         /// <param name="jsonContent">Content of the json.</param>
         public FeedbackSignal(string jsonContent)
         {
-            TactosyFile tactosyFile = TactosyUtils.ConvertJsonStringToTactosyFile(jsonContent);
-            EndTime = tactosyFile.durationMillis;
-            HapticFeedback = tactosyFile.feedback;
+            try
+            {
+                TactosyFile tactosyFile = TactosyUtils.ConvertJsonStringToTactosyFile(jsonContent);
+                if (tactosyFile == null)
+                {
+                    throw new TactosyException("tactosy file exception - returned null");
+                }
+
+                EndTime = tactosyFile.durationMillis;
+                HapticFeedback = tactosyFile.feedback;
+            }
+            catch (Exception e)
+            {
+                throw new TactosyException("tactosy file exception unexpected", e);
+            }
         }
 
         /// <summary>

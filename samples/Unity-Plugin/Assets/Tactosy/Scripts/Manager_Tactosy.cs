@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using Tactosy.Common;
 using Tactosy.Common.Sender;
-using UnityEngine.UI;
 
 namespace Tactosy.Unity
 {
@@ -22,9 +18,8 @@ namespace Tactosy.Unity
 
         [SerializeField]
         private GameObject leftHandModel, rightHandMoadel;
-        
-        public event EventHandler Elapsed;
 
+        [SerializeField]
         public bool visualizeFeedbacks;
 
         [Tooltip("Tactosy File Prefix")]
@@ -34,8 +29,6 @@ namespace Tactosy.Unity
         [Tooltip("Tactosy Feedback Mapping Infos")]
         [SerializeField]
         internal List<SignalMapping> FeedbackMappings;
-
-        //private Dictionary<string, FeedbackSignal> FeedbackSignalMappings;
 
         public TactosyPlayer TactosyPlayer;
         private ISender sender;
@@ -82,7 +75,6 @@ namespace Tactosy.Unity
 
         private void UpdateFeedbacks(GameObject handModel, TactosyFeedback tactosyFeedback)
         {
-            Debug.Log("test");
             var container = handModel.transform.GetChild(1);
 
             for (int i = 0; i < container.childCount; i++)
@@ -104,7 +96,6 @@ namespace Tactosy.Unity
             TactosyPlayer = new TactosyPlayer(sender, timer);
 
             TactosyPlayer.ValueChanged += TactosyPlayerOnValueChanged;
-            //FeedbackSignalMappings = new Dictionary<string, FeedbackSignal>();
 
 
             foreach (var feedbackMapping in FeedbackMappings)
@@ -129,7 +120,6 @@ namespace Tactosy.Unity
                         json = File.ReadAllText(filePath);
                     }
                     TactosyPlayer.RegisterFeedback(feedbackMapping.Key, new FeedbackSignal(json));
-                    //FeedbackSignalMappings.Add(feedbackMapping.Key, new FeedbackSignal(json));
                     
                 }
                 catch (Exception e)
@@ -144,7 +134,6 @@ namespace Tactosy.Unity
 
         private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
         {
-            Debug.Log("value changed");
             UpdateFeedbacks(feedback);
         }
 

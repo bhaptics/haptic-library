@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tactosy.Common.Tests
 {
@@ -19,10 +21,15 @@ namespace Tactosy.Common.Tests
             var key = "a";
             tactosyPlayer.RegisterFeedback(key, new FeedbackSignal(new TactosyFeedback(PositionType.All, bytes, FeedbackMode.DOT_MODE), 10000));
 
-            tactosyPlayer.SendSignal(key, 0.3f);
+            string filePath = "test.tactosy";
+            string json = File.ReadAllText(filePath);   
+            tactosyPlayer.RegisterFeedback("tt", new FeedbackSignal(json));
 
 
-            while (tactosyPlayer.IsPlaying(key))
+            tactosyPlayer.SendSignal("tt", 0.1f);
+
+
+            while (tactosyPlayer.IsPlaying("tt"))
             {
 
             }

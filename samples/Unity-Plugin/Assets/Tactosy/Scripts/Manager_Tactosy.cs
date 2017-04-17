@@ -82,7 +82,7 @@ namespace Tactosy.Unity
                 var scale = tactosyFeedback.Values[i] / 200f;
                 if (container.transform.GetChild(i) != null)
                 {
-                    container.transform.GetChild(i).localScale = Vector3.one * scale;
+                    container.transform.GetChild(i).localScale = new Vector3(scale, .02f, scale);
                 }
             }
         }

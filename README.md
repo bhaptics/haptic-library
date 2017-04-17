@@ -9,11 +9,14 @@ This project is to utilize Tactosy in unity and others.
 * To install Tactosy.Common, run the following command in the Package Manager Console
     
     ```
-    PM> Install-Package Tactosy.Common -pre
+    PM> Install-Package Tactosy.Common
     ```
     #### or 
 * Clone the git then apply dll in src folder
-    
+
+## Build 
+
+
 ## Sample (Unity plugin)
 * For more detail, you can find in [Unity-Plugin](https://github.com/bhaptics/tactosy-sharp/tree/master/samples/Unity-Plugin)
   

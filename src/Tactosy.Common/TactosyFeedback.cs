@@ -189,6 +189,57 @@ namespace Tactosy.Common
 
     public enum PositionType
     {
-        All, Left, Right
+        All = 0, Left = 1, Right = 2,
+        VestFront =3, VestBack=4,
+        GloveLeft =5, GloveRight=6,
+        Custom1 =251, Custom2 = 252, Custom3 = 253, Custom4 = 254
+    }
+
+    public class EnumParser
+    {
+        private static Dictionary<string, PositionType> _positionMappings;
+        private static Dictionary<string, FeedbackMode> _modeMappings;
+
+        public static PositionType ToPositionType(string str)
+        {
+            if (_positionMappings == null)
+            {
+                _positionMappings = new Dictionary<string, PositionType>();
+
+                foreach (PositionType positionType in Enum.GetValues(typeof(PositionType)))
+                {
+                    _positionMappings[positionType.ToString()] = positionType;
+                }
+            }
+
+            PositionType type;
+            if (_positionMappings.TryGetValue(str, out type))
+            {
+                return type;
+            }
+
+            return PositionType.All;
+        }
+
+        public static FeedbackMode ToMode(string str)
+        {
+            if (_modeMappings == null)
+            {
+                _modeMappings = new Dictionary<string, FeedbackMode>();
+
+                foreach (FeedbackMode positionType in Enum.GetValues(typeof(FeedbackMode)))
+                {
+                    _modeMappings[positionType.ToString()] = positionType;
+                }
+            }
+
+            FeedbackMode type;
+            if (_modeMappings.TryGetValue(str, out type))
+            {
+                return type;
+            }
+
+            return FeedbackMode.DOT_MODE;
+        }
     }
 }

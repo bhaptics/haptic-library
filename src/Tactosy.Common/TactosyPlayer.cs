@@ -51,6 +51,7 @@ namespace Tactosy.Common
         /// The sender
         /// </summary>
         private readonly ISender _sender;
+        
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TactosyPlayer"/> class.
@@ -124,7 +125,12 @@ namespace Tactosy.Common
                 feedback.Values = new byte[_motorSize];
             }
 
+            // callback
             _sender.PlayFeedback(feedback);
+            if (ValueChanged != null)
+            {
+                ValueChanged(feedback);
+            }
         }
 
         private void TimerOnElapsed(object sender, EventArgs e)
@@ -518,6 +524,9 @@ namespace Tactosy.Common
             _enable = false;
             PlayFeedback(new TactosyFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
         }
+
+        public event TactosyEvent.ValueChangeEvent ValueChanged;
+
         #endregion
     }
 }

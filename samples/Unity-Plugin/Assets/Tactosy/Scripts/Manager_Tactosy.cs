@@ -16,6 +16,12 @@ namespace Tactosy.Unity
             public string Path;
         }
 
+        [SerializeField]
+        private GameObject leftHandModel, rightHandMoadel;
+
+        [SerializeField]
+        public bool visualizeFeedbacks;
+
         [Tooltip("Tactosy File Prefix")]
         [SerializeField]
         private string PathPrefix = "Assets/Tactosy/Feedbacks/";
@@ -30,7 +36,55 @@ namespace Tactosy.Unity
 
         void OnEnable()
         {
+            InitializeFeedbacks();
             InitPlayer();
+        }
+        
+        void InitializeFeedbacks()
+        {
+            if (leftHandModel != null && rightHandMoadel != null)
+            {
+                leftHandModel.gameObject.SetActive(false);
+                rightHandMoadel.gameObject.SetActive(false);
+
+                if (visualizeFeedbacks)
+                {
+                    leftHandModel.gameObject.SetActive(true);
+                    rightHandMoadel.gameObject.SetActive(true);
+
+                }
+            }
+        }
+
+        void UpdateFeedbacks(TactosyFeedback tactosyFeedback)
+        {
+            if (tactosyFeedback.Position == PositionType.Left)
+            {
+                UpdateFeedbacks(leftHandModel, tactosyFeedback);
+            }
+            else if (tactosyFeedback.Position == PositionType.Right)
+            {
+                UpdateFeedbacks(rightHandMoadel, tactosyFeedback);
+            }
+            else if (tactosyFeedback.Position == PositionType.All)
+            {
+                UpdateFeedbacks(leftHandModel, tactosyFeedback);
+                UpdateFeedbacks(rightHandMoadel, tactosyFeedback);
+            }
+        }
+
+        private void UpdateFeedbacks(GameObject handModel, TactosyFeedback tactosyFeedback)
+        {
+            var container = handModel.transform.GetChild(1);
+
+            for (int i = 0; i < container.childCount; i++)
+            {
+                var scale = tactosyFeedback.Values[i] / 200f;
+                if (container.transform.GetChild(i) != null)
+                {
+                    container.transform.GetChild(i).localScale = Vector3.one * scale;
+                }
+            }
         }
 
         private void InitPlayer()
@@ -38,7 +92,11 @@ namespace Tactosy.Unity
             // Setup Tactosy Player
             sender = new WebSocketSender();
             timer = GetComponent<UnityTimer>();
+            
             TactosyPlayer = new TactosyPlayer(sender, timer);
+
+            TactosyPlayer.ValueChanged += TactosyPlayerOnValueChanged;
+
 
             foreach (var feedbackMapping in FeedbackMappings)
             {
@@ -62,15 +120,21 @@ namespace Tactosy.Unity
                         json = File.ReadAllText(filePath);
                     }
                     TactosyPlayer.RegisterFeedback(feedbackMapping.Key, new FeedbackSignal(json));
+                    
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Debug.LogError("failed to read feedback file " + Path.Combine(PathPrefix, feedbackMapping.Path));
+                    Debug.LogError(e.Message);
+                    Debug.LogError("failed to read feedback file " + Path.Combine(PathPrefix, feedbackMapping.Path) + " : " + e.Message);
                 }
-
             }
 
             TactosyPlayer.Start();
+        }
+
+        private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
+        {
+            UpdateFeedbacks(feedback);
         }
 
         public void Play(string key)
@@ -82,6 +146,7 @@ namespace Tactosy.Unity
             }
             TactosyPlayer.SendSignal(key);
         }
+        
 
         public void TurnOff()
         {
@@ -99,6 +164,14 @@ namespace Tactosy.Unity
             TactosyPlayer.Stop();
         }
 
+        void OnApplicationPause(bool pauseState)
+        {
+            if (pauseState)
+            {
+                OnDisable();
+            }
+        }
+
         void Update()
         {
             if (Input.GetKeyDown("space"))
@@ -110,7 +183,7 @@ namespace Tactosy.Unity
                     0, 0, 100, 100, 0,
                     0, 0, 0, 0, 0
                 };
-//                TactosyPlayer.SendSignal("test", PositionType.All, bytes, 100);
+                //TactosyPlayer.SendSignal("test", PositionType.All, bytes, 100);
 
                 TactosyPlayer.SendSignal("Fireball", 0.2f);
             }

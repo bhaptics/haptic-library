@@ -23,9 +23,17 @@ namespace Tactosy.Unity
         {
             while (true)
             {
+
                 if (Elapsed != null)
                 {
-                    Elapsed(this, new EventArgs());
+                    try
+                    {
+                        Elapsed(this, new EventArgs());
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                    }
                 }
                 yield return new WaitForSeconds(_interval*0.001f);
             }

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Timers;
 using CustomWebSocketSharp;
 
@@ -54,7 +55,20 @@ namespace Tactosy.Common.Sender
 
         public void PlayFeedback(TactosyFeedback feedback)
         {
-            _webSocket.Send(TactosyFeedback.ToBytes(feedback));
+            if (!_websocketConnected)
+            {
+                return;
+            }
+
+            try
+            {
+                _webSocket.Send(TactosyFeedback.ToBytes(feedback));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
         }
     }
 }

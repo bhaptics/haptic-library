@@ -122,7 +122,7 @@
     <Compile Include="Plugin\ITactosyPlugin.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleJson.cs" />
+    <Compile Include="Json\SimpleJson.cs" />
     <Compile Include="TactosyConfig.cs" />
     <Compile Include="TactosyException.cs" />
     <Compile Include="TactosyFeedback.cs" />

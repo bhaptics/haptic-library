@@ -21,11 +21,6 @@ This project is to utilize Tactosy in unity and others.
 * For more detail, you can find in [Unity-Plugin](https://github.com/bhaptics/tactosy-sharp/tree/master/samples/Unity-Plugin)
   
 
-
-## Dependencies 
-> websocket sharp : https://github.com/sta/websocket-sharp
->
-> json parser : http://www.newtonsoft.com/json
 #####
 
 Copyright 2017 bHaptics Co., Ltd.

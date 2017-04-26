@@ -56,10 +56,6 @@ This project is to use Tactosy in unity.
     bool isFireballFeedbackPlaying = TactosyPlayer.IsPlaying("Fireball");
     bool isAnyFeedbackPlaying = TactosyPlayer.IsPlaying();
     ```    
-## Dependencies 
-> websocket sharp : https://github.com/sta/websocket-sharp
->
-> json parser : http://www.newtonsoft.com/json
 #####
 
 Copyright 2017 bHaptics Co., Ltd.

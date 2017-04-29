@@ -143,24 +143,24 @@ namespace Tactosy.Common
 
                     PlayFeedback(new TactosyFeedback(PositionType.Right, new byte[_motorSize], FeedbackMode.DOT_MODE));
                     PlayFeedback(new TactosyFeedback(PositionType.Left, new byte[_motorSize], FeedbackMode.DOT_MODE));
+                    PlayFeedback(new TactosyFeedback(PositionType.VestFront, new byte[_motorSize], FeedbackMode.DOT_MODE));
+                    PlayFeedback(new TactosyFeedback(PositionType.VestBack, new byte[_motorSize], FeedbackMode.DOT_MODE));
+                    PlayFeedback(new TactosyFeedback(PositionType.Head, new byte[_motorSize], FeedbackMode.DOT_MODE));
                 }
 
                 return;
             }
-
-            int[] dotModeSignalLeft = new int[_motorSize];
-            int[] dotModeSignalRight = new int[_motorSize];
-            int[] pathModeSignalLeft = new int[_motorSize];
-            int[] pathModeSignalRight = new int[_motorSize];
-
+            
             List<string> expiredSignals = new List<string>();
 
+            Dictionary<PositionType, Dictionary<FeedbackMode, List<TactosyFeedback>>> feedbackMap = new Dictionary<PositionType, Dictionary<FeedbackMode, List<TactosyFeedback>>>();
+            feedbackMap[PositionType.Left] = new Dictionary<FeedbackMode, List<TactosyFeedback>>();
+            feedbackMap[PositionType.Right] = new Dictionary<FeedbackMode, List<TactosyFeedback>>();
+            feedbackMap[PositionType.VestBack] = new Dictionary<FeedbackMode, List<TactosyFeedback>>();
+            feedbackMap[PositionType.VestFront] = new Dictionary<FeedbackMode, List<TactosyFeedback>>();
+            feedbackMap[PositionType.Head] = new Dictionary<FeedbackMode, List<TactosyFeedback>>();
 
-            bool dotModeLeftActive = false;
-            bool dotModeRightActive = false;
-            bool pathModeActiveLeft = false;
-            bool pathModeActiveRight = false;
-            
+
             foreach (KeyValuePair<string, FeedbackSignal> keyPair in _activeSignals)
             {
                 FeedbackSignal signalData = keyPair.Value;
@@ -181,129 +181,91 @@ namespace Tactosy.Common
                         var hapticFeedbackData = signalData.HapticFeedback[timePast];
                         foreach (var feedback in hapticFeedbackData)
                         {
-                            if (feedback.Mode == FeedbackMode.PATH_MODE && feedback.Position == PositionType.Left)
+                            if (!feedbackMap.ContainsKey(feedback.Position))
                             {
-                                int prevSize = pathModeSignalLeft[0];
-
-                                byte[] data = feedback.Values;
-                                int size = data[0];
-                                if (prevSize + size > 6)
-                                {
-                                    continue;
-                                }
-
-                                pathModeSignalLeft[0] = prevSize + size;
-
-                                for (int i = prevSize; i < prevSize + size; i++)
-                                {
-                                    pathModeSignalLeft[3 * i + 1] = data[3 * (i - prevSize) + 1];
-                                    pathModeSignalLeft[3 * i + 2] = data[3 * (i - prevSize) + 2];
-                                    pathModeSignalLeft[3 * i + 3] = data[3 * (i - prevSize) + 3];
-                                }
-
-                                pathModeActiveLeft = true;
+                                feedbackMap[feedback.Position] = new Dictionary<FeedbackMode, List<TactosyFeedback>>();
                             }
-                            else if (feedback.Mode == FeedbackMode.PATH_MODE && feedback.Position == PositionType.Right)
+
+                            if (!feedbackMap[feedback.Position].ContainsKey(feedback.Mode))
                             {
-                                int prevSize = pathModeSignalRight[0];
-
-                                byte[] data = feedback.Values;
-                                int size = data[0];
-                                if (prevSize + size > 6)
-                                {
-                                    continue;
-                                }
-
-                                pathModeSignalRight[0] = prevSize + size;
-
-                                for (int i = prevSize; i < prevSize + size; i++)
-                                {
-                                    pathModeSignalRight[3 * i + 1] = data[3 * (i - prevSize) + 1];
-                                    pathModeSignalRight[3 * i + 2] = data[3 * (i - prevSize) + 2];
-                                    pathModeSignalRight[3 * i + 3] = data[3 * (i - prevSize) + 3];
-                                }
-
-                                pathModeActiveRight = true;
+                                feedbackMap[feedback.Position][feedback.Mode] = new List<TactosyFeedback>();
                             }
-                            else if (feedback.Mode == FeedbackMode.DOT_MODE && feedback.Position == PositionType.Left)
-                            {
-                                for (int i = 0; i < _motorSize; i++)
-                                {
-                                    dotModeSignalLeft[i] += feedback.Values[i];
-                                }
 
-                                dotModeLeftActive = true;
-                            }
-                            else if (feedback.Mode == FeedbackMode.DOT_MODE && feedback.Position == PositionType.Right)
+                            feedbackMap[feedback.Position][feedback.Mode].Add(feedback);
+                        }
+                    }
+                }
+            }
+
+
+            foreach (var keyValue in feedbackMap)
+            {
+                var modeDictionary = keyValue.Value;
+                var pos = keyValue.Key;
+
+                bool isDotMode = false;
+                bool isPathMode = false;
+
+                byte[] dotMode = new byte[_motorSize];
+                byte[] pathMode = new byte[_motorSize];
+
+                foreach (var feedbackKeyValue in modeDictionary)
+                {
+                    var feedbackMode = feedbackKeyValue.Key;
+
+                    if (feedbackMode == FeedbackMode.DOT_MODE)
+                    {
+                        isDotMode = true;
+                        foreach (var feedback in feedbackKeyValue.Value)
+                        {
+                            for (int i = 0; i < _motorSize; i++)
                             {
-                                for (int i = 0; i < _motorSize; i++)
-                                {
-                                    dotModeSignalRight[i] += feedback.Values[i];
-                                }
-                                dotModeRightActive = true;
+                                dotMode[i] += feedback.Values[i];
                             }
                         }
                     }
+                    else if (feedbackMode == FeedbackMode.PATH_MODE)
+                    {
+                        isPathMode = true;
+                        foreach (var feedback in feedbackKeyValue.Value)
+                        {
+                            int prevSize = pathMode[0];
+
+                            byte[] data = feedback.Values;
+                            int size = data[0];
+                            if (prevSize + size > 6)
+                            {
+                                continue;
+                            }
+
+                            pathMode[0] = (byte) (prevSize + size);
+
+                            for (int i = prevSize; i < prevSize + size; i++)
+                            {
+                                pathMode[3 * i + 1] = data[3 * (i - prevSize) + 1];
+                                pathMode[3 * i + 2] = data[3 * (i - prevSize) + 2];
+                                pathMode[3 * i + 3] = data[3 * (i - prevSize) + 3];
+                            }
+                        }
+                    }
+                }
+
+                if (isDotMode)
+                {
+                    PlayFeedback(new TactosyFeedback(pos, dotMode, FeedbackMode.DOT_MODE));
+                } else if (isPathMode)
+                {
+                    PlayFeedback(new TactosyFeedback(pos, pathMode, FeedbackMode.PATH_MODE));
+                }
+                else
+                {
+                    PlayFeedback(new TactosyFeedback(pos, new byte[_motorSize], FeedbackMode.DOT_MODE));
                 }
             }
 
             foreach (string key in expiredSignals)
             {
                 _activeSignals.Remove(key);
-            }
-
-            if (dotModeLeftActive)
-            {
-                byte[] data = new byte[_motorSize];
-                for (int i = 0; i < _motorSize; i++)
-                {
-                    data[i] = (byte)dotModeSignalLeft[i];
-                }
-
-                TactosyFeedback feedback = new TactosyFeedback(PositionType.Left, data, FeedbackMode.DOT_MODE);
-                PlayFeedback(feedback);
-            }
-            else if (pathModeActiveLeft)
-            {
-                byte[] data = new byte[_motorSize];
-                for (int i = 0; i < _motorSize; i++)
-                {
-                    data[i] = (byte)pathModeSignalLeft[i];
-                }
-                TactosyFeedback feedback = new TactosyFeedback(PositionType.Left, data, FeedbackMode.PATH_MODE);
-                PlayFeedback(feedback);
-            }
-            else
-            {
-                TactosyFeedback feedback = new TactosyFeedback(PositionType.Left, new byte[_motorSize], FeedbackMode.DOT_MODE);
-                PlayFeedback(feedback);
-            }
-
-            if (dotModeRightActive)
-            {
-                byte[] data = new byte[_motorSize];
-                for (int i = 0; i < _motorSize; i++)
-                {
-                    data[i] = (byte)dotModeSignalRight[i];
-                }
-
-                TactosyFeedback feedback = new TactosyFeedback(PositionType.Right, data, FeedbackMode.DOT_MODE);
-                PlayFeedback(feedback);
-            }
-            else if (pathModeActiveRight)
-            {
-                byte[] data = new byte[_motorSize];
-                for (int i = 0; i < _motorSize; i++)
-                {
-                    data[i] = (byte)pathModeSignalRight[i];
-                }
-                TactosyFeedback feedback = new TactosyFeedback(PositionType.Right, data, FeedbackMode.PATH_MODE);
-                PlayFeedback(feedback);
-            }
-            else
-            {
-                TactosyFeedback feedback = new TactosyFeedback(PositionType.Right, new byte[_motorSize], FeedbackMode.DOT_MODE);
-                PlayFeedback(feedback);
             }
 
             _currentTime += _interval;

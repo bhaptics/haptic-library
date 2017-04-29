@@ -58,7 +58,9 @@ namespace Tactosy.Unity
                     0, 0, 100, 100, 0,
                     0, 0, 0, 0, 0
                 };
-                TactosyPlayer.SendSignal("Fireball", 0.2f);
+
+                TactosyPlayer.SendSignal("test", PositionType.VestFront, bytes, 1000);
+//                TactosyPlayer.SendSignal("Fireball", 0.2f);
             }
         }
 

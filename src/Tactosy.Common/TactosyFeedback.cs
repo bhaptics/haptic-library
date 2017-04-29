@@ -39,41 +39,32 @@ namespace Tactosy.Common
         /// </exception>
         public TactosyFeedback(byte[] bytes)
         {
-            // refer https://github.com/bhaptics-corp/tactosy-win
+            // refer https://github.com/bhaptics/tactosy-sharp
             if (bytes.Length != 22)
             {
-                throw new Exception("Illegal argument size");
+                throw new TactosyException("Illegal argument size");
             }
 
             Values = TactosyUtils.SubArray(bytes, 2, 20);
-            
-            if (bytes[0] == 0)
+            try
+            {
+                Mode = (FeedbackMode)bytes[0];
+            }
+            catch (Exception)
             {
                 // turn off
                 Values = new byte[20];
                 Mode = FeedbackMode.DOT_MODE;
-            } else if (bytes[0] == 1)
-            {
-                Mode = FeedbackMode.PATH_MODE; ;
-            } else if (bytes[0] == 2)
-            {
-                Mode = FeedbackMode.DOT_MODE;
             }
 
-
-            if (bytes[1] == 1)
+            try
             {
-                Position = PositionType.Left;
-            } else if (bytes[1] == 2)
-            {
-                Position = PositionType.Right;
+                Position = (PositionType) bytes[1];
             }
-            else if (bytes[1] == 0)
+            catch (Exception)
             {
-                Position = PositionType.All;
-            } else
-            {
-                throw new Exception("Undefined Position Type");
+
+                throw new TactosyException("Undefined Position Type");
             }
         }
 
@@ -164,21 +155,8 @@ namespace Tactosy.Common
         public static byte[] ToBytes(TactosyFeedback feedback)
         {
             byte[] bytes = new byte[22];
-            if (feedback.Mode == FeedbackMode.PATH_MODE)
-            {
-                bytes[0] = 1;
-            } else if (feedback.Mode == FeedbackMode.DOT_MODE)
-            {
-                bytes[0] = 2;
-            }
-
-            if (feedback.Position == PositionType.Left)
-            {
-                bytes[1] = 1;
-            } else if (feedback.Position == PositionType.Right)
-            {
-                bytes[1] = 2;
-            }
+            bytes[0] = (byte) feedback.Mode;
+            bytes[1] = (byte) feedback.Position;
 
             Buffer.BlockCopy(feedback.Values,0, bytes, 2, 20);
 
@@ -190,9 +168,38 @@ namespace Tactosy.Common
     public enum PositionType
     {
         All = 0, Left = 1, Right = 2,
-        VestFront =3, VestBack=4,
-        GloveLeft =5, GloveRight=6,
+        Vest = 3,
+        Head = 4,
+        VestFront =201, VestBack=202,
+        GloveLeft =203, GloveRight=204,
         Custom1 =251, Custom2 = 252, Custom3 = 253, Custom4 = 254
+    }
+
+    public class FeedbackItem
+    {
+        public FeedbackItem(int time, Dictionary<int, HapticFeedbackData> feedback)
+        {
+            Time = time;
+
+            Feedback = feedback;
+        }
+
+        public int Time { get; set; }
+
+        public Dictionary<int, HapticFeedbackData> Feedback { get; set; }
+    }
+
+    public class HapticFeedbackData
+    {
+        public int Time { get; set; }
+        public int[] Values { get; set; }
+        public FeedbackMode Mode { get; set; }
+    }
+
+    public enum FeedbackMode
+    {
+        PATH_MODE = 1,
+        DOT_MODE = 2
     }
 
     public class EnumParser

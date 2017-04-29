@@ -116,7 +116,6 @@
     <Compile Include="CustomWebSocketSharp\WebSocketState.cs" />
     <Compile Include="FeedbackSignal.cs" />
     <Compile Include="FileUtils.cs" />
-    <Compile Include="HapticFeedbackItem.cs" />
     <Compile Include="ISender.cs" />
     <Compile Include="ITactosyPlayer.cs" />
     <Compile Include="Plugin\ITactosyPlugin.cs" />

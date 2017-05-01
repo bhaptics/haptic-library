@@ -1,8 +1,11 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace Tactosy.Unity
-{ 
+{
+#if UNITY_EDITOR
     [CustomEditor(typeof(Manager_Tactosy))]
     public class TactosyEditor : Editor
     {
@@ -28,4 +31,5 @@ namespace Tactosy.Unity
             }
         }
     }
+#endif
 }

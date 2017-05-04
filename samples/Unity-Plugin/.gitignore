@@ -30,3 +30,6 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# SteamVR Dependency
+/Assets/SteamVR/

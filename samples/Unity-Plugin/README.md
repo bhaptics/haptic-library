@@ -56,7 +56,7 @@ This project is to use Tactosy in unity.
     bool isFireballFeedbackPlaying = TactosyPlayer.IsPlaying("Fireball");
     bool isAnyFeedbackPlaying = TactosyPlayer.IsPlaying();
     ```    
-##Sample
+## Sample
 * Tactosy feedback to bow game : https://github.com/codeblv/Bhaptics_Longbow_Archery
 
 

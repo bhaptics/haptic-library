@@ -17,7 +17,7 @@ namespace Tactosy.Unity
         }
 
         [SerializeField]
-        private GameObject leftHandModel, rightHandMoadel;
+        private GameObject leftHandModel, rightHandModel;
 
         [SerializeField]
         public bool visualizeFeedbacks;
@@ -78,23 +78,19 @@ namespace Tactosy.Unity
 
         void InitializeFeedbacks()
         {
-            if (leftHandModel != null && rightHandMoadel != null)
+            if (leftHandModel != null && rightHandModel != null)
             {
                 leftHandModel.gameObject.SetActive(visualizeFeedbacks);
-                rightHandMoadel.gameObject.SetActive(visualizeFeedbacks);
+                rightHandModel.gameObject.SetActive(visualizeFeedbacks);
 
                 TactosyPlayerOnValueChanged(new TactosyFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
             }
         }
 
+        /*
         private void UpdateFeedbacks(GameObject handModel, TactosyFeedback tactosyFeedback)
         {
-            if (handModel == null)
-            {
-                return;
-            }
-
-            var container = handModel.transform.GetChild(1);
+            var container = handModel.transform.GetChild(1); //handModel.transform.GetChild(1);
 
             for (int i = 0; i < container.childCount; i++)
             {
@@ -105,6 +101,7 @@ namespace Tactosy.Unity
                 }
             }
         }
+        */
 
         private void InitPlayer()
         {
@@ -148,18 +145,33 @@ namespace Tactosy.Unity
 
         private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
         {
+            if (visualizeFeedbacks == false)
+            {
+                return;
+            }
+
+            if (leftHandModel == null || rightHandModel == null)
+            {
+                Debug.LogError("failed to find models for feedback visualization");
+                return;
+            }
+
             if (feedback.Position == PositionType.Left)
             {
-                UpdateFeedbacks(leftHandModel, feedback);
+                leftHandModel.SendMessage("UpdateFeedbacks", feedback);
+                //UpdateFeedbacks(leftHandModel, feedback);
             }
             else if (feedback.Position == PositionType.Right)
             {
-                UpdateFeedbacks(rightHandMoadel, feedback);
+                rightHandModel.SendMessage("UpdateFeedbacks", feedback);
+                //UpdateFeedbacks(rightHandMoadel, feedback);
             }
             else if (feedback.Position == PositionType.All)
             {
-                UpdateFeedbacks(leftHandModel, feedback);
-                UpdateFeedbacks(rightHandMoadel, feedback);
+                leftHandModel.SendMessage("UpdateFeedbacks", feedback);
+                rightHandModel.SendMessage("UpdateFeedbacks", feedback);
+                //UpdateFeedbacks(leftHandModel, feedback);
+                //UpdateFeedbacks(rightHandMoadel, feedback);
             }
         }
 

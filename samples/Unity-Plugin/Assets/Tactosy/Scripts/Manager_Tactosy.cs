@@ -87,22 +87,6 @@ namespace Tactosy.Unity
             }
         }
 
-        /*
-        private void UpdateFeedbacks(GameObject handModel, TactosyFeedback tactosyFeedback)
-        {
-            var container = handModel.transform.GetChild(1); //handModel.transform.GetChild(1);
-
-            for (int i = 0; i < container.childCount; i++)
-            {
-                var scale = tactosyFeedback.Values[i] / 200f;
-                if (container.transform.GetChild(i) != null)
-                {
-                    container.transform.GetChild(i).localScale = new Vector3(scale, .02f, scale);
-                }
-            }
-        }
-        */
-
         private void InitPlayer()
         {
             // Setup Tactosy Player
@@ -150,28 +134,30 @@ namespace Tactosy.Unity
                 return;
             }
 
-            if (leftHandModel == null || rightHandModel == null)
+            if (leftHandModel == null)
             {
-                Debug.LogError("failed to find models for feedback visualization");
+                Debug.LogError("failed to find the left hand model for feedback visualization");
+                return;
+            }
+
+            if (rightHandModel == null)
+            {
+                Debug.LogError("failed to find the right hand model for feedback visualization");
                 return;
             }
 
             if (feedback.Position == PositionType.Left)
             {
                 leftHandModel.SendMessage("UpdateFeedbacks", feedback);
-                //UpdateFeedbacks(leftHandModel, feedback);
             }
             else if (feedback.Position == PositionType.Right)
             {
                 rightHandModel.SendMessage("UpdateFeedbacks", feedback);
-                //UpdateFeedbacks(rightHandMoadel, feedback);
             }
             else if (feedback.Position == PositionType.All)
             {
                 leftHandModel.SendMessage("UpdateFeedbacks", feedback);
                 rightHandModel.SendMessage("UpdateFeedbacks", feedback);
-                //UpdateFeedbacks(leftHandModel, feedback);
-                //UpdateFeedbacks(rightHandMoadel, feedback);
             }
         }
 

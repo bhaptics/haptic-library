@@ -2,17 +2,20 @@
 <package >
   <metadata>
     <id>Tactosy.Common</id>
-    <version>1.3.0-rc3</version>
+    <version>1.3.0-rc5</version>
     <title>Tactosy.Common</title>
-    <authors>sangwon.choi</authors>
-    <owners>bhaptics</owners>
+    <authors>bhaptics</authors>
+    <owners>bHaptics Inc.</owners>
     <licenseUrl>https://github.com/bhaptics/tactosy-sharp</licenseUrl>
     <projectUrl>https://github.com/bhaptics/tactosy-sharp</projectUrl>
     <iconUrl>http://bhaptics.com/images/web_design_source_all-01.svg</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is tactosy sharp plugin</description>
     <releaseNotes>tactosy library</releaseNotes>
-    <copyright>Copyright 2017</copyright>
+    <copyright>Copyright bHaptics Inc. 2017</copyright>
     <tags>tactosy haptic</tags>
   </metadata>
+    <files>
+    <file src="src\Tactosy.Common\bin\Release\**" target="lib" />
+  </files>
 </package>

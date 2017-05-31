@@ -63,7 +63,6 @@ namespace Tactosy.Common
             }
             catch (Exception)
             {
-
                 throw new TactosyException("Undefined Position Type");
             }
         }
@@ -118,25 +117,9 @@ namespace Tactosy.Common
         /// <param name="points">The points.</param>
         public TactosyFeedback(PositionType position, List<Point> points): this(position, points, defaultTexture)
         {
+            throw new NotSupportedException();
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TactosyFeedback"/> class.
-        /// </summary>
-        /// <param name="position">The position.</param>
-        /// <param name="points">The points.</param>
-        public TactosyFeedback(PositionType position, List<CoordinatePoint> points)
-        {
-            Position = position;
-            Mode = FeedbackMode.DOT_MODE;
-
-            Values = new byte[gridSize];
-            foreach (CoordinatePoint coordinatePoint in points)
-            {
-                int idx = coordinatePoint.Y * column + coordinatePoint.X;
-                Values[idx] = (byte)(coordinatePoint.Intensity * 100);
-            }
-        }
+        
         #endregion
 
         public override string ToString()

@@ -50,6 +50,8 @@ namespace Tactosy.Common
         /// <param name="motorBytes">The motor bytes.</param>
         /// <param name="durationMillis">The duration millis.</param>
         void SendSignal(string key, PositionType position, byte[] motorBytes, int durationMillis);
+        void SendSignal(string key, PositionType position, List<IndexPoint> points, int durationMillis);
+        void SendSignal(string key, PositionType position, IndexPoint point, int durationMillis);
         /// <summary>
         /// Sends the signal.
         /// </summary>
@@ -58,6 +60,7 @@ namespace Tactosy.Common
         /// <param name="points">The points.</param>
         /// <param name="durationMillis">The duration millis.</param>
         void SendSignal(string key, PositionType position, List<Point> points, int durationMillis);
+        void SendSignal(string key, PositionType position, Point point, int durationMillis);
         /// <summary>
         /// Sends the signal.
         /// </summary>
@@ -70,7 +73,6 @@ namespace Tactosy.Common
         /// </summary>
         /// <param name="key">The key.</param>
         void SendSignal(string key);
-
 
         /// <summary>
         /// Sends the signal.

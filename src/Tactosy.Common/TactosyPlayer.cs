@@ -330,6 +330,16 @@ namespace Tactosy.Common
             _activeSignals[key] = new FeedbackSignal(feedback, durationMillis, _interval);
         }
 
+        public void SendSignal(string key, PositionType position, List<IndexPoint> points, int durationMillis)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendSignal(string key, PositionType position, IndexPoint point, int durationMillis)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Sends the signal.
         /// </summary>
@@ -357,6 +367,11 @@ namespace Tactosy.Common
 
             TactosyFeedback feedback = new TactosyFeedback(position, bytes, FeedbackMode.PATH_MODE);
             _activeSignals[key] = new FeedbackSignal(feedback, durationMillis, _interval);
+        }
+
+        public void SendSignal(string key, PositionType position, Point point, int durationMillis)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

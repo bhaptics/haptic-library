@@ -19,17 +19,17 @@ namespace Tactosy.Common.Tests
                 0, 0, 0, 0, 0
             };
             var key = "a";
-            tactosyPlayer.RegisterFeedback(key, new FeedbackSignal(new TactosyFeedback(PositionType.All, bytes, FeedbackMode.DOT_MODE), 10000));
+            tactosyPlayer.RegisterFeedback(key, new FeedbackSignal(new TactosyFeedback(PositionType.Head, bytes, FeedbackMode.DOT_MODE), 1000));
 
             string filePath = "test.tactosy";
             string json = File.ReadAllText(filePath);   
             tactosyPlayer.RegisterFeedback("tt", new FeedbackSignal(json));
 
 
-            tactosyPlayer.SendSignal("tt", 0.1f);
+            tactosyPlayer.SendSignal(key);
 
 
-            while (tactosyPlayer.IsPlaying("tt"))
+            while (tactosyPlayer.IsPlaying(key))
             {
 
             }

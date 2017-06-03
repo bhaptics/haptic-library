@@ -7,13 +7,12 @@ namespace Tactosy.Common.Tests
     public class TactosyFeedbackTests
     {
         [TestMethod()]
-        public void TactosyFeedbackTest()
+        public void HapticFeedbackTest()
         {
-            byte[] bytes = new byte[22];
-            bytes[1] = 4;
-            TactosyFeedback feedback = new TactosyFeedback(bytes);
-
-            Debug.WriteLine(feedback);
+//            byte[] bytes = new byte[22];
+//            bytes[1] = 4;
+//            HapticFeedback feedback = new HapticFeedback(bytes);
+//            Debug.WriteLine(feedback);
         }
     }
 }

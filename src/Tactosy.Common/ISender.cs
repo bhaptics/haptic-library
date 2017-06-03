@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
@@ -6,7 +7,13 @@ namespace Tactosy.Common
 {
     public interface ISender
     {
-        void PlayFeedback(TactosyFeedback feedback);
+        void PlayFeedback(HapticFeedback feedback);
+    }
+
+    public class HapticFeedbackFrame
+    {
+        public List<PathPoint> PathPoints { get; set; }
+        public List<DotPoint> DotPoints { get; set; }
     }
 
     public interface ITimer : IDisposable

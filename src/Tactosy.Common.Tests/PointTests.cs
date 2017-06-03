@@ -9,11 +9,11 @@ namespace Tactosy.Common.Tests
         [TestMethod()]
         public void PointTest()
         {
-            Point point = new Point(2f, 0.5f, -1f);
+            PathPoint point = new PathPoint(2f, 0.5f, 100);
             
             Debug.WriteLine(point);
 
-            IndexPoint point2 = new IndexPoint(1, -1f);
+            DotPoint point2 = new DotPoint(1, 100);
             
             Debug.WriteLine(point2);
         }

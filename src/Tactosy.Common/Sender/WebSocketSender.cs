@@ -9,7 +9,7 @@ namespace Tactosy.Common.Sender
     {
         private WebSocket _webSocket;
         private bool _websocketConnected = false;
-        private readonly string WebsocketUrl = "ws://127.0.0.1:15881/feedbackBytes";
+        private readonly string WebsocketUrl = "ws://127.0.0.1:15881/feedbacks";
 
         public WebSocketSender(bool tryReconnect = true)
         {
@@ -53,7 +53,7 @@ namespace Tactosy.Common.Sender
             _webSocket.Connect();
         }
 
-        public void PlayFeedback(TactosyFeedback feedback)
+        public void PlayFeedback(HapticFeedback feedback)
         {
             if (!_websocketConnected)
             {
@@ -62,13 +62,20 @@ namespace Tactosy.Common.Sender
 
             try
             {
-                _webSocket.Send(TactosyFeedback.ToBytes(feedback));
+                long time = TactosyUtils.CurrentTimeMillis();
+                _webSocket.Send(HapticFeedback.ToBytes(feedback));
+
+                long elapsed = TactosyUtils.CurrentTimeMillis() - time;
+
+                Debug.WriteLine($"Elapsed : {elapsed}");
+
+                var serializeObject = SimpleJson.SerializeObject(feedback);
+                _webSocket.Send(serializeObject);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.WriteLine(e);
             }
-            
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Tactosy.Common
         public int size;
         public int durationMillis;
 
-        public Dictionary<int, TactosyFeedback[]> feedback;
+        public Dictionary<int, HapticFeedback[]> feedback;
     }
 
     public class TactosyFeedbackBridge
@@ -20,9 +20,9 @@ namespace Tactosy.Common
         public string mode { get; set; }
         public byte[] values { get; set; }
 
-        public static TactosyFeedback AsTactosyFeedback(TactosyFeedbackBridge bridge)
+        public static HapticFeedback AsTactosyFeedback(TactosyFeedbackBridge bridge)
         {
-            return new TactosyFeedback(EnumParser.ToPositionType(bridge.position), 
+            return new HapticFeedback(EnumParser.ToPositionType(bridge.position), 
                 bridge.values, EnumParser.ToMode(bridge.mode));
         }
     }
@@ -46,12 +46,12 @@ namespace Tactosy.Common
             file.intervalMillis = bridge.intervalMillis;
             file.durationMillis = bridge.durationMillis;
             file.size = bridge.size;
-            file.feedback = new Dictionary<int, TactosyFeedback[]>();
+            file.feedback = new Dictionary<int, HapticFeedback[]>();
 
             foreach (var feed in bridge.feedback)
             {
                 var key = int.Parse(feed.Key);
-                TactosyFeedback[] feedbacks = new TactosyFeedback[feed.Value.Length];
+                HapticFeedback[] feedbacks = new HapticFeedback[feed.Value.Length];
                 for (int i = 0; i < feed.Value.Length; i++)
                 {
                     feedbacks[i] = TactosyFeedbackBridge.AsTactosyFeedback(feed.Value[i]);

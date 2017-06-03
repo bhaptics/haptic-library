@@ -114,20 +114,18 @@
     <Compile Include="CustomWebSocketSharp\WebSocketException.cs" />
     <Compile Include="CustomWebSocketSharp\WebSocketFrame.cs" />
     <Compile Include="CustomWebSocketSharp\WebSocketState.cs" />
-    <Compile Include="FeedbackSignal.cs" />
+    <Compile Include="BufferedHapticFeedback.cs" />
     <Compile Include="FileUtils.cs" />
     <Compile Include="ISender.cs" />
-    <Compile Include="ITactosyPlayer.cs" />
+    <Compile Include="IHapticPlayer.cs" />
     <Compile Include="Plugin\ITactosyPlugin.cs" />
-    <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Json\SimpleJson.cs" />
     <Compile Include="TactosyConfig.cs" />
-    <Compile Include="TactosyException.cs" />
-    <Compile Include="TactosyFeedback.cs" />
+    <Compile Include="HapticException.cs" />
+    <Compile Include="HapticFeedback.cs" />
     <Compile Include="TactosyFile.cs" />
-    <Compile Include="TactosyPlayer.cs" />
-    <Compile Include="TactosyPlayerHelper.cs" />
+    <Compile Include="HapticPlayer.cs" />
     <Compile Include="TactosyUtils.cs" />
     <Compile Include="Sender\WebSocketSender.cs" />
   </ItemGroup>

@@ -578,7 +578,7 @@ namespace Tactosy.Common
 
             if (jsonObject == null)
             {
-                throw new TactosyException("null returned");
+                throw new HapticException("null returned");
             }
 
             return type == null || jsonObject != null && ReflectionUtils.IsAssignableFrom(jsonObject.GetType(), type)

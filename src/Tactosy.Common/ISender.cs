@@ -7,13 +7,59 @@ namespace Tactosy.Common
 {
     public interface ISender
     {
-        void PlayFeedback(HapticFeedback feedback);
+        void PlayFeedback(HapticFeedbackFrame feedback);
+        event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChangeReceived;
     }
 
     public class HapticFeedbackFrame
     {
+        public HapticFeedbackFrame()
+        {
+            PathPoints = new List<PathPoint>();
+            DotPoints = new List<DotPoint>();
+        }
+
+        public PositionType Position { get; set; }
         public List<PathPoint> PathPoints { get; set; }
         public List<DotPoint> DotPoints { get; set; }
+        public int Texture { get; set; }
+
+        public override string ToString()
+        {
+            return "HapticFeedbackFrame { Position=" + Position +
+                   ", Texture=" + Texture +
+                   ", PathPoints=" + PathPoints +
+                   ", DotPoints=" + DotPoints + "}";
+        }
+
+        public static HapticFeedbackFrame AsFeedbackFrame(PositionType position, List<PathPoint> points, int texture = 0)
+        {
+            var frame = new HapticFeedbackFrame();
+            frame.PathPoints.AddRange(points);
+            frame.Texture = texture;
+            frame.Position = position;
+
+            return frame;
+        }
+
+        public static HapticFeedbackFrame AsTurnOffFrame(PositionType position, int texture = 0)
+        {
+            var frame = new HapticFeedbackFrame();
+            frame.Texture = texture;
+            frame.Position = position;
+
+            return frame;
+        }
+
+        public static HapticFeedbackFrame AsFeedbackFrame(PositionType position, List<DotPoint> points, int texture = 0)
+        {
+            var frame = new HapticFeedbackFrame();
+            frame.DotPoints.AddRange(points);
+            frame.Texture = texture;
+            frame.Position = position;
+
+            return frame;
+        }
     }
 
     public interface ITimer : IDisposable

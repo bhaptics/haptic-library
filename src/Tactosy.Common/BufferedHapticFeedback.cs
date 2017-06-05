@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Tactosy.Common
 {
     public class BufferedHapticFeedback
     {
-        public Dictionary<int, HapticFeedback[]> HapticFeedback;
-
+        public Dictionary<int, HapticFeedbackFrame[]> HapticFeedback;
+        private int interval = 20;
         public int StartTime { get; set; }
         public int EndTime { get; set; }
         
@@ -24,8 +25,7 @@ namespace Tactosy.Common
                     throw new HapticException("tactosy file exception - returned null");
                 }
 
-                EndTime = tactosyFile.durationMillis;
-                HapticFeedback = tactosyFile.feedback;
+                Initialize(tactosyFile);
             }
             catch (Exception e)
             {
@@ -40,64 +40,156 @@ namespace Tactosy.Common
                 throw new HapticException("tactosy file is null");
             }
 
-            StartTime = -1;
-            EndTime = tactosyFile.durationMillis;
-            HapticFeedback = tactosyFile.feedback;
+            Initialize(tactosyFile);
         }
 
-        public BufferedHapticFeedback(HapticFeedback feedback, int durationMillis, int interval = 20)
-        {
-            if (feedback == null)
-            {
-                throw new HapticException("feedback is null");
-            }
 
+        private void Initialize(TactosyFile tactosyFile)
+        {
+            StartTime = -1;
+            EndTime = tactosyFile.durationMillis;
+            var feedback = tactosyFile.feedback;
+            HapticFeedback = new Dictionary<int, HapticFeedbackFrame[]>();
+
+            foreach (var keyValuePair in feedback)
+            {
+                var time = keyValuePair.Key;
+                var feed = keyValuePair.Value;
+
+                HapticFeedbackFrame[] feedbackFrames = new HapticFeedbackFrame[feed.Length];
+
+                for (int i = 0; i < feed.Length; i++)
+                {
+                    if (feed[i].Mode == FeedbackMode.DOT_MODE)
+                    {
+                        List<DotPoint> points = new List<DotPoint>();
+                        var values = feed[i].Values;
+                        for (int index = 0; index < values.Length; index++)
+                        {
+                            if (values[index] > 0)
+                            {
+                                points.Add(new DotPoint(index, values[index]));
+                            }
+                        }
+                        
+                        feedbackFrames[i] = HapticFeedbackFrame.AsFeedbackFrame(feed[i].Position, points, feed[i].Texture);
+                    }
+                    else if (feed[i].Mode == FeedbackMode.PATH_MODE)
+                    {
+                        List<PathPoint> points = new List<PathPoint>();
+                        var values = feed[i].Values;
+                        var size = values[0];
+                        for (int index = 0; index < size; index++)
+                        {
+                            float x = values[3 * index + 1] / 40f;
+                            float y = values[3 * index + 2] / 30f;
+                            int intensity = values[3 * index + 3];
+
+                            points.Add(new PathPoint(x, y, intensity));
+                        }
+
+                        feedbackFrames[i] = HapticFeedbackFrame.AsFeedbackFrame(feed[i].Position, points);
+                    }
+
+                }
+
+
+                HapticFeedback[time] = feedbackFrames;
+            }
+        }
+
+        public BufferedHapticFeedback(PositionType position, List<DotPoint> points, int durationMillis,
+            int texture = 0)
+        {
             if (durationMillis <= 0)
             {
                 throw new HapticException("durationMillis should be positive");
             }
 
-            if (interval <= 0)
-            {
-                throw new HapticException("interval should be positive");
-            }
-
             int i;
-            HapticFeedback = new Dictionary<int, HapticFeedback[]>();
+            HapticFeedback = new Dictionary<int, HapticFeedbackFrame[]>();
             for (i = 0; i < durationMillis / interval; i++)
             {
-                HapticFeedback[] feedbacks;
-                if (feedback.Position == PositionType.All)
+                HapticFeedbackFrame[] feedbacks;
+                if (position == PositionType.All)
                 {
-                    HapticFeedback left = new HapticFeedback(PositionType.Left, feedback.Values, feedback.Mode);
-                    HapticFeedback right = new HapticFeedback(PositionType.Right, feedback.Values, feedback.Mode);
-                    HapticFeedback vFront = new HapticFeedback(PositionType.VestFront, feedback.Values, feedback.Mode);
-                    HapticFeedback vBack = new HapticFeedback(PositionType.VestBack, feedback.Values, feedback.Mode);
-                    HapticFeedback head = new HapticFeedback(PositionType.Head, feedback.Values, feedback.Mode);
+                    HapticFeedbackFrame left = HapticFeedbackFrame.AsFeedbackFrame(PositionType.Left, points, texture);
+                    HapticFeedbackFrame right = HapticFeedbackFrame.AsFeedbackFrame(PositionType.Right, points, texture);
+                    HapticFeedbackFrame vFront = HapticFeedbackFrame.AsFeedbackFrame(PositionType.VestFront, points, texture);
+                    HapticFeedbackFrame vBack = HapticFeedbackFrame.AsFeedbackFrame(PositionType.VestBack, points, texture);
+                    HapticFeedbackFrame head = HapticFeedbackFrame.AsFeedbackFrame(PositionType.Head, points, texture);
                     feedbacks = new[] { left, right, vFront, vBack, head };
                 }
                 else
                 {
-                    feedbacks = new[] { feedback };
+                    feedbacks = new[] { HapticFeedbackFrame.AsFeedbackFrame(position, points, texture) };
                 }
 
                 HapticFeedback[i * interval] = feedbacks;
             }
             StartTime = -1;
-            HapticFeedback[] f;
-            if (feedback.Position == PositionType.All)
+            HapticFeedbackFrame[] f;
+            if (position == PositionType.All)
             {
-
-                HapticFeedback left = new HapticFeedback(PositionType.Left, new byte[20], feedback.Mode);
-                HapticFeedback right = new HapticFeedback(PositionType.Right, new byte[20], feedback.Mode);
-                HapticFeedback vFront = new HapticFeedback(PositionType.VestFront, new byte[20], feedback.Mode);
-                HapticFeedback vBack = new HapticFeedback(PositionType.VestBack, new byte[20], feedback.Mode);
-                HapticFeedback head = new HapticFeedback(PositionType.Head, new byte[20], feedback.Mode);
+                HapticFeedbackFrame left = HapticFeedbackFrame.AsTurnOffFrame(PositionType.Left);
+                HapticFeedbackFrame right = HapticFeedbackFrame.AsTurnOffFrame(PositionType.Right);
+                HapticFeedbackFrame vFront = HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestFront);
+                HapticFeedbackFrame vBack = HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestBack);
+                HapticFeedbackFrame head = HapticFeedbackFrame.AsTurnOffFrame(PositionType.Head);
                 f = new[] { left, right, vFront, vBack, head };
             }
             else
             {
-                f = new[] { new HapticFeedback(feedback.Position, new byte[20], feedback.Mode) };
+                f = new[] { HapticFeedbackFrame.AsTurnOffFrame(position) };
+
+            }
+
+            HapticFeedback[i * interval] = f;
+            EndTime = i * interval;
+        }
+
+        public BufferedHapticFeedback(PositionType position, List<PathPoint> points, int durationMillis, int texture = 0)
+        {
+            if (durationMillis <= 0)
+            {
+                throw new HapticException("durationMillis should be positive");
+            }
+
+            int i;
+            HapticFeedback = new Dictionary<int, HapticFeedbackFrame[]>();
+            for (i = 0; i < durationMillis / interval; i++)
+            {
+                HapticFeedbackFrame[] feedbacks;
+                if (position == PositionType.All)
+                {
+                    HapticFeedbackFrame left =  HapticFeedbackFrame.AsFeedbackFrame(PositionType.Left, points, texture);
+                    HapticFeedbackFrame right =  HapticFeedbackFrame.AsFeedbackFrame(PositionType.Right, points, texture);
+                    HapticFeedbackFrame vFront =  HapticFeedbackFrame.AsFeedbackFrame(PositionType.VestFront, points, texture);
+                    HapticFeedbackFrame vBack =  HapticFeedbackFrame.AsFeedbackFrame(PositionType.VestBack, points, texture);
+                    HapticFeedbackFrame head =  HapticFeedbackFrame.AsFeedbackFrame(PositionType.Head, points, texture);
+                    feedbacks = new[] { left, right, vFront, vBack, head };
+                }
+                else
+                {
+                    feedbacks = new[] { HapticFeedbackFrame.AsFeedbackFrame(position, points, texture) };
+                }
+
+                HapticFeedback[i * interval] = feedbacks;
+            }
+            StartTime = -1;
+            HapticFeedbackFrame[] f;
+            if (position == PositionType.All)
+            {
+                HapticFeedbackFrame left = HapticFeedbackFrame.AsTurnOffFrame(PositionType.Left);
+                HapticFeedbackFrame right = HapticFeedbackFrame.AsTurnOffFrame(PositionType.Right);
+                HapticFeedbackFrame vFront = HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestFront);
+                HapticFeedbackFrame vBack = HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestBack);
+                HapticFeedbackFrame head = HapticFeedbackFrame.AsTurnOffFrame(PositionType.Head);
+                f = new[] { left, right, vFront, vBack, head };
+            }
+            else
+            {
+                f = new[] { HapticFeedbackFrame.AsTurnOffFrame(position) };
 
             }
 
@@ -111,7 +203,7 @@ namespace Tactosy.Common
             {
                 EndTime = (int) (bFeedback.EndTime * durationRatio / interval * interval) + interval,
                 StartTime = -1,
-                HapticFeedback = new Dictionary<int, HapticFeedback[]>()
+                HapticFeedback = new Dictionary<int, HapticFeedbackFrame[]>()
             };
 
             int time;
@@ -121,57 +213,50 @@ namespace Tactosy.Common
 
                 if (bFeedback.HapticFeedback.ContainsKey(keyTime))
                 {
-                    HapticFeedback[] hapticFeedbacks = bFeedback.HapticFeedback[keyTime];
+                    HapticFeedbackFrame[] hapticFeedbacks = bFeedback.HapticFeedback[keyTime];
 
-                    HapticFeedback[] copiedFeedbacks = new HapticFeedback[hapticFeedbacks.Length];
+                    HapticFeedbackFrame[] copiedFeedbacks = new HapticFeedbackFrame[hapticFeedbacks.Length];
 
                     for (int i = 0; i < hapticFeedbacks.Length; i++)
                     {
-                        HapticFeedback hapticFeedback = hapticFeedbacks[i];
-                        byte[] values = new byte[hapticFeedback.Values.Length];
-                        if (hapticFeedback.Mode == FeedbackMode.DOT_MODE)
-                        {
-                            for (int valueIndex = 0; valueIndex < hapticFeedback.Values.Length; valueIndex++)
-                            {
-                                int val = (int)(hapticFeedback.Values[valueIndex] * intensityRatio);
-                                if (val > 100)
-                                {
-                                    val = 100;
-                                }
-                                else if (val < 0)
-                                {
-                                    val = 0;
-                                }
+                        HapticFeedbackFrame hapticFeedback = hapticFeedbacks[i];
 
-                                values[valueIndex] = (byte)val;
-                            }
-                        }
-                        else if (hapticFeedback.Mode == FeedbackMode.PATH_MODE)
-                        {
-                            for (int valueIndex = 0; valueIndex < hapticFeedback.Values.Length; valueIndex++)
-                            {
-                                values[valueIndex] = hapticFeedback.Values[valueIndex];
-                            }
-
-                            for (int index = 0; index < 6; index++)
-                            {
-                                int realIndex = 3 + index * 3;
-                                int val = (int)(hapticFeedback.Values[realIndex] * intensityRatio);
-                                if (val > 100)
-                                {
-                                    val = 100;
-                                }
-                                else if (val < 0)
-                                {
-                                    val = 0;
-                                }
-
-                                values[realIndex] = (byte)val;
-                            }
-                        }
-                        HapticFeedback feedback = new HapticFeedback(hapticFeedback.Position, values,
-                            hapticFeedback.Mode);
+                        HapticFeedbackFrame feedback = new HapticFeedbackFrame();
+                        feedback.Position = hapticFeedback.Position;
+                        feedback.Texture = hapticFeedback.Texture;
                         copiedFeedbacks[i] = feedback;
+
+                        foreach (var point in hapticFeedback.DotPoints)
+                        {
+                            int val = (int)(point.Intensity * intensityRatio);
+                            if (val > 100)
+                            {
+                                val = 100;
+                            }
+                            else if (val < 0)
+                            {
+                                val = 0;
+                            }
+                            var pt = new DotPoint(point.Index, val);
+                            copiedFeedbacks[i].DotPoints.Add(pt);
+                        }
+
+                        foreach (var point in hapticFeedback.PathPoints)
+                        {
+                            int val = (int)(point.Intensity * intensityRatio);
+                            if (val > 100)
+                            {
+                                val = 100;
+                            }
+                            else if (val < 0)
+                            {
+                                val = 0;
+                            }
+                            var pt = new PathPoint(point.X, point.Y, val);
+                            copiedFeedbacks[i].PathPoints.Add(pt);
+                        }
+                        
+
                         bufferedHapticFeedback.HapticFeedback[time] = copiedFeedbacks;
                     }
                 }

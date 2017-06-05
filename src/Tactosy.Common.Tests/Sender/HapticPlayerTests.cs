@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tactosy.Common.Tests.Sender
 {
@@ -6,21 +7,13 @@ namespace Tactosy.Common.Tests.Sender
     public class HapticPlayerTests
     {
         private readonly string key = "testKey";
-        private readonly byte[] bytes = {
-            0, 0, 0, 0, 0,
-            0, 0, 0, 0, 100,
-            100, 0, 0, 0, 0,
-            0, 0, 0, 0, 0};
-
         [TestMethod()]
         public void HapticPlayerTest()
         {
             HapticPlayer player = new HapticPlayer();
 
-            HapticFeedback feedback = new HapticFeedback(PositionType.Left, bytes, FeedbackMode.DOT_MODE);
-
-            player.Register(key, new BufferedHapticFeedback(feedback, 1000));
-            player.Register(key, feedback, 1000);
+            var points = new List<DotPoint> {new DotPoint(2, 100), new DotPoint(3, 100)};
+            player.Register(key, new BufferedHapticFeedback(PositionType.Left, points, 2000));
             
             player.SubmitRegistered(key);
 

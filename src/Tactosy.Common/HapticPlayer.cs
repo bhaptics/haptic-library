@@ -49,20 +49,22 @@ namespace Tactosy.Common
         {
         }
         
-        private void PlayFeedback(HapticFeedback feedback)
+        private void PlayFeedback(HapticFeedbackFrame feedback)
         {
             if (!_enable)
             {
-                feedback.Mode = FeedbackMode.DOT_MODE;
-                feedback.Values = new byte[_motorSize];
+                _sender.PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(feedback.Position));
+                return;
+            }
+
+            if (feedback.DotPoints.Count > 0)
+            {
+                Debug.WriteLine(feedback.Position + ", " + feedback.DotPoints.Count);
             }
 
             // callback
+            
             _sender.PlayFeedback(feedback);
-            if (FeedbackChanged != null)
-            {
-                FeedbackChanged(feedback);
-            }
         }
 
         private void TimerOnElapsed(object sender, EventArgs e)
@@ -72,12 +74,11 @@ namespace Tactosy.Common
                 if (_currentTime > 0)
                 {
                     _currentTime = 0;
-
-                    PlayFeedback(new HapticFeedback(PositionType.Right, new byte[_motorSize], FeedbackMode.DOT_MODE));
-                    PlayFeedback(new HapticFeedback(PositionType.Left, new byte[_motorSize], FeedbackMode.DOT_MODE));
-                    PlayFeedback(new HapticFeedback(PositionType.VestFront, new byte[_motorSize], FeedbackMode.DOT_MODE));
-                    PlayFeedback(new HapticFeedback(PositionType.VestBack, new byte[_motorSize], FeedbackMode.DOT_MODE));
-                    PlayFeedback(new HapticFeedback(PositionType.Head, new byte[_motorSize], FeedbackMode.DOT_MODE));
+                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Right));
+                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Left));
+                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestFront));
+                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestBack));
+                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Head));
                 }
 
                 return;
@@ -85,13 +86,12 @@ namespace Tactosy.Common
             
             List<string> expired = new List<string>();
 
-            Dictionary<PositionType, Dictionary<FeedbackMode, List<HapticFeedback>>> feedbackMap = new Dictionary<PositionType, Dictionary<FeedbackMode, List<HapticFeedback>>>();
-            feedbackMap[PositionType.Left] = new Dictionary<FeedbackMode, List<HapticFeedback>>();
-            feedbackMap[PositionType.Right] = new Dictionary<FeedbackMode, List<HapticFeedback>>();
-            feedbackMap[PositionType.VestBack] = new Dictionary<FeedbackMode, List<HapticFeedback>>();
-            feedbackMap[PositionType.VestFront] = new Dictionary<FeedbackMode, List<HapticFeedback>>();
-            feedbackMap[PositionType.Head] = new Dictionary<FeedbackMode, List<HapticFeedback>>();
-
+            Dictionary<PositionType, HapticFeedbackFrame> feedbackMap = new Dictionary<PositionType, HapticFeedbackFrame>();
+            feedbackMap[PositionType.Left] = new HapticFeedbackFrame{Position = PositionType.Left};
+            feedbackMap[PositionType.Right] = new HapticFeedbackFrame { Position = PositionType.Right };
+            feedbackMap[PositionType.VestBack] = new HapticFeedbackFrame { Position = PositionType.VestBack };
+            feedbackMap[PositionType.VestFront] = new HapticFeedbackFrame { Position = PositionType.VestFront };
+            feedbackMap[PositionType.Head] = new HapticFeedbackFrame { Position = PositionType.Head };
 
             foreach (KeyValuePair<string, BufferedHapticFeedback> keyPair in _actives)
             {
@@ -115,15 +115,12 @@ namespace Tactosy.Common
                         {
                             if (!feedbackMap.ContainsKey(feedback.Position))
                             {
-                                feedbackMap[feedback.Position] = new Dictionary<FeedbackMode, List<HapticFeedback>>();
+                                feedbackMap[feedback.Position] = new HapticFeedbackFrame { Position = feedback.Position };
                             }
-
-                            if (!feedbackMap[feedback.Position].ContainsKey(feedback.Mode))
-                            {
-                                feedbackMap[feedback.Position][feedback.Mode] = new List<HapticFeedback>();
-                            }
-
-                            feedbackMap[feedback.Position][feedback.Mode].Add(feedback);
+                            
+                            feedbackMap[feedback.Position].DotPoints.AddRange(feedback.DotPoints);
+                            feedbackMap[feedback.Position].Texture = feedback.Texture;
+                            feedbackMap[feedback.Position].PathPoints.AddRange(feedback.PathPoints);
                         }
                     }
                 }
@@ -131,70 +128,8 @@ namespace Tactosy.Common
 
             foreach (var keyValue in feedbackMap)
             {
-                var modeDictionary = keyValue.Value;
-                var pos = keyValue.Key;
-
-                bool isDotMode = false;
-                bool isPathMode = false;
-
-                byte[] dotMode = new byte[_motorSize];
-                byte[] pathMode = new byte[_motorSize];
-
-                foreach (var feedbackKeyValue in modeDictionary)
-                {
-                    var feedbackMode = feedbackKeyValue.Key;
-
-                    if (feedbackMode == FeedbackMode.DOT_MODE)
-                    {
-                        isDotMode = true;
-                        foreach (var feedback in feedbackKeyValue.Value)
-                        {
-                            for (int i = 0; i < _motorSize; i++)
-                            {
-                                dotMode[i] += feedback.Values[i];
-                            }
-                        }
-                    }
-                    else if (feedbackMode == FeedbackMode.PATH_MODE)
-                    {
-                        isPathMode = true;
-                        foreach (var feedback in feedbackKeyValue.Value)
-                        {
-                            int prevSize = pathMode[0];
-
-                            byte[] data = feedback.Values;
-                            int size = data[0];
-                            if (prevSize + size > 6)
-                            {
-                                continue;
-                            }
-
-                            pathMode[0] = (byte) (prevSize + size);
-
-                            for (int i = prevSize; i < prevSize + size; i++)
-                            {
-                                pathMode[3 * i + 1] = data[3 * (i - prevSize) + 1];
-                                pathMode[3 * i + 2] = data[3 * (i - prevSize) + 2];
-                                pathMode[3 * i + 3] = data[3 * (i - prevSize) + 3];
-                            }
-                        }
-                    }
-                }
-
-                if (isDotMode)
-                {
-                    PlayFeedback(new HapticFeedback(pos, dotMode, FeedbackMode.DOT_MODE));
-                }
-
-                if (isPathMode)
-                {
-                    PlayFeedback(new HapticFeedback(pos, pathMode, FeedbackMode.PATH_MODE));
-                }
-
-                if (!isDotMode && !isPathMode)
-                {
-                    PlayFeedback(new HapticFeedback(pos, new byte[_motorSize], FeedbackMode.DOT_MODE));
-                }
+                var frame = keyValue.Value;
+                PlayFeedback(frame);
             }
 
             foreach (string key in expired)
@@ -227,16 +162,19 @@ namespace Tactosy.Common
         {
             _registered[key] = bufferedHapticFeedback;
         }
-
-        public void Register(string key, HapticFeedback feedback, int durationMillis)
-        {
-            _registered[key] = new BufferedHapticFeedback(feedback, durationMillis);
-        }
         
         public void Submit(string key, PositionType position, byte[] motorBytes, int durationMillis)
         {
-            HapticFeedback feedback = new HapticFeedback(position, motorBytes, FeedbackMode.DOT_MODE);
-            _actives[key] = new BufferedHapticFeedback(feedback, durationMillis, _interval);
+            List<DotPoint> points = new List<DotPoint>();
+            for (int i = 0; i < motorBytes.Length; i++)
+            {
+                if (motorBytes[i] > 0)
+                {
+                    points.Add(new DotPoint(i, motorBytes[i]));
+                }
+            }
+
+            _actives[key] = new BufferedHapticFeedback(position, points, durationMillis);
         }
 
         public void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis)
@@ -258,24 +196,7 @@ namespace Tactosy.Common
         
         public void Submit(string key, PositionType position, List<PathPoint> points, int durationMillis)
         {
-            if (points.Count > 6 || points.Count <= 0)
-            {
-                Debug.WriteLine("number of points should be [1~6]");
-                return;
-            }
-
-            byte[] bytes = new byte[_motorSize];
-            bytes[0] = (byte)points.Count;
-
-            for (var i = 0; i < points.Count; i++)
-            {
-                bytes[3 * i + 1] = (byte)TactosyUtils.Min(40f, TactosyUtils.Max(0f, points[i].X * 40f)); // x
-                bytes[3 * i + 2] = (byte)TactosyUtils.Min(30f, TactosyUtils.Max(0f, (float)points[i].Y * 40f)); // y
-                bytes[3 * i + 3] = (byte)TactosyUtils.Min(100f, TactosyUtils.Max(0f, points[i].Intensity)); // z
-            }
-
-            HapticFeedback feedback = new HapticFeedback(position, bytes, FeedbackMode.PATH_MODE);
-            _actives[key] = new BufferedHapticFeedback(feedback, durationMillis, _interval);
+            _actives[key] = new BufferedHapticFeedback(position, points, durationMillis);
         }
 
         public void Submit(string key, PositionType position, PathPoint point, int durationMillis)
@@ -377,7 +298,17 @@ namespace Tactosy.Common
 
             _timer.StartTimer();
             _enable = true;
-            PlayFeedback(new HapticFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
+            PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.All));
+
+            _sender.FeedbackChangeReceived += SenderOnFeedbackChangeReceived;
+        }
+
+        private void SenderOnFeedbackChangeReceived(HapticFeedback hapticFeedback)
+        {
+            if (FeedbackChanged != null)
+            {
+                FeedbackChanged(hapticFeedback);
+            }
         }
 
         public void Disable()
@@ -396,7 +327,10 @@ namespace Tactosy.Common
 
             _timer.StopTimer();
             _enable = false;
-            PlayFeedback(new HapticFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
+
+            PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.All));
+
+            _sender.FeedbackChangeReceived -= SenderOnFeedbackChangeReceived;
         }
 
         public event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChanged;

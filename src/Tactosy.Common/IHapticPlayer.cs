@@ -18,7 +18,6 @@ namespace Tactosy.Common
         
         void Register(string key, string path );
         void Register(string key, BufferedHapticFeedback tactosyFile);
-        void Register(string key, HapticFeedback feedback, int durationMillis);
         
         void Submit(string key, PositionType position, byte[] motorBytes, int durationMillis);
         void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis);

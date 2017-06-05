@@ -3,11 +3,6 @@ using System.Collections.Generic;
 
 namespace Tactosy.Common
 {
-    public enum Texture
-    {
-        Soft = 0, Middle = 2, Rough = 4  
-    }
-
     public class DotPoint
     {
         public DotPoint(int index, int intensity)
@@ -18,6 +13,12 @@ namespace Tactosy.Common
 
         public int Index { get; set; }
         public int Intensity { get; set; }
+
+        public override string ToString()
+        {
+            return "DotPoint { Index=" + Index +
+                   ", Intensity=" + Intensity + "}";
+        }
     }
 
     public class PathPoint
@@ -32,6 +33,13 @@ namespace Tactosy.Common
         public float X { get; set; }
         public float Y { get; set; }
         public int Intensity { get; set; }
+
+        public override string ToString()
+        {
+            return "PathPoint { X=" + X +
+                   ", Y=" + Y +
+                   ", Intensity=" + Intensity + "}";
+        }
     }
 
     public class HapticFeedback
@@ -40,51 +48,23 @@ namespace Tactosy.Common
         public PositionType Position { get; set; }
         public FeedbackMode Mode { get; set; }
         public byte[] Values { get; set; }
+        public int Texture { get; set; }
         #endregion
 
         #region Constructor
-        
-//        public HapticFeedback(byte[] bytes)
-//        {
-//            // refer https://github.com/bhaptics/tactosy-sharp
-//            if (bytes.Length != 22)
-//            {
-//                throw new HapticException("Illegal argument size");
-//            }
-//
-//            Values = TactosyUtils.SubArray(bytes, 2, 20);
-//            try
-//            {
-//                Mode = (FeedbackMode)bytes[0];
-//            }
-//            catch (Exception)
-//            {
-//                // turn off
-//                Values = new byte[20];
-//                Mode = FeedbackMode.DOT_MODE;
-//            }
-//
-//            try
-//            {
-//                Position = (PositionType) bytes[1];
-//            }
-//            catch (Exception)
-//            {
-//                throw new HapticException("Undefined Position Type");
-//            }
-//        }
-
-        public HapticFeedback(PositionType position, byte[] values, FeedbackMode mode)
+        public HapticFeedback(PositionType position, byte[] values, FeedbackMode mode, int texture = 0)
         {
             Position = position;
             Values = values;
             Mode = mode;
+            Texture = texture;
         }
 
-        public HapticFeedback(PositionType position, List<PathPoint> points, Texture texture = Texture.Soft)
+        public HapticFeedback(PositionType position, List<PathPoint> points, int texture = 0)
         {
             Position = position;
             Mode = FeedbackMode.PATH_MODE;
+            Texture = texture;
             Values = new byte[20];
             Values[0] = (byte)(points.Count > 6 ? 6 : points.Count);
 

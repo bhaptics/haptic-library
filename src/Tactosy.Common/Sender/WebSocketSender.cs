@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Timers;
 using CustomWebSocketSharp;
@@ -10,6 +11,7 @@ namespace Tactosy.Common.Sender
         private WebSocket _webSocket;
         private bool _websocketConnected = false;
         private readonly string WebsocketUrl = "ws://127.0.0.1:15881/feedbacks";
+        public event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChangeReceived;
 
         public WebSocketSender(bool tryReconnect = true)
         {
@@ -30,7 +32,30 @@ namespace Tactosy.Common.Sender
 
             _webSocket.OnMessage += (sender, e) =>
             {
-                Debug.WriteLine("Message Received : " + e.Data);
+                var deserializeObject = SimpleJson.DeserializeObject<Dictionary<string, string>>(e.Data);
+
+                try
+                {
+                    var position = deserializeObject["Position"];
+                    PositionType t = (PositionType)int.Parse(position);
+                    var values = deserializeObject["Values"];
+
+                    var ints = SimpleJson.DeserializeObject<int[]>(values);
+                    if (FeedbackChangeReceived != null)
+                    {
+                        byte[] bytes = new byte[ints.Length];
+                        for (int i = 0 ; i < bytes.Length; i++)
+                        {
+                            bytes[i] = (byte) ints[i];
+                        }
+                        var feedback = new HapticFeedback(t, bytes, FeedbackMode.DOT_MODE);
+                        FeedbackChangeReceived(feedback);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine($"{exception.Message}");
+                }
             };
 
             _webSocket.OnOpen += (sender, args) =>
@@ -53,7 +78,7 @@ namespace Tactosy.Common.Sender
             _webSocket.Connect();
         }
 
-        public void PlayFeedback(HapticFeedback feedback)
+        public void PlayFeedback(HapticFeedbackFrame feedback)
         {
             if (!_websocketConnected)
             {
@@ -62,13 +87,6 @@ namespace Tactosy.Common.Sender
 
             try
             {
-                long time = TactosyUtils.CurrentTimeMillis();
-                _webSocket.Send(HapticFeedback.ToBytes(feedback));
-
-                long elapsed = TactosyUtils.CurrentTimeMillis() - time;
-
-                Debug.WriteLine($"Elapsed : {elapsed}");
-
                 var serializeObject = SimpleJson.SerializeObject(feedback);
                 _webSocket.Send(serializeObject);
             }

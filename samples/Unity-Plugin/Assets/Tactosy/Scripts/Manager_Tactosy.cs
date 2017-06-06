@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using UnityEngine;
 using Tactosy.Common;
 using Tactosy.Common.Sender;
+using UnityEditorInternal;
 
 namespace Tactosy.Unity
 {
@@ -12,6 +14,12 @@ namespace Tactosy.Unity
         [Serializable]
         public class SignalMapping
         {
+            public SignalMapping(string key, string path)
+            {
+                Key = key;
+                Path = path;
+            }
+
             public string Key;
             public string Path;
         }
@@ -26,25 +34,32 @@ namespace Tactosy.Unity
         [SerializeField]
         private string PathPrefix = "Assets/Tactosy/Feedbacks/";
 
+        [Tooltip("Tactosy feedback file path")]
+        [SerializeField] private bool isSteamingPath;
+
         [Tooltip("Tactosy Feedback Mapping Infos")]
         [SerializeField]
         internal List<SignalMapping> FeedbackMappings;
 
-        public TactosyPlayer TactosyPlayer;
-        private ITimer timer;
+        public HapticPlayer TactosyPlayer;
 
-
+        private List<HapticFeedback> changedFeedbacks = new List<HapticFeedback>();
+        
         #region Unity Method
 
+        private bool initialized;
         void OnEnable()
         {
-            InitializeFeedbacks();
             InitPlayer();
+            
+            TactosyPlayer.FeedbackChanged += TactosyPlayerOnValueChanged;
+            TactosyPlayer.Enable();
         }
 
         void OnDisable()
         {
-            TactosyPlayer.Stop();
+            TactosyPlayer.Disable();
+            TactosyPlayer.FeedbackChanged -= TactosyPlayerOnValueChanged;
         }
 
         void Update()
@@ -59,8 +74,57 @@ namespace Tactosy.Unity
                     0, 0, 0, 0, 0
                 };
 
-                TactosyPlayer.SendSignal("test", PositionType.VestFront, bytes, 1000);
-//                TactosyPlayer.SendSignal("Fireball", 0.2f);
+                TactosyPlayer.Submit("test", PositionType.VestFront, bytes, 1000);
+            }
+
+
+            if (changedFeedbacks.Count <= 0)
+            {
+                return;
+            }
+
+            if (!Monitor.TryEnter(changedFeedbacks))
+            {
+                Debug.Log("failed to enter");
+                return;
+            }
+            try
+            {
+                foreach (var feedback in changedFeedbacks)
+                {
+                    if (feedback.Position == PositionType.Left)
+                    {
+                        leftHandModel.SendMessage("UpdateFeedbacks", feedback);
+                    }
+                    else if (feedback.Position == PositionType.Right)
+                    {
+                        rightHandModel.SendMessage("UpdateFeedbacks", feedback);
+                    }
+                    else if (feedback.Position == PositionType.VestFront)
+                    {
+                        vestFrontModel.SendMessage("UpdateFeedbacks", feedback);
+                    }
+                    else if (feedback.Position == PositionType.VestBack)
+                    {
+                        vestBackModel.SendMessage("UpdateFeedbacks", feedback);
+                    }
+                    else if (feedback.Position == PositionType.Head)
+                    {
+                        headModel.SendMessage("UpdateFeedbacks", feedback);
+                    }
+                    else if (feedback.Position == PositionType.All)
+                    {
+                        leftHandModel.SendMessage("UpdateFeedbacks", feedback);
+                        rightHandModel.SendMessage("UpdateFeedbacks", feedback);
+                    }
+                }
+
+                changedFeedbacks.Clear();
+
+            }
+            finally
+            {
+                Monitor.Exit(changedFeedbacks);
             }
         }
 
@@ -100,50 +164,77 @@ namespace Tactosy.Unity
             {
                 headModel.gameObject.SetActive(visualizeFeedbacks);
             }
-            TactosyPlayerOnValueChanged(new TactosyFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
+            TactosyPlayerOnValueChanged(new HapticFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
         }
 
-        private void InitPlayer()
+        public void InitPlayer()
         {
+            if (initialized)
+            {
+                return;
+            }
+
+            initialized = true;
+            InitializeFeedbacks();
+
             // Setup Tactosy Player
             var sender = new WebSocketSender();
-            timer = GetComponent<UnityTimer>();            
-            TactosyPlayer = new TactosyPlayer(sender, timer);
-            TactosyPlayer.ValueChanged += TactosyPlayerOnValueChanged;
+            var timer = GetComponent<UnityTimer>();            
+            TactosyPlayer = new HapticPlayer(sender, timer);
+            LoadTactosyFeedback();
+        }
 
-            foreach (var feedbackMapping in FeedbackMappings)
+        private void LoadTactosyFeedback()
+        {
+            FeedbackMappings.Clear();
+            string tactosyFileRootPath = PathPrefix;
+
+            if (isSteamingPath)
+            {
+                tactosyFileRootPath = Application.dataPath + "/StreamingAssets/" + PathPrefix;
+            }
+
+            string[] allPaths = Directory.GetFiles(tactosyFileRootPath, "*.tactosy", SearchOption.AllDirectories);
+
+            foreach (var filePath in allPaths)
             {
                 try
                 {
-                    string filePath = Path.Combine(PathPrefix, feedbackMapping.Path);
+                    var fileName = Path.GetFileNameWithoutExtension(filePath);
 
-                    string json;
-                    if (Application.platform == RuntimePlatform.Android)
-                    {
-                        WWW www = new WWW(filePath);
+                    string json = LoadStringFromFile(filePath);
 
-                        while (!www.isDone)
-                        {
-                        }
-
-                        json = www.text;
-                    }
-                    else
-                    {
-                        json = File.ReadAllText(filePath);
-                    }
-                    TactosyPlayer.RegisterFeedback(feedbackMapping.Key, new FeedbackSignal(json));
+                    TactosyPlayer.Register(fileName, new BufferedHapticFeedback(json));
+                    FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tactosy"));
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError("failed to read feedback file " + Path.Combine(PathPrefix, feedbackMapping.Path) + " : " + e.Message);
+                    Debug.LogError("failed to read feedback file " + filePath + " : " + e.Message);
                 }
             }
-
-            TactosyPlayer.Start();
         }
 
-        private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
+        private string LoadStringFromFile(string filePath)
+        {
+            string json;
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                WWW www = new WWW(filePath);
+
+                while (!www.isDone)
+                {
+                }
+
+                json = www.text;
+            }
+            else
+            {
+                json = File.ReadAllText(filePath);
+            }
+            return json;
+        }
+
+        private void TactosyPlayerOnValueChanged(HapticFeedback feedback)
         {
             if (visualizeFeedbacks == false)
             {
@@ -152,58 +243,42 @@ namespace Tactosy.Unity
 
             if (leftHandModel == null)
             {
-                Debug.LogError("failed to find the left hand model for feedback visualization");
+                Debug.Log("failed to find the left hand model for feedback visualization");
                 return;
             }
 
             if (rightHandModel == null)
             {
-                Debug.LogError("failed to find the right hand model for feedback visualization");
+                Debug.Log("failed to find the right hand model for feedback visualization");
                 return;
             }
 
             if (vestFrontModel == null)
             {
-                Debug.LogError("failed to find the vestFront model for feedback visualization");
+                Debug.Log("failed to find the vestFront model for feedback visualization");
                 return;
             }
 
             if (vestBackModel == null)
             {
-                Debug.LogError("failed to find the vestBack model for feedback visualization");
+                Debug.Log("failed to find the vestBack model for feedback visualization");
                 return;
             }
 
             if (headModel == null)
             {
-                Debug.LogError("failed to find the head model for feedback visualization");
+                Debug.Log("failed to find the head model for feedback visualization");
                 return;
             }
 
-            if (feedback.Position == PositionType.Left)
+            if (changedFeedbacks == null)
             {
-                leftHandModel.SendMessage("UpdateFeedbacks", feedback);
+                return;
             }
-            else if (feedback.Position == PositionType.Right)
+
+            lock (changedFeedbacks)
             {
-                rightHandModel.SendMessage("UpdateFeedbacks", feedback);
-            }
-            else if (feedback.Position == PositionType.VestFront)
-            {
-                vestFrontModel.SendMessage("UpdateFeedbacks", feedback);
-            }
-            else if (feedback.Position == PositionType.VestBack)
-            {
-                vestBackModel.SendMessage("UpdateFeedbacks", feedback);
-            }
-            else if (feedback.Position == PositionType.Head)
-            {
-                headModel.SendMessage("UpdateFeedbacks", feedback);
-            }
-            else if (feedback.Position == PositionType.All)
-            {
-                leftHandModel.SendMessage("UpdateFeedbacks", feedback);
-                rightHandModel.SendMessage("UpdateFeedbacks", feedback);
+                changedFeedbacks.Add(feedback);
             }
         }
 
@@ -211,10 +286,10 @@ namespace Tactosy.Unity
         {
             if (TactosyPlayer == null)
             {
-                Debug.LogError("Tactosy player is not initialized.");
+                Debug.Log("Tactosy player is not initialized.");
                 return;
             }
-            TactosyPlayer.SendSignal(key);
+            TactosyPlayer.SubmitRegistered(key);
         }
         
 
@@ -222,7 +297,7 @@ namespace Tactosy.Unity
         {
             if (TactosyPlayer == null)
             {
-                Debug.LogError("Tactosy player is not initialized.");
+                Debug.Log("Tactosy player is not initialized.");
                 return;
             }
 

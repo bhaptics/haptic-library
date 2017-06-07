@@ -51,13 +51,6 @@ namespace Tactosy.Unity
         {
             if (Input.GetKeyDown("space"))
             {
-                byte[] bytes =
-                {
-                    0, 0, 0, 0, 0,
-                    0, 0, 0, 0, 0,
-                    0, 0, 100, 100, 0,
-                    0, 0, 0, 0, 0
-                };
                 TactosyPlayer.SendSignal("Fireball", 0.2f);
             }
         }
@@ -82,24 +75,34 @@ namespace Tactosy.Unity
             {
                 leftHandModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             if (rightHandModel != null)
             {
                 rightHandModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             if (vestFrontModel != null)
             {
                 vestFrontModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             if (vestBackModel != null)
             {
                 vestBackModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             if (headModel != null)
             {
                 headModel.gameObject.SetActive(visualizeFeedbacks);
             }
-            TactosyPlayerOnValueChanged(new TactosyFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
+
+            TactosyPlayerOnValueChanged(new TactosyFeedback(PositionType.Left, new byte[20], FeedbackMode.DOT_MODE));
+            TactosyPlayerOnValueChanged(new TactosyFeedback(PositionType.Right, new byte[20], FeedbackMode.DOT_MODE));
+            TactosyPlayerOnValueChanged(new TactosyFeedback(PositionType.VestBack, new byte[20], FeedbackMode.DOT_MODE));
+            TactosyPlayerOnValueChanged(new TactosyFeedback(PositionType.VestFront, new byte[20], FeedbackMode.DOT_MODE));
+            TactosyPlayerOnValueChanged(new TactosyFeedback(PositionType.Head, new byte[7], FeedbackMode.DOT_MODE));
         }
+
 
         private void InitPlayer()
         {
@@ -137,9 +140,9 @@ namespace Tactosy.Unity
                     Debug.LogError("failed to read feedback file " + Path.Combine(PathPrefix, feedbackMapping.Path) + " : " + e.Message);
                 }
             }
-
             TactosyPlayer.Start();
         }
+
 
         private void TactosyPlayerOnValueChanged(TactosyFeedback feedback)
         {
@@ -182,27 +185,27 @@ namespace Tactosy.Unity
             {
                 leftHandModel.SendMessage("UpdateFeedbacks", feedback);
             }
+
             else if (feedback.Position == PositionType.Right)
             {
                 rightHandModel.SendMessage("UpdateFeedbacks", feedback);
             }
+
             else if (feedback.Position == PositionType.VestFront)
             {
                 vestFrontModel.SendMessage("UpdateFeedbacks", feedback);
             }
+
             else if (feedback.Position == PositionType.VestBack)
             {
                 vestBackModel.SendMessage("UpdateFeedbacks", feedback);
             }
+
             else if (feedback.Position == PositionType.Head)
             {
                 headModel.SendMessage("UpdateFeedbacks", feedback);
             }
-            else if (feedback.Position == PositionType.All)
-            {
-                leftHandModel.SendMessage("UpdateFeedbacks", feedback);
-                rightHandModel.SendMessage("UpdateFeedbacks", feedback);
-            }
+
         }
 
         public void Play(string key)

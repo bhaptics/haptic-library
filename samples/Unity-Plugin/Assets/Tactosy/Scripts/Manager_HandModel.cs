@@ -14,7 +14,7 @@ public class Manager_HandModel : MonoBehaviour
 	void Start () {
         for (int i = 0; i< 20; i++)
         {
-            Dots[i].GetComponent<MeshRenderer>().material.color = new Color(0f, 0f, 0f, 0.2f);
+            Dots[i].GetComponent<MeshRenderer>().material.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
             Dots[i].GetComponent<Transform>().localScale = new Vector3(4.3f, 0.14f, 4.3f);
         }
 	}
@@ -26,7 +26,8 @@ public class Manager_HandModel : MonoBehaviour
         {
             /* Delta values of colors and scales can be modified */
             var scale = tactosyFeedback.Values[i] * (8f / 10f);
-            Dots[i].GetComponent<MeshRenderer>().material.color = new Color(0.2f + scale, 0.2f + scale, 0.2f + scale, 0.2f + scale);
+            var scale_color = tactosyFeedback.Values[i] * (1f / 2f);
+            Dots[i].GetComponent<MeshRenderer>().material.color = new Color(0.5f - scale_color, 0.5f - scale_color, 0.5f - scale_color, 0.5f);
             Dots[i].GetComponent<Transform>().localScale = new Vector3(4.3f + 3.0f * (scale / 100f), 0.14f, 4.3f + 3.0f * (scale / 100f));
         }
     }

@@ -205,7 +205,6 @@ namespace Tactosy.Unity
             {
                 headModel.SendMessage("UpdateFeedbacks", feedback);
             }
-
         }
 
         public void Play(string key)

@@ -28,7 +28,7 @@ public class Manager_VestModel : MonoBehaviour
             /* Delta values of colors and scales can be modified */
             var scale = tactosyFeedback.Values[i] * (8f / 10f);
             var scale_color = tactosyFeedback.Values[i] * (1f / 2f);
-            Dots[i].GetComponent<MeshRenderer>().material.color = new Color(0.5f - scale_color, 0.5f - scale_color, 0.5f - scale_color, 0.5f);
+            Dots[i].GetComponent<MeshRenderer>().material.color = new Color(0.5f + scale_color, 0.5f + scale_color, 0.5f - scale_color, 0.5f);
             Dots[i].GetComponent<Transform>().localScale = new Vector3(4.3f + 3.0f * (scale / 100f), 0.14f, 4.3f + 3.0f * (scale / 100f));
         }
     }

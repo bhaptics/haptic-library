@@ -4,20 +4,21 @@ using System.IO;
 using UnityEngine;
 using Tactosy.Common;
 
-/* Class helps to visualize feedbacks for Tactosy */
-public class Manager_HandModel : MonoBehaviour
+/* Class helps to visualize feedbacks for the Vest Product */
+public class Manager_VestModel : MonoBehaviour
 {
     /* All dots should be registered */
     [SerializeField] private GameObject[] Dots;
 
-	/* Initialization,default colors and scales of dots can be modified by user */
-	void Start () {
-        for (int i = 0; i< 20; i++)
+    /* Initialization,default colors and scales of dots can be modified by user */
+    void Start()
+    {
+        for (int i = 0; i < 20; i++)
         {
             Dots[i].GetComponent<MeshRenderer>().material.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
             Dots[i].GetComponent<Transform>().localScale = new Vector3(4.3f, 0.14f, 4.3f);
         }
-	}
+    }
 
     /* Change the color and the scale of the dot according to haptic feedback */
     void UpdateFeedbacks(TactosyFeedback tactosyFeedback)
@@ -26,7 +27,7 @@ public class Manager_HandModel : MonoBehaviour
         {
             /* Delta values of colors and scales can be modified */
             var scale = tactosyFeedback.Values[i] * (8f / 10f);
-            var scale_color = tactosyFeedback.Values[i] * (0.6f / 1.0f);
+            var scale_color = tactosyFeedback.Values[i] * (1f / 2f);
             Dots[i].GetComponent<MeshRenderer>().material.color = new Color(0.5f + scale_color, 0.5f + scale_color, 0.5f - scale_color, 0.5f);
             Dots[i].GetComponent<Transform>().localScale = new Vector3(4.3f + 3.0f * (scale / 100f), 0.14f, 4.3f + 3.0f * (scale / 100f));
         }

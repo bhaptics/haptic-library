@@ -96,31 +96,28 @@ namespace Tactosy.Unity
                     {
                         leftHandModel.SendMessage("UpdateFeedbacks", feedback);
                     }
+
                     else if (feedback.Position == PositionType.Right)
                     {
                         rightHandModel.SendMessage("UpdateFeedbacks", feedback);
                     }
+
                     else if (feedback.Position == PositionType.VestFront)
                     {
                         vestFrontModel.SendMessage("UpdateFeedbacks", feedback);
                     }
+
                     else if (feedback.Position == PositionType.VestBack)
                     {
                         vestBackModel.SendMessage("UpdateFeedbacks", feedback);
                     }
+
                     else if (feedback.Position == PositionType.Head)
                     {
                         headModel.SendMessage("UpdateFeedbacks", feedback);
                     }
-                    else if (feedback.Position == PositionType.All)
-                    {
-                        leftHandModel.SendMessage("UpdateFeedbacks", feedback);
-                        rightHandModel.SendMessage("UpdateFeedbacks", feedback);
-                    }
                 }
-
                 changedFeedbacks.Clear();
-
             }
             finally
             {
@@ -148,22 +145,27 @@ namespace Tactosy.Unity
             {
                 leftHandModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             if (rightHandModel != null)
             {
                 rightHandModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             if (vestFrontModel != null)
             {
                 vestFrontModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             if (vestBackModel != null)
             {
                 vestBackModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             if (headModel != null)
             {
                 headModel.gameObject.SetActive(visualizeFeedbacks);
             }
+
             TactosyPlayerOnValueChanged(new HapticFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
         }
 

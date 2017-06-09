@@ -27,7 +27,7 @@ public class Manager_HeadModel : MonoBehaviour
 
             if (renderers[i] != null)
             {
-                renderers[i].material.color = new Color(0f, 0f, 0f, 0.2f);
+                renderers[i].material.color = new Color(1f, 1f, 1f, 0.2f);
             }
         }
     }
@@ -37,18 +37,18 @@ public class Manager_HeadModel : MonoBehaviour
     {
         for (int i = 0; i < 7; i++)
         {
-            /* Delta values of colors and scales can be modified */
-            var scale = tactosyFeedback.Values[i] * (8f / 10f);
+            var scale = tactosyFeedback.Values[i] / 100f;
 
             if (transforms[i] != null)
             {
-                transforms[i].localScale = new Vector3(4.3f + 3.0f * (scale / 100f), 0.14f, 4.3f + 3.0f * (scale / 100f));
+                transforms[i].localScale = new Vector3(4.3f + 3.0f * (scale * (8f / 10f)), 0.14f, 4.3f + 3.0f * (scale * (8f / 10f)));
             }
 
             if (renderers[i] != null)
             {
-                renderers[i].material.color = new Color(0.2f + scale, 0.2f + scale, 0.2f + scale, 0.2f + scale);
+                renderers[i].material.color = renderers[i].material.color = new Color(1f, 1f - scale * 0.19f, 1f - scale * 0.99f, 0.2f - 0.2f * scale);
             }
+
         }
     }
 }

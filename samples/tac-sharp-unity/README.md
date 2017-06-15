@@ -1,4 +1,4 @@
-# Unity plugin to activate bHaptics haptic devices
+# Unity plugin
 This project helps to use bhaptics haptic devices in Unity environments. 
 
 ## Prerequisite

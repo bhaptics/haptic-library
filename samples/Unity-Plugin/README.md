@@ -1,5 +1,5 @@
 # Unity plugin to activate tactosy
-This project helps to use Tactosy in Unity environments. 
+This project helps to use Tactosy in Unity environments.
 
 ## Prerequisite
 * Tactosy app has to be installed (Windows or Mac)
@@ -16,8 +16,14 @@ This project helps to use Tactosy in Unity environments.
     git clone https://github.com/bhaptics/tactosy-sharp.git
     ```
 
+## Tutorial
+* [bHaptics Designer To Unity - Tactosy](https://youtu.be/eateHpUKC4s)
+* [bHaptics Designer To Unity - Tactal](https://youtu.be/sj7IqgFn_iw)
+* [bHaptics Designer To Unity - Tactot](https://youtu.be/MvhrSCwS2Wg)
+* [bHaptics Unity plugin](https://youtu.be/zHoJANhfwpk)
+
 ## How to use
-* Test Default scene 
+* Test Default scene
 
     >Go to Assets > Tactosy > Example > open Default.scene
     Select [Tactosy] Prefab.<br/>
@@ -30,7 +36,7 @@ using System.IO;
 using Tactosy.Common;
 using Tactosy.Common.Sender;
 ```
-    
+
 * Initialize TactosyPlayer in C# script
     ```
      public TactosyPlayer TactosyPlayer;
@@ -41,9 +47,9 @@ using Tactosy.Common.Sender;
      timer = GetComponent<UnityTimer>();
      TactosyPlayer = new TactosyPlayer(sender, timer);
     ```
-    
+
 * Apply more feedbacks: with .tactosy file
-    
+
     >You can create Tactosy feebacks via https://studio.bhaptics.com
     .tactosy file is timeline based haptic feedback file.
     For more detail, you can find in http://bhaptics.com/studio.html

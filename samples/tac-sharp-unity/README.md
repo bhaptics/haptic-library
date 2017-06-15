@@ -17,10 +17,10 @@ This project helps to use bhaptics haptic devices in Unity environments.
     ```
 
 ## Tutorial
-* 
-* 
-* 
-* 	
+* [bHaptics Unity plugin With Code](https://youtu.be/zHoJANhfwpk)	
+* [bHaptics Designer To Unity - Tactosy](https://youtu.be/eateHpUKC4s)
+* [bHaptics Designer To Unity - Tactal](https://youtu.be/sj7IqgFn_iw)
+* [bHaptics Designer To Unity - Tactot](https://youtu.be/MvhrSCwS2Wg)
 	
 ## How to use
 * Test Default scene 

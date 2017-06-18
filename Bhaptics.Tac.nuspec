@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Bhaptics.Tac</id>
+    <version>1.0.0</version>
+    <title>Bhaptics.Tac</title>
+    <authors>bhaptics</authors>
+    <owners>bHaptics Inc.</owners>
+    <licenseUrl>https://github.com/bhaptics/tac-sharp</licenseUrl>
+    <projectUrl>https://github.com/bhaptics/tac-sharp</projectUrl>
+    <iconUrl>http://bhaptics.com/images/web_design_source_all-01.svg</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is sharp SDK for bhaptics haptic devices(tactosy, tactot, tactal)</description>
+    <releaseNotes>bhaptics tactile SDK for c#</releaseNotes>
+    <copyright>Copyright bHaptics Inc. 2017</copyright>
+    <tags>tactosy tactot tactal haptic</tags>
+  </metadata>
+    <files>
+    <file src="src\Bhaptics.Tac\bin\Release\**" target="lib" />
+  </files>
+</package>

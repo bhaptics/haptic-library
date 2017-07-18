@@ -9,6 +9,8 @@ namespace Bhaptics.Tac
     {
         void PlayFeedback(HapticFeedbackFrame feedback);
         event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChangeReceived;
+        event FeedbackEvent.ConnectionEvent Connected;
+        event FeedbackEvent.ConnectionEvent Disconnected;
     }
 
     public class HapticFeedbackFrame

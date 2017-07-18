@@ -12,17 +12,39 @@ namespace Bhaptics.Tac.Sender
         private bool _websocketConnected = false;
         private readonly string WebsocketUrl = "ws://127.0.0.1:15881/feedbacks";
         public event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChangeReceived;
+        public event FeedbackEvent.ConnectionEvent Connected;
+        public event FeedbackEvent.ConnectionEvent Disconnected;
+        private int retry = 0;
+        private int retryCount = 5;
+
+        public WebSocketSender(FeedbackEvent.ConnectionEvent connected, FeedbackEvent.ConnectionEvent disconnected, bool tryReconnect = true)
+        {
+            Connected = connected;
+            Disconnected = disconnected;
+            Initialize(tryReconnect);
+        }
 
         public WebSocketSender(bool tryReconnect = true)
         {
+            Initialize(tryReconnect);
+        }
+
+        private void Initialize(bool tryReconnect)
+        {
             if (tryReconnect)
             {
-                Timer timer = new Timer(5 * 1000); // 5 sec
-                timer.Elapsed += delegate(object sender, ElapsedEventArgs args)
+                Timer timer = new Timer(3 * 1000); // 3 sec
+                timer.Elapsed += delegate (object sender, ElapsedEventArgs args)
                 {
                     if (!_websocketConnected)
                     {
+                        retry++;
+
                         _webSocket.Connect();
+                        if (retry >= retryCount)
+                        {
+                            timer.Stop();
+                        }
                     }
                 };
                 timer.Start();
@@ -44,9 +66,9 @@ namespace Bhaptics.Tac.Sender
                     if (FeedbackChangeReceived != null)
                     {
                         byte[] bytes = new byte[ints.Length];
-                        for (int i = 0 ; i < bytes.Length; i++)
+                        for (int i = 0; i < bytes.Length; i++)
                         {
-                            bytes[i] = (byte) ints[i];
+                            bytes[i] = (byte)ints[i];
                         }
                         var feedback = new HapticFeedback(t, bytes, FeedbackMode.DOT_MODE);
                         FeedbackChangeReceived(feedback);
@@ -61,6 +83,10 @@ namespace Bhaptics.Tac.Sender
             _webSocket.OnOpen += (sender, args) =>
             {
                 Debug.WriteLine("Connected");
+                if (Connected != null)
+                {
+                    Connected();
+                }
                 _websocketConnected = true;
             };
 
@@ -72,6 +98,11 @@ namespace Bhaptics.Tac.Sender
             _webSocket.OnClose += (sender, args) =>
             {
                 Debug.WriteLine("Closed");
+                if (Disconnected != null)
+                {
+                    Disconnected();
+                }
+
                 _websocketConnected = false;
             };
 

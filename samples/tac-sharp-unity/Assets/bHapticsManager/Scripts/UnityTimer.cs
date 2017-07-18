@@ -19,11 +19,10 @@ namespace Bhaptics.Tac.Unity
             }
         }
 
-        IEnumerator StageTransition()
+        IEnumerator TimerLoop()
         {
             while (true)
             {
-
                 if (Elapsed != null)
                 {
                     try
@@ -46,7 +45,7 @@ namespace Bhaptics.Tac.Unity
                 return;
             }
 
-            timerCoroutine = StartCoroutine(StageTransition());
+            timerCoroutine = StartCoroutine(TimerLoop());
         }
 
         public void StopTimer()

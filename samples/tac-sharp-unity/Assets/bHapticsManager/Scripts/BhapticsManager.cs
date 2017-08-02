@@ -35,7 +35,7 @@ namespace Bhaptics.Tac.Unity
         private string PathPrefix = "Assets/bHapticsManager/Feedbacks/";
 
         [Tooltip("Use Streaming Path or not")]
-        [SerializeField] private bool isSteamingPath;
+        [SerializeField] private bool useStreamingPath;
 
         [Tooltip("Feedback Mapping Infos")]
         [SerializeField]
@@ -48,8 +48,37 @@ namespace Bhaptics.Tac.Unity
         #region Unity Method
 
         private bool initialized;
+
+        private bool tryLaunchApp = false;
+
+        void Awake()
+        {
+            var uninstalledMessage = "bHaptics Player is not installed. Plugin is now disabled. Please download here." +
+                                     "\nhttp://bhaptics.com/app.html#download";
+            if (!BhapticsUtils.IsPlayerInstalled())
+            {
+                Debug.LogError(uninstalledMessage);
+                return;
+            }
+
+            if (!BhapticsUtils.IsPlayerRunning())
+            {
+                Debug.Log("bHaptics Player is not running, try launching bHaptics Player.");
+                BhapticsUtils.LaunchPlayer();
+                tryLaunchApp = true;
+                
+                return;
+            }
+        }
+
         void OnEnable()
         {
+            if (!BhapticsUtils.IsPlayerInstalled())
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+
             InitPlayer();
             
             HapticPlayer.FeedbackChanged += OnFeedbackChanged;
@@ -58,12 +87,22 @@ namespace Bhaptics.Tac.Unity
 
         void OnDisable()
         {
+            if (!BhapticsUtils.IsPlayerInstalled())
+            {
+                return;
+            }
+
             HapticPlayer.Disable();
             HapticPlayer.FeedbackChanged -= OnFeedbackChanged;
         }
 
         void Update()
         {
+            if (!BhapticsUtils.IsPlayerInstalled())
+            {
+                return;
+            }
+
             if (!visualizeFeedbacks)
             {
                 return;
@@ -167,6 +206,11 @@ namespace Bhaptics.Tac.Unity
 
         public void InitPlayer()
         {
+            if (!BhapticsUtils.IsPlayerInstalled())
+            {
+                return;
+            }
+
             if (initialized)
             {
                 return;
@@ -176,8 +220,17 @@ namespace Bhaptics.Tac.Unity
             InitializeFeedbacks();
 
             // Setup Haptic Player
-            var sender = new WebSocketSender();
-            var timer = GetComponent<UnityTimer>();            
+            var sender = new WebSocketSender(() => tryLaunchApp = true
+            , () =>
+            {
+                if (!tryLaunchApp)
+                {
+                    BhapticsUtils.LaunchPlayer();
+                    tryLaunchApp = true;
+                }
+            });
+
+            var timer = GetComponent<UnityTimer>();
             HapticPlayer = new HapticPlayer(sender, timer);
             LoadFeedbackFile();
         }
@@ -187,28 +240,35 @@ namespace Bhaptics.Tac.Unity
             FeedbackMappings.Clear();
             string fileRootPath = PathPrefix;
 
-            if (isSteamingPath)
+            if (useStreamingPath)
             {
                 fileRootPath = Application.dataPath + "/StreamingAssets/" + PathPrefix;
             }
 
-            string[] allPaths = Directory.GetFiles(fileRootPath, "*.tactosy", SearchOption.AllDirectories);
-
-            foreach (var filePath in allPaths)
+            try
             {
-                try
-                {
-                    var fileName = Path.GetFileNameWithoutExtension(filePath);
+                string[] allPaths = Directory.GetFiles(fileRootPath, "*.tactosy", SearchOption.AllDirectories);
 
-                    string json = LoadStringFromFile(filePath);
-
-                    HapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
-                    FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tactosy"));
-                }
-                catch (Exception e)
+                foreach (var filePath in allPaths)
                 {
-                    Debug.LogError("failed to read feedback file " + filePath + " : " + e.Message);
+                    try
+                    {
+                        var fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                        string json = LoadStringFromFile(filePath);
+
+                        HapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
+                        FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tactosy"));
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("failed to read feedback file " + filePath + " : " + e.Message);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("FeedbackFile Loading failed : " + e.Message);
             }
         }
 

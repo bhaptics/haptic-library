@@ -246,7 +246,7 @@ namespace Bhaptics.Tac
             }
         }
 
-        public void SubmitRegistered(string key, float ratio)
+        public void SubmitRegistered(string key, float duration)
         {
             if (!_registered.ContainsKey(key))
             {
@@ -254,13 +254,13 @@ namespace Bhaptics.Tac
                 return;
             }
 
-            if (ratio < 0 || ratio > 1)
+            if (duration < 0 || duration > 1)
             {
                 Debug.WriteLine("ratio should be between [0, 1]");
                 return;
             }
             var signal = _registered[key];
-            signal.StartTime = _currentTime - (int) (signal.EndTime * ratio / _interval) * _interval;
+            signal.StartTime = _currentTime - (int) (signal.EndTime * duration / _interval) * _interval;
             if (!_actives.ContainsKey(key))
             {
                 _actives[key] = signal;

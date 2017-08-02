@@ -6,6 +6,7 @@ namespace Bhaptics.Tac
     public class FeedbackEvent
     {
         public delegate void HapticFeedbackChangeEvent(HapticFeedback feedback);
+        public delegate void ConnectionEvent();
     }
     
     public interface IHapticPlayer
@@ -27,7 +28,7 @@ namespace Bhaptics.Tac
 
         void SubmitRegistered(string key, float intensity, float duration);
         void SubmitRegistered(string key);
-        void SubmitRegistered(string key, float ratio);
+        void SubmitRegistered(string key, float duration);
 
         void TurnOff(string key);
         void TurnOff();

@@ -19,7 +19,8 @@ namespace Bhaptics.Tac.Tests
             // Register with DotPoint
             var key = "headFeedabck";
             var points = new List<DotPoint>() {new DotPoint(1, 100)};
-            hapticPlayer.Register(key, new BufferedHapticFeedback(PositionType.Head, points,  1000));
+//            hapticPlayer.Register(key, new BufferedHapticFeedback(PositionType.Head, points,  1000));
+            hapticPlayer.Register(key, new BufferedHapticFeedback(PositionType.Racket, points,  1000));
             
             // Register with file
             HapticFeedbackFile file = CommonUtils.ConvertJsonStringToTactosyFile(File.ReadAllText("test2.tactosy"));

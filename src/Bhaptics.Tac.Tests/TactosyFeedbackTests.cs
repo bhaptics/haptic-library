@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Bhaptics.Tac.Tests
@@ -9,10 +10,8 @@ namespace Bhaptics.Tac.Tests
         [TestMethod()]
         public void HapticFeedbackTest()
         {
-//            byte[] bytes = new byte[22];
-//            bytes[1] = 4;
-//            HapticFeedback feedback = new HapticFeedback(bytes);
-//            Debug.WriteLine(feedback);
+            var feedback = new HapticFeedback(PositionType.Racket, new List<PathPoint>());
+            Debug.WriteLine(feedback);
         }
     }
 }

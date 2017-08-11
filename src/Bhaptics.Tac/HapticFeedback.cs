@@ -11,19 +11,9 @@ namespace Bhaptics.Tac
             {
                 throw new HapticException("Invalid argument index : " + index);
             }
+            Intensity = CommonUtils.Clamp(intensity, 0, 100);
 
             Index = index;
-
-            if (intensity < 0)
-            {
-                Intensity = 0;
-            } else if (intensity > 100)
-            {
-                Intensity = 100;
-            } else
-            {
-                Intensity = intensity;
-            }
         }
 
         public int Index { get; set; }
@@ -40,38 +30,9 @@ namespace Bhaptics.Tac
     {
         public PathPoint(float x, float y, int intensity)
         {
-            if (x > 1f)
-            {
-                X = 1;
-            } else if (x < 0)
-            {
-                X = 0;
-            } else
-            {
-                X = x;
-            }
-
-            if (y > 1f)
-            {
-                Y = 1;
-            } else if (y < 0)
-            {
-                Y = 0;
-            } else
-            {
-                Y = y;
-            }
-
-            if (intensity > 100)
-            {
-                Intensity = 100;
-            } else if (intensity < 0)
-            {
-                Intensity = 0;
-            } else
-            {
-                Intensity = intensity;
-            }
+            X = CommonUtils.Clamp(x, 0f, 1f);
+            Y = CommonUtils.Clamp(y, 0f, 1f);
+            Intensity = CommonUtils.Clamp(intensity, 0, 100);
         }
 
         public float X { get; set; }
@@ -149,6 +110,7 @@ namespace Bhaptics.Tac
         All = 0, Left = 1, Right = 2,
         Vest = 3,
         Head = 4,
+        Racket = 5,
         VestFront =201, VestBack=202,
         GloveLeft =203, GloveRight=204,
         Custom1 =251, Custom2 = 252, Custom3 = 253, Custom4 = 254

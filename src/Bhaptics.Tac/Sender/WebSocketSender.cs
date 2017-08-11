@@ -126,5 +126,17 @@ namespace Bhaptics.Tac.Sender
                 Debug.WriteLine(e);
             }
         }
+
+        public void Dispose()
+        {
+            try
+            {
+                _webSocket.CloseAsync();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
+        }
     }
 }

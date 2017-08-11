@@ -37,6 +37,16 @@ namespace Bhaptics.Tac
             return milliseconds;
         }
 
+        public static T Clamp<T>(T aValue, T aMin, T aMax) where T : IComparable<T>
+        {
+            var result = aValue;
+            if (aValue.CompareTo(aMax) > 0)
+                result = aMax;
+            else if (aValue.CompareTo(aMin) < 0)
+                result = aMin;
+            return result;
+        }
+
         /// <summary>
         /// Determines whether [is array equal] [the specified a1].
         /// </summary>

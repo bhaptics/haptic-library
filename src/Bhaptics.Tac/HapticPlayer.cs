@@ -79,6 +79,7 @@ namespace Bhaptics.Tac
                     PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestFront));
                     PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestBack));
                     PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Head));
+                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Racket));
                 }
 
                 return;
@@ -92,6 +93,7 @@ namespace Bhaptics.Tac
             feedbackMap[PositionType.VestBack] = new HapticFeedbackFrame { Position = PositionType.VestBack };
             feedbackMap[PositionType.VestFront] = new HapticFeedbackFrame { Position = PositionType.VestFront };
             feedbackMap[PositionType.Head] = new HapticFeedbackFrame { Position = PositionType.Head };
+            feedbackMap[PositionType.Racket] = new HapticFeedbackFrame { Position = PositionType.Racket };
 
             foreach (KeyValuePair<string, BufferedHapticFeedback> keyPair in _actives)
             {
@@ -328,7 +330,7 @@ namespace Bhaptics.Tac
             _timer.StopTimer();
             _enable = false;
 
-            PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.All));
+//            PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.All));
 
             _sender.FeedbackChangeReceived -= SenderOnFeedbackChangeReceived;
         }
@@ -336,5 +338,15 @@ namespace Bhaptics.Tac
         public event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChanged;
 
         #endregion
+
+        public void Dispose()
+        {
+            Disable();
+            if (_sender != null)
+            {
+                _sender.Dispose();
+            }
+            
+        }
     }
 }

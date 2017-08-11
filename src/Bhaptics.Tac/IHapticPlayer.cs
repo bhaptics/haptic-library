@@ -9,7 +9,7 @@ namespace Bhaptics.Tac
         public delegate void ConnectionEvent();
     }
     
-    public interface IHapticPlayer
+    public interface IHapticPlayer : IDisposable
     {
         void Enable();
         void Disable();

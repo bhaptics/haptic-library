@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 
 namespace Bhaptics.Tac
 {
-    public interface ISender
+    public interface ISender : IDisposable
     {
         void PlayFeedback(HapticFeedbackFrame feedback);
         event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChangeReceived;

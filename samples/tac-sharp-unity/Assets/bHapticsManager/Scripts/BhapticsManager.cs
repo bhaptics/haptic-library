@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -22,10 +23,7 @@ namespace Bhaptics.Tac.Unity
             public string Path;
         }
 
-        [SerializeField]
-        private GameObject leftHandModel, rightHandModel, headModel, vestFrontModel, vestBackModel;
-
-        [SerializeField] private GameObject[] uis;
+        private VisualFeedabck[] visualFeedbacks;
 
         [SerializeField]
         public bool visualizeFeedbacks;
@@ -41,15 +39,25 @@ namespace Bhaptics.Tac.Unity
         [SerializeField]
         internal List<SignalMapping> FeedbackMappings;
 
-        public HapticPlayer HapticPlayer;
+//        public HapticPlayer HapticPlayer;
+        private IHapticPlayer _hapticPlayer;
 
-        private List<HapticFeedback> changedFeedbacks = new List<HapticFeedback>();
-        
+        private WebSocketSender _sender;
+        public IHapticPlayer HapticPlayer()
+        {
+            if (_hapticPlayer == null)
+            {
+                InitPlayer();
+            }
+
+            return _hapticPlayer;
+        }
+
         #region Unity Method
 
-        private bool initialized;
-
-        private bool tryLaunchApp = false;
+        private readonly List<HapticFeedback> _changedFeedbacks = new List<HapticFeedback>();
+        private bool _isInit;
+        private bool _isTryLaunchApp;
 
         void Awake()
         {
@@ -65,7 +73,7 @@ namespace Bhaptics.Tac.Unity
             {
                 Debug.Log("bHaptics Player is not running, try launching bHaptics Player.");
                 BhapticsUtils.LaunchPlayer();
-                tryLaunchApp = true;
+                _isTryLaunchApp = true;
                 
                 return;
             }
@@ -80,9 +88,9 @@ namespace Bhaptics.Tac.Unity
             }
 
             InitPlayer();
-            
-            HapticPlayer.FeedbackChanged += OnFeedbackChanged;
-            HapticPlayer.Enable();
+
+            _hapticPlayer.FeedbackChanged += OnFeedbackChanged;
+            _hapticPlayer.Enable();
         }
 
         void OnDisable()
@@ -91,9 +99,9 @@ namespace Bhaptics.Tac.Unity
             {
                 return;
             }
-
-            HapticPlayer.Disable();
-            HapticPlayer.FeedbackChanged -= OnFeedbackChanged;
+            _hapticPlayer.TurnOff();
+            _hapticPlayer.Disable();
+            _hapticPlayer.FeedbackChanged -= OnFeedbackChanged;
         }
 
         void Update()
@@ -108,55 +116,50 @@ namespace Bhaptics.Tac.Unity
                 return;
             }
 
-            if (changedFeedbacks.Count <= 0)
+            if (_changedFeedbacks.Count <= 0)
             {
                 return;
             }
 
-            if (!Monitor.TryEnter(changedFeedbacks))
+            if (!Monitor.TryEnter(_changedFeedbacks))
             {
                 Debug.Log("failed to enter");
                 return;
             }
             try
             {
-                foreach (var feedback in changedFeedbacks)
+                foreach (var feedback in _changedFeedbacks)
                 {
-                    if (feedback.Position == PositionType.Left)
+                    foreach (var vis in visualFeedbacks)
                     {
-                        leftHandModel.SendMessage("UpdateFeedbacks", feedback, SendMessageOptions.DontRequireReceiver);
-                    }
-
-                    else if (feedback.Position == PositionType.Right)
-                    {
-                        rightHandModel.SendMessage("UpdateFeedbacks", feedback, SendMessageOptions.DontRequireReceiver);
-                    }
-
-                    else if (feedback.Position == PositionType.VestFront)
-                    {
-                        vestFrontModel.SendMessage("UpdateFeedbacks", feedback, SendMessageOptions.DontRequireReceiver);
-                    }
-
-                    else if (feedback.Position == PositionType.VestBack)
-                    {
-                        vestBackModel.SendMessage("UpdateFeedbacks", feedback, SendMessageOptions.DontRequireReceiver);
-                    }
-
-                    else if (feedback.Position == PositionType.Head)
-                    {
-                        headModel.SendMessage("UpdateFeedbacks", feedback, SendMessageOptions.DontRequireReceiver);
+                        if (vis.Position == feedback.Position)
+                        {
+                            vis.UpdateFeedbacks(feedback);
+                        }
                     }
                 }
-                changedFeedbacks.Clear();
+                _changedFeedbacks.Clear();
             }
             finally
             {
-                Monitor.Exit(changedFeedbacks);
+                Monitor.Exit(_changedFeedbacks);
             }
         }
 
         void OnApplicationPause(bool pauseState)
         {
+            try
+            {
+                if (_sender != null)
+                {
+                    _sender.PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.All));
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+
             if (pauseState)
             {
                 OnDisable();
@@ -171,34 +174,11 @@ namespace Bhaptics.Tac.Unity
 
         void InitializeFeedbacks()
         {
-            foreach (var ui in uis)
-            {
-                ui.SetActive(visualizeFeedbacks);
-            }
+            visualFeedbacks = GetComponentsInChildren<VisualFeedabck>(true);
 
-            if (leftHandModel != null)
+            foreach (var go in visualFeedbacks)
             {
-                leftHandModel.gameObject.SetActive(visualizeFeedbacks);
-            }
-
-            if (rightHandModel != null)
-            {
-                rightHandModel.gameObject.SetActive(visualizeFeedbacks);
-            }
-
-            if (vestFrontModel != null)
-            {
-                vestFrontModel.gameObject.SetActive(visualizeFeedbacks);
-            }
-
-            if (vestBackModel != null)
-            {
-                vestBackModel.gameObject.SetActive(visualizeFeedbacks);
-            }
-
-            if (headModel != null)
-            {
-                headModel.gameObject.SetActive(visualizeFeedbacks);
+                go.gameObject.SetActive(visualizeFeedbacks);
             }
 
             OnFeedbackChanged(new HapticFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
@@ -208,30 +188,31 @@ namespace Bhaptics.Tac.Unity
         {
             if (!BhapticsUtils.IsPlayerInstalled())
             {
+                _hapticPlayer = new DumbPlayer();
                 return;
             }
 
-            if (initialized)
+            if (_isInit)
             {
                 return;
             }
 
-            initialized = true;
+            _isInit = true;
             InitializeFeedbacks();
 
             // Setup Haptic Player
-            var sender = new WebSocketSender(() => tryLaunchApp = true
+            _sender = new WebSocketSender(() => _isTryLaunchApp = true
             , () =>
             {
-                if (!tryLaunchApp)
+                if (!_isTryLaunchApp)
                 {
                     BhapticsUtils.LaunchPlayer();
-                    tryLaunchApp = true;
+                    _isTryLaunchApp = true;
                 }
             });
 
             var timer = GetComponent<UnityTimer>();
-            HapticPlayer = new HapticPlayer(sender, timer);
+            _hapticPlayer = new HapticPlayer(_sender, timer);
             LoadFeedbackFile();
         }
 
@@ -257,7 +238,7 @@ namespace Bhaptics.Tac.Unity
 
                         string json = LoadStringFromFile(filePath);
 
-                        HapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
+                        _hapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
                         FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tactosy"));
                     }
                     catch (Exception e)
@@ -299,68 +280,129 @@ namespace Bhaptics.Tac.Unity
                 return;
             }
 
-            if (leftHandModel == null)
-            {
-                Debug.Log("failed to find the left hand model for feedback visualization");
-                return;
-            }
-
-            if (rightHandModel == null)
-            {
-                Debug.Log("failed to find the right hand model for feedback visualization");
-                return;
-            }
-
-            if (vestFrontModel == null)
-            {
-                Debug.Log("failed to find the vestFront model for feedback visualization");
-                return;
-            }
-
-            if (vestBackModel == null)
-            {
-                Debug.Log("failed to find the vestBack model for feedback visualization");
-                return;
-            }
-
-            if (headModel == null)
-            {
-                Debug.Log("failed to find the head model for feedback visualization");
-                return;
-            }
-
-            if (changedFeedbacks == null)
+            if (_changedFeedbacks == null)
             {
                 return;
             }
 
-            lock (changedFeedbacks)
+            lock (_changedFeedbacks)
             {
-                changedFeedbacks.Add(feedback);
+                _changedFeedbacks.Add(feedback);
             }
         }
 
         public void Play(string key)
         {
-            if (HapticPlayer == null)
+            if (_hapticPlayer == null)
             {
                 Debug.Log("Haptic player is not initialized.");
                 return;
             }
-            HapticPlayer.SubmitRegistered(key);
+            _hapticPlayer.SubmitRegistered(key);
         }
-        
 
         public void TurnOff()
         {
-            if (HapticPlayer == null)
+            if (_hapticPlayer == null)
             {
                 Debug.Log("Haptic player is not initialized.");
                 return;
             }
 
-            HapticPlayer.TurnOff();
+            _hapticPlayer.TurnOff();
         }
+    }
+
+    public class DumbPlayer : IHapticPlayer
+    {
+        public void Dispose()
+        {
+            // nothing to do
+        }
+
+        public void Enable()
+        {
+            // nothing to do
+        }
+
+        public void Disable()
+        {
+            // nothing to do
+        }
+
+        public bool IsPlaying(string key)
+        {
+            // nothing to do
+            return false;
+        }
+
+        public bool IsPlaying()
+        {
+            // nothing to do
+            return false;
+        }
+
+        public void Register(string key, string path)
+        {
+            // nothing to do
+        }
+
+        public void Register(string key, BufferedHapticFeedback tactosyFile)
+        {
+            // nothing to do
+        }
+
+        public void Submit(string key, PositionType position, byte[] motorBytes, int durationMillis)
+        {
+            // nothing to do
+        }
+
+        public void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis)
+        {
+            // nothing to do
+        }
+
+        public void Submit(string key, PositionType position, DotPoint point, int durationMillis)
+        {
+            // nothing to do
+        }
+
+        public void Submit(string key, PositionType position, List<PathPoint> points, int durationMillis)
+        {
+            // nothing to do
+        }
+
+        public void Submit(string key, PositionType position, PathPoint point, int durationMillis)
+        {
+            // nothing to do
+        }
+
+        public void SubmitRegistered(string key, float intensity, float duration)
+        {
+            // nothing to do
+        }
+
+        public void SubmitRegistered(string key)
+        {
+            // nothing to do
+        }
+
+        public void SubmitRegistered(string key, float duration)
+        {
+            // nothing to do
+        }
+
+        public void TurnOff(string key)
+        {
+            // nothing to do
+        }
+
+        public void TurnOff()
+        {
+            // nothing to do
+        }
+
+        public event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChanged;
     }
 }
 

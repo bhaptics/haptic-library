@@ -7,34 +7,65 @@ namespace Bhaptics.Tac.Unity
     
     public class UnityTimer : MonoBehaviour, ITimer
     {
-        private int _interval = 20;
+        private float _interval = 0.02f;
         public event EventHandler Elapsed;
         private Coroutine timerCoroutine;
+        private float time = 0f;
+        private int count;
 
-        void OnTimeUpdate()
+        private int maxCountOnce = 5;
+
+        void OnEnable()
         {
-            if (Elapsed != null)
-            {
-                Elapsed(this, new EventArgs());
-            }
+            time = 0;
+            count = 0;
         }
 
-        IEnumerator TimerLoop()
+        void OnDisable()
+        {
+            time = 0;
+            count = 0;
+        }
+
+        private IEnumerator TimerLoop()
         {
             while (true)
             {
-                if (Elapsed != null)
+                if (time > 5f)
                 {
-                    try
+                    time = 0;
+                    count = 0;
+                }
+
+                time += Time.deltaTime;
+
+                var expectedCount = (int) (time / _interval);
+                var repeatCount = 0;
+                while (count < expectedCount)
+                {
+                    if (Elapsed != null)
                     {
-                        Elapsed(this, new EventArgs());
+                        try
+                        {
+                            Elapsed(this, new EventArgs());
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError(e);
+                        }
                     }
-                    catch (Exception e)
+                    count++;
+                    repeatCount++;
+                    
+                    if (repeatCount > maxCountOnce)
                     {
-                        Console.WriteLine(e);
+                        time = 0;
+                        count = 0;
+                        break;
                     }
                 }
-                yield return new WaitForSeconds(_interval*0.001f);
+
+                yield return null;
             }
         }
 
@@ -44,7 +75,8 @@ namespace Bhaptics.Tac.Unity
             {
                 return;
             }
-
+            time = 0;
+            count = 0;
             timerCoroutine = StartCoroutine(TimerLoop());
         }
 

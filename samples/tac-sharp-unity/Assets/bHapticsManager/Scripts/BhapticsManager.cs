@@ -228,24 +228,30 @@ namespace Bhaptics.Tac.Unity
 
             try
             {
-                string[] allPaths = Directory.GetFiles(fileRootPath, "*.tactosy", SearchOption.AllDirectories);
+                string[] extensions = { "*.tactosy", "*.tact"};
 
-                foreach (var filePath in allPaths)
+                foreach (var extension in extensions)
                 {
-                    try
-                    {
-                        var fileName = Path.GetFileNameWithoutExtension(filePath);
+                    string[] allPaths = Directory.GetFiles(fileRootPath, extension, SearchOption.AllDirectories);
 
-                        string json = LoadStringFromFile(filePath);
-
-                        _hapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
-                        FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tactosy"));
-                    }
-                    catch (Exception e)
+                    foreach (var filePath in allPaths)
                     {
-                        Debug.LogError("failed to read feedback file " + filePath + " : " + e.Message);
+                        try
+                        {
+                            var fileName = Path.GetFileNameWithoutExtension(filePath);
+
+                            string json = LoadStringFromFile(filePath);
+
+                            _hapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
+                            FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tactosy"));
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogError("failed to read feedback file " + filePath + " : " + e.Message);
+                        }
                     }
                 }
+
             }
             catch (Exception e)
             {

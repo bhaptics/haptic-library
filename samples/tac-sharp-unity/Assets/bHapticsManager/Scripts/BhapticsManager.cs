@@ -25,6 +25,7 @@ namespace Bhaptics.Tac.Unity
 
         private VisualFeedabck[] visualFeedbacks;
 
+        [Tooltip("Show visual feedabck or not")]
         [SerializeField]
         public bool visualizeFeedbacks;
 
@@ -39,25 +40,49 @@ namespace Bhaptics.Tac.Unity
         [SerializeField]
         internal List<SignalMapping> FeedbackMappings;
 
-//        public HapticPlayer HapticPlayer;
-        private IHapticPlayer _hapticPlayer;
+        private readonly List<HapticFeedback> _changedFeedbacks = new List<HapticFeedback>();
 
-        private WebSocketSender _sender;
-        public IHapticPlayer HapticPlayer()
-        {
-            if (_hapticPlayer == null)
+        private static IHapticPlayer _hapticPlayer;
+        private static bool _isTryLaunchApp;
+
+        private static WebSocketSender _sender;
+        public static IHapticPlayer HapticPlayer {
+            get
             {
-                InitPlayer();
-            }
+                if (_hapticPlayer == null)
+                {
+                    if (!BhapticsUtils.IsPlayerInstalled())
+                    {
+                        _hapticPlayer = new DumbPlayer();
+                    }
+                    else
+                    {
+                        _sender = new WebSocketSender(() => _isTryLaunchApp = true
+                            , () =>
+                            {
+                                if (!_isTryLaunchApp)
+                                {
+                                    BhapticsUtils.LaunchPlayer();
+                                    _isTryLaunchApp = true;
+                                }
+                            });
+                        var manager = GameObject.FindObjectOfType<BhapticsManager>();
 
-            return _hapticPlayer;
+                        if (manager == null)
+                        {
+                            manager = new BhapticsManager();
+                        }
+                        var timer = manager.GetComponent<UnityTimer>();
+
+                        _hapticPlayer = new HapticPlayer(_sender, timer);
+                    }
+                }
+
+                return _hapticPlayer;
+            }
         }
 
         #region Unity Method
-
-        private readonly List<HapticFeedback> _changedFeedbacks = new List<HapticFeedback>();
-        private bool _isInit;
-        private bool _isTryLaunchApp;
 
         void Awake()
         {
@@ -73,9 +98,6 @@ namespace Bhaptics.Tac.Unity
             {
                 Debug.Log("bHaptics Player is not running, try launching bHaptics Player.");
                 BhapticsUtils.LaunchPlayer();
-                _isTryLaunchApp = true;
-                
-                return;
             }
         }
 
@@ -87,10 +109,12 @@ namespace Bhaptics.Tac.Unity
                 return;
             }
 
-            InitPlayer();
+            InitVisualFeedback();
 
-            _hapticPlayer.FeedbackChanged += OnFeedbackChanged;
-            _hapticPlayer.Enable();
+            HapticPlayer.FeedbackChanged += OnFeedbackChanged;
+            HapticPlayer.Enable();
+
+            LoadFeedbackFile();
         }
 
         void OnDisable()
@@ -99,9 +123,9 @@ namespace Bhaptics.Tac.Unity
             {
                 return;
             }
-            _hapticPlayer.TurnOff();
-            _hapticPlayer.Disable();
-            _hapticPlayer.FeedbackChanged -= OnFeedbackChanged;
+            HapticPlayer.TurnOff();
+            HapticPlayer.Disable();
+            HapticPlayer.FeedbackChanged -= OnFeedbackChanged;
         }
 
         void Update()
@@ -172,7 +196,7 @@ namespace Bhaptics.Tac.Unity
 
         #endregion
 
-        void InitializeFeedbacks()
+        void InitVisualFeedback()
         {
             visualFeedbacks = GetComponentsInChildren<VisualFeedabck>(true);
 
@@ -182,38 +206,6 @@ namespace Bhaptics.Tac.Unity
             }
 
             OnFeedbackChanged(new HapticFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
-        }
-
-        public void InitPlayer()
-        {
-            if (!BhapticsUtils.IsPlayerInstalled())
-            {
-                _hapticPlayer = new DumbPlayer();
-                return;
-            }
-
-            if (_isInit)
-            {
-                return;
-            }
-
-            _isInit = true;
-            InitializeFeedbacks();
-
-            // Setup Haptic Player
-            _sender = new WebSocketSender(() => _isTryLaunchApp = true
-            , () =>
-            {
-                if (!_isTryLaunchApp)
-                {
-                    BhapticsUtils.LaunchPlayer();
-                    _isTryLaunchApp = true;
-                }
-            });
-
-            var timer = GetComponent<UnityTimer>();
-            _hapticPlayer = new HapticPlayer(_sender, timer);
-            LoadFeedbackFile();
         }
 
         private void LoadFeedbackFile()
@@ -242,7 +234,7 @@ namespace Bhaptics.Tac.Unity
 
                             string json = LoadStringFromFile(filePath);
 
-                            _hapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
+                            HapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
                             FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tactosy"));
                         }
                         catch (Exception e)
@@ -299,23 +291,12 @@ namespace Bhaptics.Tac.Unity
 
         public void Play(string key)
         {
-            if (_hapticPlayer == null)
-            {
-                Debug.Log("Haptic player is not initialized.");
-                return;
-            }
-            _hapticPlayer.SubmitRegistered(key);
+            HapticPlayer.SubmitRegistered(key);
         }
 
         public void TurnOff()
         {
-            if (_hapticPlayer == null)
-            {
-                Debug.Log("Haptic player is not initialized.");
-                return;
-            }
-
-            _hapticPlayer.TurnOff();
+            HapticPlayer.TurnOff();
         }
     }
 

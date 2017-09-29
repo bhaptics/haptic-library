@@ -130,6 +130,7 @@ bool isAnyFeedbackPlaying = HapticPlayer.IsPlaying();
 
 ### pathPrefix 
 * Define the path of the .tact feedback files
+* Default Path : Assets/bHapticsManager/Feedbacks/
 
 ### useStreamingPath 
 * Specifies to use the StreamingPath for getting feedback files rather than the pathPrefix.
@@ -137,7 +138,7 @@ bool isAnyFeedbackPlaying = HapticPlayer.IsPlaying();
 To avoid this problem, unity provides ['StreamingAssets'](https://docs.unity3d.com/ScriptReference/Application-streamingAssetsPath.html) folder for automatic loading during building.
 * If this option is checked, [bHapticsManger] reads feedback files from the 'StreamingAssets/{pathPrefix}' folder.
 * If this option is not checked, you need to manually copy feedback files to the destination folder. <br/>
-The default destination folder path for windows will be 'Assets/{pathPrefix}'
+The default destination folder path for windows will be '{pathPrefix}'
 
 
 ## Notes

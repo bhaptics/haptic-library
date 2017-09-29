@@ -128,6 +128,15 @@ namespace Bhaptics.Tac.Unity
             HapticPlayer.FeedbackChanged -= OnFeedbackChanged;
         }
 
+        void OnDestroy()
+        {
+            if (HapticPlayer != null)
+            {
+                HapticPlayer.Dispose();
+            }
+            _hapticPlayer = null;
+        }
+
         void Update()
         {
             if (!BhapticsUtils.IsPlayerInstalled())

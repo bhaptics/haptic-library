@@ -20,12 +20,12 @@ namespace Bhaptics.Tac.Unity
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                _manager.HapticPlayer().Submit("left", PositionType.Left, new DotPoint(_motorIndex, 100), 1000);
-                _manager.HapticPlayer().Submit("right", PositionType.Right, new DotPoint(_motorIndex, 100), 1000);
-                _manager.HapticPlayer().Submit("head", PositionType.Head, new DotPoint(_motorIndex, 100), 1000);
-                _manager.HapticPlayer().Submit("vestfront", PositionType.VestFront, new DotPoint(_motorIndex, 100), 1000);
-                _manager.HapticPlayer().Submit("vestback", PositionType.VestBack, new DotPoint(_motorIndex, 100), 1000);
-                _manager.HapticPlayer().Submit("racket", PositionType.Racket, new DotPoint(_motorIndex, 100), 1000);
+                BhapticsManager.HapticPlayer.Submit("left", PositionType.Left, new DotPoint(_motorIndex, 100), 1000);
+                BhapticsManager.HapticPlayer.Submit("right", PositionType.Right, new DotPoint(_motorIndex, 100), 1000);
+                BhapticsManager.HapticPlayer.Submit("head", PositionType.Head, new DotPoint(_motorIndex, 100), 1000);
+                BhapticsManager.HapticPlayer.Submit("vestfront", PositionType.VestFront, new DotPoint(_motorIndex, 100), 1000);
+                BhapticsManager.HapticPlayer.Submit("vestback", PositionType.VestBack, new DotPoint(_motorIndex, 100), 1000);
+                BhapticsManager.HapticPlayer.Submit("racket", PositionType.Racket, new DotPoint(_motorIndex, 100), 1000);
                 _motorIndex++;
                 if (_motorIndex >= 20)
                 {

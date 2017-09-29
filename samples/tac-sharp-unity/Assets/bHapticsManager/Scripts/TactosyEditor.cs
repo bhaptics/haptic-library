@@ -19,7 +19,6 @@ namespace Bhaptics.Tac.Unity
             if (!init)
             {
                 init = true;
-                manager.InitPlayer();
             }
             
             foreach (var mappings in manager.FeedbackMappings)

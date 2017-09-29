@@ -139,5 +139,19 @@ To avoid this problem, unity provides ['StreamingAssets'](https://docs.unity3d.c
 * If this option is not checked, you need to manually copy feedback files to the destination folder. <br/>
 The default destination folder path for windows will be 'Assets/{pathPrefix}'
 
+
+## Notes
+* Migration from 1.0.3 to 1.0.4
+
+```
+var hapticPlayer = FindObjectOfType<BhapticsManager>().HapticPlayer();
+```
+
+To 
+
+```
+var hapticPlayer = BhapticsManager.HapticPlayer;
+```
+
 <br>
 Copyright 2017 bHaptics Inc.

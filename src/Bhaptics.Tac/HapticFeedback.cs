@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bhaptics.Tac.Designer;
 
 namespace Bhaptics.Tac
 {
@@ -147,6 +148,8 @@ namespace Bhaptics.Tac
     {
         private static Dictionary<string, PositionType> _positionMappings;
         private static Dictionary<string, FeedbackMode> _modeMappings;
+        private static Dictionary<string, PlaybackType> _playbackMapping;
+        private static Dictionary<string, PathMovingPattern> _movingPatternMapping;
 
         public static PositionType ToPositionType(string str)
         {
@@ -188,6 +191,48 @@ namespace Bhaptics.Tac
             }
 
             return FeedbackMode.DOT_MODE;
+        }
+
+        public static PlaybackType ToPlaybackType(string str)
+        {
+            if (_playbackMapping == null)
+            {
+                _playbackMapping = new Dictionary<string, PlaybackType>();
+
+                foreach (PlaybackType positionType in Enum.GetValues(typeof(PlaybackType)))
+                {
+                    _playbackMapping[positionType.ToString()] = positionType;
+                }
+            }
+
+            PlaybackType type;
+            if (_playbackMapping.TryGetValue(str, out type))
+            {
+                return type;
+            }
+
+            return PlaybackType.NONE;
+        }
+
+        public static PathMovingPattern ToMovingPattern(string str)
+        {
+            if (_movingPatternMapping == null)
+            {
+                _movingPatternMapping = new Dictionary<string, PathMovingPattern>();
+
+                foreach (PathMovingPattern positionType in Enum.GetValues(typeof(PathMovingPattern)))
+                {
+                    _movingPatternMapping[positionType.ToString()] = positionType;
+                }
+            }
+
+            PathMovingPattern type;
+            if (_movingPatternMapping.TryGetValue(str, out type))
+            {
+                return type;
+            }
+
+            return PathMovingPattern.CONST_SPEED;
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Bhaptics.Tac.Designer;
 
 namespace Bhaptics.Tac
 {
@@ -7,33 +10,39 @@ namespace Bhaptics.Tac
     /// </summary>
     public class HapticFeedbackFile
     {
-        public int intervalMillis;
-        public int size;
-        public int durationMillis;
+        public int IntervalMillis;
+        public int Size;
+        public int DurationMillis;
 
-        public Dictionary<int, HapticFeedback[]> feedback;
+        public Dictionary<int, HapticFeedback[]> Feedback;
+
+        public Project Project;
     }
 
     public class HapticFeedbackBridge
     {
-        public string position { get; set; }
-        public string mode { get; set; }
-        public byte[] values { get; set; }
+        public string Position { get; set; }
+        public string Mode { get; set; }
+        public int[] Values { get; set; }
 
         public static HapticFeedback AsTactosyFeedback(HapticFeedbackBridge bridge)
         {
-            return new HapticFeedback(EnumParser.ToPositionType(bridge.position), 
-                bridge.values, EnumParser.ToMode(bridge.mode));
+            byte[] result = new byte[bridge.Values.Length * sizeof(int)];
+            Buffer.BlockCopy(bridge.Values, 0, result, 0, result.Length);
+
+            return new HapticFeedback(EnumParser.ToPositionType(bridge.Position),
+                result, EnumParser.ToMode(bridge.Mode));
         }
     }
 
     public class HapticFeedbackFileBridge
     {
-        public int intervalMillis;
-        public int size;
-        public int durationMillis;
+        public int IntervalMillis;
+        public int Size;
+        public int DurationMillis;
 
-        public Dictionary<string, HapticFeedbackBridge[]> feedback;
+        public Dictionary<string, HapticFeedbackBridge[]> Feedback;
+        public Project Project;
 
         public static HapticFeedbackFile AsTactosyFile(HapticFeedbackFileBridge bridge)
         {
@@ -43,12 +52,12 @@ namespace Bhaptics.Tac
             }
 
             HapticFeedbackFile file = new HapticFeedbackFile();
-            file.intervalMillis = bridge.intervalMillis;
-            file.durationMillis = bridge.durationMillis;
-            file.size = bridge.size;
-            file.feedback = new Dictionary<int, HapticFeedback[]>();
+            file.IntervalMillis = bridge.IntervalMillis;
+            file.DurationMillis = bridge.DurationMillis;
+            file.Size = bridge.Size;
+            file.Feedback = new Dictionary<int, HapticFeedback[]>();
 
-            foreach (var feed in bridge.feedback)
+            foreach (var feed in bridge.Feedback)
             {
                 var key = int.Parse(feed.Key);
                 HapticFeedback[] feedbacks = new HapticFeedback[feed.Value.Length];
@@ -57,8 +66,16 @@ namespace Bhaptics.Tac
                     feedbacks[i] = HapticFeedbackBridge.AsTactosyFeedback(feed.Value[i]);
                 }
 
-                file.feedback[key] = feedbacks;
+                file.Feedback[key] = feedbacks;
             }
+            var project = bridge.Project;
+
+            if (project != null)
+            {
+                Debug.WriteLine($"{project}");
+            }
+
+            file.Project = bridge.Project;
             return file;
         }
     }

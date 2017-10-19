@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Bhaptics.fastJSON;
+using Bhaptics.Tac.Designer;
 
 namespace Bhaptics.Tac
 {
@@ -140,7 +142,7 @@ namespace Bhaptics.Tac
 
         private static HapticFeedbackFile Parse(string json)
         {
-            var obj = SimpleJson.DeserializeObject<HapticFeedbackFileBridge>(json);
+            var obj = JSON.ToObject<HapticFeedbackFileBridge>(json);
 
             return HapticFeedbackFileBridge.AsTactosyFile(obj);
         }

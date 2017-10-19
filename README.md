@@ -31,4 +31,75 @@ $ git clone https://github.com/bhaptics/tac-sharp.git
 Last update of README.md: Jun 15th, 2017.
 
 
+## Websocket Communication V2
+* request url : /v2/feedbacks
+// Register Remove는 분리 필요하다.. 
+### Request
+```json
+{
+    "register" : [{
+        "key" : "feedback1",
+        "project" : {
+                "tracks" : [...],
+                "layout" : {...}
+		    }
+        },{
+        "key" : "feedback2",
+        "project" : {
+            "tracks" : [...],
+            "layout" : {...}
+		}
+	}],
+	"submit" : [{
+            "type" : "frame",
+            "key" : "newFeedback",
+            "frame" : {}
+        }, {
+            "type" : "key",
+            "key" : "newFeedback"
+        }, {
+            "type" : "turnOff",
+            "key" : "newFeedback2"
+        }, {
+            "type" : "turnOffAll"
+        },
+    ]
+}
+
+```
+
+* Response 
+```json
+{
+    "status" : "success",
+    "data" : {
+        "registered" : ["a", "c"],
+        "active" : ["a", "c"],
+        "connectedDevices" : 3,
+        "connectedPositions" : ["Left", "Right", "VestFront", "VestBack", "Head", "Racket"],
+        "activeStatus" : [
+            "Left" : [0, 0, 0, 0, 0, 0, 0, 0, 100, 0, ..., 0],
+            "Right" : [0, 0, 0, 0, 0, 0, 0, 0, 100, 0, ..., 0],
+            "VestFront" : [0, 0, 0, 0, 0, 0, 0, 0, 100, 0, ..., 0],
+            "VestBack" : [0, 0, 0, 0, 0, 0, 0, 0, 100, 0, ..., 0],
+            "Head" : [0, 0, 0, 0, 0, 0, 0, 0, 100, 0, ..., 0],
+            "Racket" : [0, 0, 0, 0, 0, 0, 0, 0, 100, 0, ..., 0]
+        ]
+    }
+}
+```
+
+```json
+{
+    "status" : "error",
+	"data" : [{
+		"type" : "register",
+        "source" : "type"
+        }
+	]
+}
+```
+
+
+
 ###### Copyright (c) 2017 bHaptics Inc. All rights reserved.

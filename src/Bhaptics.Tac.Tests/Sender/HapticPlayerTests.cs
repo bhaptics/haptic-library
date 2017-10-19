@@ -10,10 +10,9 @@ namespace Bhaptics.Tac.Tests.Sender
         [TestMethod()]
         public void HapticPlayerTest()
         {
-            HapticPlayer player = new HapticPlayer();
+            var player = new HapticPlayer();
 
             var points = new List<DotPoint> {new DotPoint(2, 100), new DotPoint(3, 100)};
-            player.Register(key, new BufferedHapticFeedback(PositionType.Left, points, 2000));
             
             player.SubmitRegistered(key);
 
@@ -21,6 +20,7 @@ namespace Bhaptics.Tac.Tests.Sender
             {   
             }
             Assert.IsNotNull(player);
+            
         }
     }
 }

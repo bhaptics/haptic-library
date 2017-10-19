@@ -1,173 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Bhaptics.Tac.Designer;
 using Bhaptics.Tac.Sender;
 
 namespace Bhaptics.Tac
 {
-    /// <summary>
-    /// HapticPlayer
-    /// </summary>
-    /// <seealso cref="IHapticPlayer" />
     public class HapticPlayer : IHapticPlayer
     {
-        private int _currentTime = 0;
-        private int _motorSize = 20;
-        private readonly int _interval;
-        private bool _enable = false;
-        
-        // .NET 3.5 doesnot support System.Collections.Concurrent so let's use lock....
-        private readonly Dictionary<string, BufferedHapticFeedback> _registered;
-        private readonly Dictionary<string, BufferedHapticFeedback> _actives;
-        private readonly ITimer _timer;
-        private readonly ISender _sender;
+        private readonly DefaultWebSocketSender _sender;
+        private readonly List<string> _activeKeys = new List<string>();
+        public event FeedbackEvent.StatusReceivedEvent StatusReceived;
 
-        public HapticPlayer(ISender sender, ITimer timer, int interval = 20)
+        public HapticPlayer(FeedbackEvent.ConnectionEvent connectionChanged, bool tryReconnect = true)
         {
-            if (interval <= 0)
+            _sender = new DefaultWebSocketSender();
+            _sender.StatusReceived += feedback =>
             {
-                throw new HapticException("Interval should be positive : " + interval);
-            }
+                StatusReceived?.Invoke(feedback);
 
-            if (timer == null)
+                lock (_activeKeys)
+                {
+                    _activeKeys.Clear();
+                    _activeKeys.AddRange(feedback.ActiveKeys);
+                }
+            };
+            _sender.ConnectionChanged += (isConn) =>
             {
-                throw new HapticException("Timer should not be null");
-            }
-
-            _registered = new Dictionary<string, BufferedHapticFeedback>();
-            _actives = new Dictionary<string, BufferedHapticFeedback>();
-            _sender = sender;
-            _timer = timer;
-            _timer.Elapsed += TimerOnElapsed;
-
-            _interval = interval;
-
-            Enable();
+                connectionChanged?.Invoke(isConn);
+            };
+            _sender.Initialize(tryReconnect);
         }
 
-        public HapticPlayer() : this(new WebSocketSender(), new MultimediaTimer())
+        public HapticPlayer(bool tryReconnect = true) : this(null, tryReconnect)
         {
         }
-        
-        private void PlayFeedback(HapticFeedbackFrame feedback)
+
+        public void Dispose()
         {
-            if (!_enable)
-            {
-                _sender.PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(feedback.Position));
-                return;
-            }
-
-            if (feedback.DotPoints.Count > 0)
-            {
-                Debug.WriteLine(feedback.Position + ", " + feedback.DotPoints.Count);
-            }
-
-            // callback
-            
-            _sender.PlayFeedback(feedback);
+            _sender.StoreTurnOff();
+            _sender.Dispose();
         }
 
-        private void TimerOnElapsed(object sender, EventArgs e)
+        public void Enable()
         {
-            if (_actives.Count == 0)
-            {
-                if (_currentTime > 0)
-                {
-                    _currentTime = 0;
-                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Right));
-                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Left));
-                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestFront));
-                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.VestBack));
-                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Head));
-                    PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.Racket));
-                }
-
-                return;
-            }
-            
-            List<string> expired = new List<string>();
-
-            Dictionary<PositionType, HapticFeedbackFrame> feedbackMap = new Dictionary<PositionType, HapticFeedbackFrame>();
-            feedbackMap[PositionType.Left] = new HapticFeedbackFrame{Position = PositionType.Left};
-            feedbackMap[PositionType.Right] = new HapticFeedbackFrame { Position = PositionType.Right };
-            feedbackMap[PositionType.VestBack] = new HapticFeedbackFrame { Position = PositionType.VestBack };
-            feedbackMap[PositionType.VestFront] = new HapticFeedbackFrame { Position = PositionType.VestFront };
-            feedbackMap[PositionType.Head] = new HapticFeedbackFrame { Position = PositionType.Head };
-            feedbackMap[PositionType.Racket] = new HapticFeedbackFrame { Position = PositionType.Racket };
-
-            foreach (KeyValuePair<string, BufferedHapticFeedback> keyPair in _actives)
-            {
-                BufferedHapticFeedback data = keyPair.Value;
-                if (data.StartTime > _currentTime || data.StartTime == -1)
-                {
-                    data.StartTime = _currentTime;
-                }
-                int timePast = _currentTime - data.StartTime;
-
-                if (timePast > data.EndTime)
-                {
-                    expired.Add(keyPair.Key);
-                }
-                else
-                {
-                    if (data.HapticFeedback.ContainsKey(timePast))
-                    {
-                        var hapticFeedbackData = data.HapticFeedback[timePast];
-                        foreach (var feedback in hapticFeedbackData)
-                        {
-                            if (!feedbackMap.ContainsKey(feedback.Position))
-                            {
-                                feedbackMap[feedback.Position] = new HapticFeedbackFrame { Position = feedback.Position };
-                            }
-                            
-                            feedbackMap[feedback.Position].DotPoints.AddRange(feedback.DotPoints);
-                            feedbackMap[feedback.Position].Texture = feedback.Texture;
-                            feedbackMap[feedback.Position].PathPoints.AddRange(feedback.PathPoints);
-                        }
-                    }
-                }
-            }
-
-            foreach (var keyValue in feedbackMap)
-            {
-                var frame = keyValue.Value;
-                PlayFeedback(frame);
-            }
-
-            foreach (string key in expired)
-            {
-                _actives.Remove(key);
-            }
-
-            _currentTime += _interval;
+            _sender.Enable();
         }
 
-        #region public methods
+        public void Disable()
+        {
+            _sender.Disable();
+        }
+
         public bool IsPlaying(string key)
         {
-            return _actives.ContainsKey(key);
+
+            lock (_activeKeys)
+            {
+                return _activeKeys.Contains(key);
+            }
         }
-        
+
         public bool IsPlaying()
         {
-            return _actives.Count > 0;
+            return _activeKeys.Count > 0;
         }
-        
+
         public void Register(string key, string path)
         {
             HapticFeedbackFile file = CommonUtils.ConvertToTactosyFile(path);
-            BufferedHapticFeedback bufferedHapticFeedback = new BufferedHapticFeedback(file);
-            Register(key, bufferedHapticFeedback);
+            Register(key, file.Project);
         }
 
-        public void Register(string key, BufferedHapticFeedback bufferedHapticFeedback)
+        public void Register(string key, Project project)
         {
-            _registered[key] = bufferedHapticFeedback;
+            _sender.Register(key, project);
         }
-        
-        public void Submit(string key, PositionType position, byte[] motorBytes, int durationMillis)
+
+        public void Submit(string key, PositionType position, 
+            byte[] motorBytes, int durationMillis)
         {
-            List<DotPoint> points = new List<DotPoint>();
+            var points = new List<DotPoint>();
             for (int i = 0; i < motorBytes.Length; i++)
             {
                 if (motorBytes[i] > 0)
@@ -176,44 +89,36 @@ namespace Bhaptics.Tac
                 }
             }
 
-            _actives[key] = new BufferedHapticFeedback(position, points, durationMillis);
+            Submit(key, position, points, durationMillis);
         }
 
-        public void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis)
+        public void Submit(string key, 
+            PositionType position, 
+            List<DotPoint> points, 
+            int durationMillis)
         {
-            byte[] bytes = new byte[_motorSize];
-
-            foreach (var dotPoint in points)
-            {
-                bytes[dotPoint.Index] = (byte)dotPoint.Intensity;
-            }
-
-            Submit(key, position, bytes, durationMillis);
+            var frame = Frame.AsDotPointFrame(points, position, durationMillis);
+            _sender.Store(key, frame);
         }
 
         public void Submit(string key, PositionType position, DotPoint point, int durationMillis)
         {
-            Submit(key, position, new List<DotPoint> {point}, durationMillis);
+            Submit(key, position, new List<DotPoint> { point }, durationMillis);
         }
-        
+
         public void Submit(string key, PositionType position, List<PathPoint> points, int durationMillis)
         {
-            _actives[key] = new BufferedHapticFeedback(position, points, durationMillis);
+            var frame = Frame.AsPathPointFrame(points, position, durationMillis);
+            _sender.Store(key, frame);
         }
 
         public void Submit(string key, PositionType position, PathPoint point, int durationMillis)
         {
-            Submit(key, position, new List<PathPoint> {point}, durationMillis);
+            Submit(key, position, new List<PathPoint> { point }, durationMillis);
         }
-        
+
         public void SubmitRegistered(string key, float intensity, float duration)
         {
-            if (!_registered.ContainsKey(key))
-            {
-                Debug.WriteLine("Key : " + key + " is not registered.");
-                return;
-            }
-
             if (duration < 0.01f || duration > 100f)
             {
                 Debug.WriteLine("not allowed duration " + duration);
@@ -226,127 +131,33 @@ namespace Bhaptics.Tac
                 return;
             }
 
-            BufferedHapticFeedback signal = _registered[key];
-            BufferedHapticFeedback feedback = BufferedHapticFeedback.Copy(signal, _interval, intensity, duration);
-
-            _actives[key] = feedback;
+            throw new NotImplementedException();
         }
-        
+
         public void SubmitRegistered(string key)
         {
-            if (!_registered.ContainsKey(key))
-            {
-                Debug.WriteLine("Key : " + key + " is not registered.");
-                return;
-            }
-            var signal = _registered[key];
-
-            signal.StartTime = -1;
-            if (!_actives.ContainsKey(key))
-            {
-                _actives[key] = signal;
-            }
+            _sender.Store(key);
+//            SubmitRegistered(key, 1f, 1f);
         }
 
         public void SubmitRegistered(string key, float duration)
         {
-            if (!_registered.ContainsKey(key))
-            {
-                Debug.WriteLine("Key : " + key + " is not registered.");
-                return;
-            }
-
             if (duration < 0 || duration > 1)
             {
                 Debug.WriteLine("ratio should be between [0, 1]");
                 return;
             }
-            var signal = _registered[key];
-            signal.StartTime = _currentTime - (int) (signal.EndTime * duration / _interval) * _interval;
-            if (!_actives.ContainsKey(key))
-            {
-                _actives[key] = signal;
-            }
+            SubmitRegistered(key, 1f, duration);
         }
-        
+
         public void TurnOff(string key)
         {
-            if (!_actives.ContainsKey(key))
-            {
-                Debug.WriteLine("feedback with key( " + key + " ) is not playing.");
-                return;
-            }
-
-            _actives.Remove(key);
+            _sender.StoreTurnOff(key);
         }
-        
+
         public void TurnOff()
         {
-            _actives.Clear();
-        }
-
-        public void Enable()
-        {
-            if (_enable)
-            {
-                Debug.WriteLine("Already Started.");
-                return;
-            }
-            _actives.Clear();
-            if (_timer == null)
-            {
-                return;
-            }
-
-            _timer.StartTimer();
-            _enable = true;
-            PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.All));
-
-            _sender.FeedbackChangeReceived += SenderOnFeedbackChangeReceived;
-        }
-
-        private void SenderOnFeedbackChangeReceived(HapticFeedback hapticFeedback)
-        {
-            if (FeedbackChanged != null)
-            {
-                FeedbackChanged(hapticFeedback);
-            }
-        }
-
-        public void Disable()
-        {
-            if (!_enable)
-            {
-                Debug.WriteLine("Already Stopped.");
-                return;
-            }
-
-            _actives.Clear();
-            if (_timer == null)
-            {
-                return;
-            }
-
-            _timer.StopTimer();
-            _enable = false;
-
-//            PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.All));
-
-            _sender.FeedbackChangeReceived -= SenderOnFeedbackChangeReceived;
-        }
-
-        public event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChanged;
-
-        #endregion
-
-        public void Dispose()
-        {
-            Disable();
-            if (_sender != null)
-            {
-                _sender.Dispose();
-            }
-            
+            _sender.StoreTurnOff();
         }
     }
 }

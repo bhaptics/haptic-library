@@ -46,8 +46,8 @@ namespace Bhaptics.Tac
         private void Initialize(HapticFeedbackFile hapticFeedbackFile)
         {
             StartTime = -1;
-            EndTime = hapticFeedbackFile.durationMillis;
-            var feedback = hapticFeedbackFile.feedback;
+            EndTime = hapticFeedbackFile.DurationMillis;
+            var feedback = hapticFeedbackFile.Feedback;
             HapticFeedback = new Dictionary<int, HapticFeedbackFrame[]>();
 
             foreach (var keyValuePair in feedback)
@@ -255,7 +255,6 @@ namespace Bhaptics.Tac
                             var pt = new PathPoint(point.X, point.Y, val);
                             copiedFeedbacks[i].PathPoints.Add(pt);
                         }
-                        
 
                         bufferedHapticFeedback.HapticFeedback[time] = copiedFeedbacks;
                     }

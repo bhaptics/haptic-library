@@ -1041,7 +1041,10 @@ namespace Bhaptics.Tac
                             builder.Append((bool)value ? "true" : "false");
                         else if (value == null)
                             builder.Append("null");
-                        else
+                        else if (value is Enum)
+                        {
+                            SerializeValue(jsonSerializerStrategy, value.ToString(), builder);
+                        } else 
                         {
                             object serializedObject;
                             success = jsonSerializerStrategy.TrySerializeNonPrimitiveObject(value, out serializedObject);
@@ -1072,7 +1075,7 @@ namespace Bhaptics.Tac
                 else
                     if (!SerializeValue(jsonSerializerStrategy, value, builder)) return false;
                 builder.Append(":");
-                if (!SerializeValue(jsonSerializerStrategy, value, builder))
+                 if (!SerializeValue(jsonSerializerStrategy, value, builder))
                     return false;
                 first = false;
             }
@@ -1276,6 +1279,29 @@ namespace Bhaptics.Tac
             return clrPropertyName;
         }
 
+        public string FirstLetterToUpper(string str)
+        {
+            if (str == null)
+                return null;
+
+            if (str.Length > 1)
+                return char.ToUpper(str[0]) + str.Substring(1);
+
+            return str.ToUpper();
+        }
+
+        public string FirstLetterToLower(string str)
+        {
+            if (str == null)
+                return null;
+
+            if (str.Length > 1)
+                return char.ToLower(str[0]) + str.Substring(1);
+
+            return str.ToLower();
+        }
+
+
         internal virtual ReflectionUtils.ConstructorDelegate ContructorDelegateFactory(Type key)
         {
             return ReflectionUtils.GetContructor(key, key.IsArray ? ArrayConstructorParameterTypes : EmptyTypes);
@@ -1362,13 +1388,33 @@ namespace Bhaptics.Tac
                         if (isValid && Uri.TryCreate(str, UriKind.RelativeOrAbsolute, out result))
                             return result;
 
-												return null;
+						return null;
                     }
                   
-									if (type == typeof(string))  
-										return str;
+					if (type == typeof(string))  
+						return str;
 
-									return Convert.ChangeType(str, type, CultureInfo.InvariantCulture);
+                    if ("Bhaptics.Tac.FeedbackMode".Equals(type.FullName))
+                    {
+                        return EnumParser.ToMode(str);
+                    }
+
+                    if ("Bhaptics.Tac.Designer.PlaybackType".Equals(type.FullName))
+                    {
+                        return EnumParser.ToPlaybackType(str);
+                    }
+
+                    if ("Bhaptics.Tac.Designer.PathMovingPattern".Equals(type.FullName))
+                    {
+                        return EnumParser.ToMovingPattern(str);
+                    }
+
+                    if ("Bhaptics.Tac.PositionType".Equals(type.FullName))
+                    {
+                        return EnumParser.ToMovingPattern(str);
+                    }
+
+                    return Convert.ChangeType(str, type, CultureInfo.InvariantCulture);
                 }
                 else
                 {
@@ -1413,9 +1459,23 @@ namespace Bhaptics.Tac
                         Type genericType = typeof(Dictionary<,>).MakeGenericType(keyType, valueType);
 
                         IDictionary dict = (IDictionary)ConstructorCache[genericType]();
-
+                        bool isPosType = "Bhaptics.Tac.PositionType".Equals(keyType.FullName);
+                        
                         foreach (KeyValuePair<string, object> kvp in jsonObject)
-                            dict.Add(kvp.Key, DeserializeObject(kvp.Value, valueType));
+                        {
+                            var key = FirstLetterToUpper(kvp.Key);
+
+                            if (isPosType)
+                            {
+                                dict.Add(EnumParser.ToPositionType(key), 
+                                    DeserializeObject(kvp.Value, valueType));
+                                continue;
+                            }
+                            dict.Add(key, DeserializeObject(kvp.Value, valueType));
+
+
+                        }
+                        
 
                         obj = dict;
                     }
@@ -1429,7 +1489,8 @@ namespace Bhaptics.Tac
                             foreach (KeyValuePair<string, KeyValuePair<Type, ReflectionUtils.SetDelegate>> setter in SetCache[type])
                             {
                                 object jsonValue;
-                                if (jsonObject.TryGetValue(setter.Key, out jsonValue))
+                                var key = FirstLetterToLower(setter.Key);
+                                if (jsonObject.TryGetValue(key, out jsonValue))
                                 {
                                     jsonValue = DeserializeObject(jsonValue, setter.Value.Key);
                                     setter.Value.Value(obj, jsonValue);
@@ -1510,6 +1571,7 @@ namespace Bhaptics.Tac
                 return false;
             IDictionary<string, object> obj = new JsonObject();
             IDictionary<string, ReflectionUtils.GetDelegate> getters = GetCache[type];
+            
             foreach (KeyValuePair<string, ReflectionUtils.GetDelegate> getter in getters)
             {
                 if (getter.Value != null)

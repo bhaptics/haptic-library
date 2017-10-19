@@ -8,7 +8,6 @@ namespace Bhaptics.Tac
     public interface ISender : IDisposable
     {
         void PlayFeedback(HapticFeedbackFrame feedback);
-        event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChangeReceived;
         event FeedbackEvent.ConnectionEvent Connected;
         event FeedbackEvent.ConnectionEvent Disconnected;
     }

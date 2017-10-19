@@ -52,58 +52,22 @@ namespace Bhaptics.Tac
     {
         #region public members
         public PositionType Position { get; set; }
-        public FeedbackMode Mode { get; set; }
         public byte[] Values { get; set; }
-        public int Texture { get; set; }
         #endregion
 
         #region Constructor
-        public HapticFeedback(PositionType position, byte[] values, FeedbackMode mode, int texture = 0)
+        public HapticFeedback(PositionType position, byte[] values)
         {
             Position = position;
             Values = values;
-            Mode = mode;
-            Texture = texture;
         }
-
-        public HapticFeedback(PositionType position, List<PathPoint> points, int texture = 0)
-        {
-            Position = position;
-            Mode = FeedbackMode.PATH_MODE;
-            Texture = texture;
-            Values = new byte[20];
-            Values[0] = (byte)(points.Count > 6 ? 6 : points.Count);
-
-            for (int i = 0; i < Values[0]; i++)
-            {
-                var point = points[i];
-                Values[3 * i + 1] = (byte)(point.X * 100f);
-                Values[3 * i + 2] = (byte)(point.Y * 100f);
-                Values[3 * i + 3] = (byte)point.Intensity;
-            }
-        }
-
         #endregion
 
         public override string ToString()
         {
             return "HapticFeedback {Position=" + Position +
-                 ", Mode=" + Mode +
                 ", Values=" + CommonUtils.ConvertByteArrayToString(Values) + "}";
         }
-
-        #region static method
-        public static byte[] ToBytes(HapticFeedback feedback)
-        {
-            byte[] bytes = new byte[22];
-            bytes[0] = (byte) feedback.Mode;
-            bytes[1] = (byte) feedback.Position;
-
-            Buffer.BlockCopy(feedback.Values,0, bytes, 2, 20);
-
-            return bytes;
-        }
-        #endregion
     }
 
     public enum PositionType
@@ -116,28 +80,7 @@ namespace Bhaptics.Tac
         GloveLeft =203, GloveRight=204,
         Custom1 =251, Custom2 = 252, Custom3 = 253, Custom4 = 254
     }
-
-    public class FeedbackItem
-    {
-        public FeedbackItem(int time, Dictionary<int, HapticFeedbackData> feedback)
-        {
-            Time = time;
-
-            Feedback = feedback;
-        }
-
-        public int Time { get; set; }
-
-        public Dictionary<int, HapticFeedbackData> Feedback { get; set; }
-    }
-
-    public class HapticFeedbackData
-    {
-        public int Time { get; set; }
-        public int[] Values { get; set; }
-        public FeedbackMode Mode { get; set; }
-    }
-
+    
     public enum FeedbackMode
     {
         PATH_MODE = 1,

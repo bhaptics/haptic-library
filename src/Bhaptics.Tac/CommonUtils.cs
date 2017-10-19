@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using Bhaptics.fastJSON;
-using Bhaptics.Tac.Designer;
 
 namespace Bhaptics.Tac
 {
@@ -77,27 +76,6 @@ namespace Bhaptics.Tac
             return true;
         }
 
-        public static bool Parse(string json, out Dictionary<int, HapticFeedbackData> hapticFeedback, out int endTime)
-        {
-            endTime = -1;
-            hapticFeedback = new Dictionary<int, HapticFeedbackData>();
-            try
-            {
-                List<HapticFeedbackData> items = SimpleJson.DeserializeObject<List<HapticFeedbackData>>(json);
-                foreach (HapticFeedbackData data in items)
-                {
-                    hapticFeedback.Add(data.Time, data);
-                    endTime = data.Time;
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         /// <summary>
         /// Subs the array.
         /// </summary>
@@ -142,9 +120,9 @@ namespace Bhaptics.Tac
 
         private static HapticFeedbackFile Parse(string json)
         {
-            var obj = JSON.ToObject<HapticFeedbackFileBridge>(json);
+            var obj = JSON.ToObject<HapticFeedbackFile>(json);
 
-            return HapticFeedbackFileBridge.AsTactosyFile(obj);
+            return obj;
         }
 
         /// <summary>

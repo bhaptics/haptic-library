@@ -1,3 +1,8 @@
+## 1.1.0
+* Update websocket communcation between bHaptics Player
+* The version of bHaptics Player should be higher or eqaul to 1.2.0
+* No need to use UnityTimer in BhapticsManager.cs
+
 ## 1.0.4 
 * The method of getting the HapticPlayer reference is changed
 * Update Readme.md

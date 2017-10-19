@@ -2,7 +2,6 @@
 
 namespace Bhaptics.Tac.Designer
 {
-
     public class Project
     {
         public Track[] Tracks { get; set; }

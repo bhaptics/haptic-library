@@ -38,7 +38,7 @@ namespace Bhaptics.Tac
 
         public void Dispose()
         {
-            _sender.StoreTurnOff();
+            _sender.TurnOff();
             _sender.Dispose();
         }
 
@@ -98,7 +98,7 @@ namespace Bhaptics.Tac
             int durationMillis)
         {
             var frame = Frame.AsDotPointFrame(points, position, durationMillis);
-            _sender.Store(key, frame);
+            _sender.Submit(key, frame);
         }
 
         public void Submit(string key, PositionType position, DotPoint point, int durationMillis)
@@ -109,7 +109,7 @@ namespace Bhaptics.Tac
         public void Submit(string key, PositionType position, List<PathPoint> points, int durationMillis)
         {
             var frame = Frame.AsPathPointFrame(points, position, durationMillis);
-            _sender.Store(key, frame);
+            _sender.Submit(key, frame);
         }
 
         public void Submit(string key, PositionType position, PathPoint point, int durationMillis)
@@ -117,47 +117,46 @@ namespace Bhaptics.Tac
             Submit(key, position, new List<PathPoint> { point }, durationMillis);
         }
 
-        public void SubmitRegistered(string key, float intensity, float duration)
+        public void SubmitRegistered(string key, float intensityRatio, float durationRatio)
         {
-            if (duration < 0.01f || duration > 100f)
+            if (durationRatio < 0.01f || durationRatio > 100f)
             {
-                Debug.WriteLine("not allowed duration " + duration);
+                Debug.WriteLine("not allowed duration " + durationRatio);
                 return;
             }
 
-            if (intensity < 0.01f || intensity > 100f)
+            if (intensityRatio < 0.01f || intensityRatio > 100f)
             {
-                Debug.WriteLine("not allowed intensity " + duration);
+                Debug.WriteLine("not allowed intensity " + intensityRatio);
                 return;
             }
 
-            throw new NotImplementedException();
+            _sender.SubmitRegistered(key, intensityRatio, durationRatio);
         }
 
         public void SubmitRegistered(string key)
         {
-            _sender.Store(key);
-//            SubmitRegistered(key, 1f, 1f);
+            _sender.SubmitRegistered(key);
         }
 
-        public void SubmitRegistered(string key, float duration)
+        public void SubmitRegistered(string key, float ratio)
         {
-            if (duration < 0 || duration > 1)
+            if (ratio < 0 || ratio > 1)
             {
                 Debug.WriteLine("ratio should be between [0, 1]");
                 return;
             }
-            SubmitRegistered(key, 1f, duration);
+            _sender.SubmitRegistered(key, ratio);
         }
 
         public void TurnOff(string key)
         {
-            _sender.StoreTurnOff(key);
+            _sender.TurnOff(key);
         }
 
         public void TurnOff()
         {
-            _sender.StoreTurnOff();
+            _sender.TurnOff();
         }
     }
 }

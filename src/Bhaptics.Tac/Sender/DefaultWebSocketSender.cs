@@ -23,10 +23,17 @@ namespace Bhaptics.Tac.Sender
         private Timer _timer;
 
         // We need copy when conncted
-        private List<RegisterRequest> _registered;
+        private readonly List<RegisterRequest> _registered;
         private bool _enable;
 
-
+        private readonly JSONParameters DEFAULT_PARAM = new JSONParameters
+        {
+            EnableAnonymousTypes = true,
+            UsingGlobalTypes = false,
+            UseValuesOfEnums = false,
+            SerializeToLowerCaseNames = false,
+            UseExtensions = true
+        };
         private PlayerRequest _activeRequest;
 
         public DefaultWebSocketSender()
@@ -116,30 +123,12 @@ namespace Bhaptics.Tac.Sender
             return _activeRequest;
         }
 
-        private readonly JSONParameters DEFAULT_PARAM = new JSONParameters
-        {
-            EnableAnonymousTypes = true,
-            UsingGlobalTypes = false,
-            UseValuesOfEnums = false,
-            SerializeToLowerCaseNames = false,
-            UseExtensions = true
-        };
-
         private void OnConnected(object o, EventArgs args)
         {
             Debug.WriteLine("Connected");
             _websocketConnected = true;
-            var request = GetActiveRequest();
-            request.Register.AddRange(_registered);
 
-            
-            var msg = JSON.ToJSON(request, DEFAULT_PARAM);
-            _webSocket.SendAsync(msg, b =>
-            {
-                Debug.WriteLine("Register");
-                _activeRequest = null;
-            });
-
+            AddRegister(_registered);
             ConnectionChanged?.Invoke(_websocketConnected);
         }
 
@@ -156,17 +145,7 @@ namespace Bhaptics.Tac.Sender
             StatusReceived?.Invoke(response);
         }
 
-        public void Flush()
-        {
-            _webSocket.SendAsync(JSON.ToJSON(GetActiveRequest()), b =>
-            {
-                Debug.WriteLine("Send");
-            });
-
-            _activeRequest = null;
-        }
-
-        public void StoreTurnOff(string key)
+        public void TurnOff(string key)
         {
             if (!_enable)
             {
@@ -178,10 +157,10 @@ namespace Bhaptics.Tac.Sender
                 Key = key,
                 Type = "turnOff"
             };
-            GetActiveRequest().Submit.Add(req);
+            AddSubmit(req);
         }
 
-        public void StoreTurnOff()
+        public void TurnOff()
         {
             if (!_enable)
             {
@@ -192,7 +171,7 @@ namespace Bhaptics.Tac.Sender
             {
                 Type = "turnOffAll"
             };
-            GetActiveRequest().Submit.Add(req);
+            AddSubmit(req);
         }
 
         public void Register(string key, Project project)
@@ -204,26 +183,10 @@ namespace Bhaptics.Tac.Sender
             };
             _registered.Add(req);
 
-            var request = GetActiveRequest();
-            
-            request.Register.Add(req);
-            
-
-            var msg = JSON.ToJSON(request, DEFAULT_PARAM);
-            _webSocket.SendAsync(msg, b =>
-            {
-                Debug.WriteLine("Register");
-                _activeRequest = null;
-            });
+            AddRegister(req);
         }
 
-        private void Completed(bool b1)
-        {
-            Debug.WriteLine("dddd");
-
-        }
-
-        public void Store(string key)
+        public void SubmitRegistered(string key)
         {
             if (!_enable)
             {
@@ -235,17 +198,41 @@ namespace Bhaptics.Tac.Sender
                 Key = key,
                 Type = "key"
             };
-            GetActiveRequest().Submit.Add(submitRequest);
-
-            var msg = JSON.ToJSON(GetActiveRequest(), DEFAULT_PARAM);
-            _webSocket.SendAsync(msg, b =>
-            {
-                Debug.WriteLine("Register");
-                _activeRequest = null;
-            });
+            AddSubmit(submitRequest);
         }
 
-        public void Store(string key, Frame req)
+        public void SubmitRegistered(string key, float ratio)
+        {
+            var submitRequest = new SubmitRequest
+            {
+                Key = key,
+                Type = "key",
+                Parameters = new Dictionary<string, object>
+                {
+                    { "ratio", ratio}
+                }
+            };
+
+            AddSubmit(submitRequest);
+        }
+
+        public void SubmitRegistered(string key, float intensityRatio, float durationRatio)
+        {
+            var submitRequest = new SubmitRequest
+            {
+                Key = key,
+                Type = "key",
+                Parameters = new Dictionary<string, object>
+                {
+                    { "intensityRatio", intensityRatio},
+                    { "durationRatio", durationRatio}
+                }
+            };
+
+            AddSubmit(submitRequest);
+        }
+
+        public void Submit(string key, Frame req)
         {
             if (!_enable)
             {
@@ -258,19 +245,64 @@ namespace Bhaptics.Tac.Sender
                 Key = key,
                 Type = "frame"
             };
-            GetActiveRequest().Submit.Add(submitRequest);
+            AddSubmit(submitRequest);
+        }
+
+        private void AddSubmit(SubmitRequest submitRequest)
+        {
+            var request = GetActiveRequest();
+
+            if (request == null)
+            {
+                Debug.WriteLine($"Getting request failed.");
+                return;
+            }
+
+            request.Submit.Add(submitRequest);
+
+            Send();
+        }
+
+        private void AddRegister(RegisterRequest req)
+        {
+            AddRegister(new List<RegisterRequest> { req });
+        }
+
+        private void AddRegister(List<RegisterRequest> req)
+        {
+            var request = GetActiveRequest();
+
+            if (request == null)
+            {
+                Debug.WriteLine($"Getting request failed.");
+                return;
+            }
+
+            request.Register.AddRange(req);
 
             Send();
         }
 
         private void Send()
         {
-            var msg = JSON.ToJSON(GetActiveRequest(), DEFAULT_PARAM);
-            _webSocket.SendAsync(msg, b =>
+            try
             {
-                Debug.WriteLine("Register");
-                _activeRequest = null;
-            });
+                if (!_websocketConnected)
+                {
+                    Debug.WriteLine("not connected.");
+                    return;
+                }
+
+                var msg = JSON.ToJSON(GetActiveRequest(), DEFAULT_PARAM);
+                _webSocket.SendAsync(msg, b =>
+                {
+                    _activeRequest = null;
+                });
+            }
+            catch (Exception e)
+            {
+               Debug.WriteLine($"{e.Message}");
+            }
         }
     }
 
@@ -299,6 +331,7 @@ namespace Bhaptics.Tac.Sender
     {
         public string Type { get; set; }
         public string Key { get; set; }
+        public Dictionary<string, object> Parameters { get; set; } // durationRatio
         public Frame Frame { get; set; }
     }
 

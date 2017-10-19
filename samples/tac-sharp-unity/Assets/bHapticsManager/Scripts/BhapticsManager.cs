@@ -289,7 +289,7 @@ namespace Bhaptics.Tac.Unity
                     {
                         result[i] = (byte)val[i];
                     }
-                    var feedback = new HapticFeedback(pos, result, FeedbackMode.DOT_MODE);
+                    var feedback = new HapticFeedback(pos, result);
                     _changedFeedbacks.Add(feedback);
                 }
             }

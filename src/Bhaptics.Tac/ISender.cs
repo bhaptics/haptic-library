@@ -5,13 +5,6 @@ using System.Runtime.InteropServices;
 
 namespace Bhaptics.Tac
 {
-    public interface ISender : IDisposable
-    {
-        void PlayFeedback(HapticFeedbackFrame feedback);
-        event FeedbackEvent.ConnectionEvent Connected;
-        event FeedbackEvent.ConnectionEvent Disconnected;
-    }
-
     public class HapticFeedbackFrame
     {
         public HapticFeedbackFrame()

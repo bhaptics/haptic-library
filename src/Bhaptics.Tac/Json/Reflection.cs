@@ -4,7 +4,6 @@ using System.Reflection.Emit;
 using System.Reflection;
 using System.Collections;
 using System.Text;
-using System.Runtime.Serialization;
 #if !SILVERLIGHT
 using System.Data;
 #endif

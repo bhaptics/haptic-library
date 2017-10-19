@@ -28,7 +28,7 @@ namespace Bhaptics.Tac.Unity
                     }
                 }
 
-                UpdateFeedbacks(new HapticFeedback(Position, new byte[column * row], FeedbackMode.DOT_MODE));
+                UpdateFeedbacks(new HapticFeedback(Position, new byte[column * row]));
             }
         }
 

@@ -154,5 +154,7 @@ To
 var hapticPlayer = BhapticsManager.HapticPlayer;
 ```
 
+* Migration from 1.0.4 to 1.1.0
+
 <br>
 Copyright 2017 bHaptics Inc.

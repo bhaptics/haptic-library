@@ -117,7 +117,6 @@
     <Compile Include="CustomWebSocketSharp\WebSocketException.cs" />
     <Compile Include="CustomWebSocketSharp\WebSocketFrame.cs" />
     <Compile Include="CustomWebSocketSharp\WebSocketState.cs" />
-    <Compile Include="BufferedHapticFeedback.cs" />
     <Compile Include="Designer\DotMode.cs" />
     <Compile Include="Designer\Layout.cs" />
     <Compile Include="Designer\PathMode.cs" />
@@ -136,7 +135,6 @@
     <Compile Include="Json\SafeDictionary.cs" />
     <Compile Include="Plugin\IBhapticsPlayerPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Json\SimpleJson.cs" />
     <Compile Include="HapticException.cs" />
     <Compile Include="HapticFeedback.cs" />
     <Compile Include="HapticFeedbackFile.cs" />

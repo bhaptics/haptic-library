@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Bhaptics.Tac.Designer;
 using Bhaptics.Tac.Sender;
 using UnityEngine;
 
@@ -34,7 +35,8 @@ namespace Bhaptics.Tac.Unity
         private string PathPrefix = "Assets/bHapticsManager/Feedbacks/";
 
         [Tooltip("Use Streaming Path or not")]
-        [SerializeField] private bool useStreamingPath;
+        [SerializeField]
+        private bool useStreamingPath;
 
         [Tooltip("Feedback Mapping Infos")]
         [SerializeField]
@@ -45,8 +47,8 @@ namespace Bhaptics.Tac.Unity
         private static IHapticPlayer _hapticPlayer;
         private static bool _isTryLaunchApp;
 
-        private static WebSocketSender _sender;
-        public static IHapticPlayer HapticPlayer {
+        public static IHapticPlayer HapticPlayer
+        {
             get
             {
                 if (_hapticPlayer == null)
@@ -57,24 +59,21 @@ namespace Bhaptics.Tac.Unity
                     }
                     else
                     {
-                        _sender = new WebSocketSender(() => _isTryLaunchApp = true
-                            , () =>
+                        _hapticPlayer = new HapticPlayer(connected =>
+                        {
+                            if (connected)
+                            {
+                                _isTryLaunchApp = true;
+                            }
+                            else
                             {
                                 if (!_isTryLaunchApp)
                                 {
                                     BhapticsUtils.LaunchPlayer();
                                     _isTryLaunchApp = true;
                                 }
-                            });
-                        var manager = GameObject.FindObjectOfType<BhapticsManager>();
-
-                        if (manager == null)
-                        {
-                            manager = new BhapticsManager();
-                        }
-                        var timer = manager.GetComponent<UnityTimer>();
-
-                        _hapticPlayer = new HapticPlayer(_sender, timer);
+                            }
+                        });
                     }
                 }
 
@@ -111,7 +110,7 @@ namespace Bhaptics.Tac.Unity
 
             InitVisualFeedback();
 
-            HapticPlayer.FeedbackChanged += OnFeedbackChanged;
+            HapticPlayer.StatusReceived += OnStatusChanged;
             HapticPlayer.Enable();
 
             LoadFeedbackFile();
@@ -125,7 +124,7 @@ namespace Bhaptics.Tac.Unity
             }
             HapticPlayer.TurnOff();
             HapticPlayer.Disable();
-            HapticPlayer.FeedbackChanged -= OnFeedbackChanged;
+            HapticPlayer.StatusReceived -= OnStatusChanged;
         }
 
         void OnDestroy()
@@ -181,18 +180,6 @@ namespace Bhaptics.Tac.Unity
 
         void OnApplicationPause(bool pauseState)
         {
-            try
-            {
-                if (_sender != null)
-                {
-                    _sender.PlayFeedback(HapticFeedbackFrame.AsTurnOffFrame(PositionType.All));
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e);
-            }
-
             if (pauseState)
             {
                 OnDisable();
@@ -213,8 +200,6 @@ namespace Bhaptics.Tac.Unity
             {
                 go.gameObject.SetActive(visualizeFeedbacks);
             }
-
-            OnFeedbackChanged(new HapticFeedback(PositionType.All, new byte[20], FeedbackMode.DOT_MODE));
         }
 
         private void LoadFeedbackFile()
@@ -229,7 +214,7 @@ namespace Bhaptics.Tac.Unity
 
             try
             {
-                string[] extensions = { "*.tactosy", "*.tact"};
+                string[] extensions = { "*.tactosy", "*.tact" };
 
                 foreach (var extension in extensions)
                 {
@@ -240,11 +225,11 @@ namespace Bhaptics.Tac.Unity
                         try
                         {
                             var fileName = Path.GetFileNameWithoutExtension(filePath);
-
                             string json = LoadStringFromFile(filePath);
+                            var file = CommonUtils.ConvertJsonStringToTactosyFile(json);
 
-                            HapticPlayer.Register(fileName, new BufferedHapticFeedback(json));
-                            FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tactosy"));
+                            _hapticPlayer.Register(fileName, file.Project);
+                            FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tact"));
                         }
                         catch (Exception e)
                         {
@@ -280,7 +265,7 @@ namespace Bhaptics.Tac.Unity
             return json;
         }
 
-        private void OnFeedbackChanged(HapticFeedback feedback)
+        private void OnStatusChanged(PlayerResponse playerResponse)
         {
             if (visualizeFeedbacks == false)
             {
@@ -294,7 +279,19 @@ namespace Bhaptics.Tac.Unity
 
             lock (_changedFeedbacks)
             {
-                _changedFeedbacks.Add(feedback);
+                foreach (var status in playerResponse.Status)
+                {
+                    var pos = EnumParser.ToPositionType(status.Key);
+                    var val = status.Value;
+
+                    byte[] result = new byte[val.Length];
+                    for (int i = 0; i < val.Length; i++)
+                    {
+                        result[i] = (byte)val[i];
+                    }
+                    var feedback = new HapticFeedback(pos, result);
+                    _changedFeedbacks.Add(feedback);
+                }
             }
         }
 
@@ -339,11 +336,6 @@ namespace Bhaptics.Tac.Unity
         }
 
         public void Register(string key, string path)
-        {
-            // nothing to do
-        }
-
-        public void Register(string key, BufferedHapticFeedback tactosyFile)
         {
             // nothing to do
         }
@@ -398,7 +390,11 @@ namespace Bhaptics.Tac.Unity
             // nothing to do
         }
 
-        public event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChanged;
+        public void Register(string key, Project project)
+        {
+            // nothing to do
+        }
+
+        public event FeedbackEvent.StatusReceivedEvent StatusReceived;
     }
 }
-

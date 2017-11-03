@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bhaptics.Tac.Designer;
+using Bhaptics.Tac.Sender;
 
 namespace Bhaptics.Tac
 {
     public class FeedbackEvent
     {
-        public delegate void HapticFeedbackChangeEvent(HapticFeedback feedback);
-        public delegate void ConnectionEvent();
+        public delegate void StatusReceivedEvent(PlayerResponse feedback);
+        public delegate void ConnectionEvent(bool isConnected);
     }
     
     public interface IHapticPlayer : IDisposable
@@ -18,7 +20,7 @@ namespace Bhaptics.Tac
         bool IsPlaying();
         
         void Register(string key, string path );
-        void Register(string key, BufferedHapticFeedback tactosyFile);
+        void Register(string key, Project project );
         
         void Submit(string key, PositionType position, byte[] motorBytes, int durationMillis);
         void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis);
@@ -32,7 +34,7 @@ namespace Bhaptics.Tac
 
         void TurnOff(string key);
         void TurnOff();
-
-        event FeedbackEvent.HapticFeedbackChangeEvent FeedbackChanged;
+        
+        event FeedbackEvent.StatusReceivedEvent StatusReceived;
     }
 }

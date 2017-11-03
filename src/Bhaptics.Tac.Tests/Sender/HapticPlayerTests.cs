@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Bhaptics.Tac.Tests.Sender
@@ -10,17 +11,19 @@ namespace Bhaptics.Tac.Tests.Sender
         [TestMethod()]
         public void HapticPlayerTest()
         {
-            HapticPlayer player = new HapticPlayer();
-
-            var points = new List<DotPoint> {new DotPoint(2, 100), new DotPoint(3, 100)};
-            player.Register(key, new BufferedHapticFeedback(PositionType.Left, points, 2000));
+            var player = new HapticPlayer();
             
+            player.Register(key, "BowShoot.tact");
             player.SubmitRegistered(key);
+            // waiting for submission
+            Thread.Sleep(100);
 
             while (player.IsPlaying(key))
             {   
             }
             Assert.IsNotNull(player);
+            player.Dispose();
+            
         }
     }
 }

@@ -1,6 +1,6 @@
 # bHaptics haptic devices C# plugin
 This project helps to utilize haptic devices in Unity and other C# based platform.
-Current version is 1.1.0
+Current version is 1.1.1
 
 ## Prerequisite
 * bHaptics Player has to be installed (Windows)

@@ -1,5 +1,2 @@
-<<<<<<< HEAD
-m_EditorVersion: 5.6.1f1
-=======
-m_EditorVersion: 5.6.0f3
->>>>>>> [Tactosy] default renderer disabled
+m_EditorVersion: 5.3.5f1
+m_StandardAssetsVersion: 0

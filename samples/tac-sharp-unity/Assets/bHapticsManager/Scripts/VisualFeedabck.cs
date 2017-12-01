@@ -49,7 +49,7 @@ namespace Bhaptics.Tac.Unity
                 }
                 var scale = feedback.Values[i] / 100f;
                 
-                motor.transform.localScale = new Vector3(0.2f + (scale * (.8f)), 0.2f + (scale * (.8f)), 1f);
+                motor.transform.localScale = new Vector3(0.2f + (scale * (.25f)), 0.2f + (scale * (.25f)), 1f);
 
                 var rd = motor.GetComponentInChildren<Renderer>();
                 if (rd != null)

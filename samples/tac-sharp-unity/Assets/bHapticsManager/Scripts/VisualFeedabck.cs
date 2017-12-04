@@ -7,7 +7,7 @@ namespace Bhaptics.Tac.Unity
     {
         [SerializeField] private int column, row;
         [SerializeField] private GameObject motorPrefab;
-        [SerializeField] private float distance = 1f;
+        [SerializeField] private float distance = 0.4f;
         public PositionType Position = PositionType.Left;
 
         private GameObject[] motors;
@@ -16,6 +16,17 @@ namespace Bhaptics.Tac.Unity
         {
             if (motorPrefab != null && column > 0 && row > 0)
             {
+                float c_distance, r_distance;
+                c_distance = distance;
+                r_distance = distance;
+                if (gameObject.tag == "Racket")
+                {
+                    c_distance += 0.2f;
+                }
+                else if (gameObject.tag == "Shooes")
+                {
+                    c_distance -= 0.1f;
+                }
                 motors = new GameObject[column * row];
                 for (var r = 0; r < row; r++)
                 {
@@ -23,7 +34,7 @@ namespace Bhaptics.Tac.Unity
                     {
                         var dot = Instantiate(motorPrefab);
                         dot.transform.parent = transform;
-                        dot.transform.localPosition = new Vector3(c * distance, r * distance, 0);
+                        dot.transform.localPosition = new Vector3(c * c_distance, r * r_distance, 0);
                         motors[(row - r - 1) * column + c] = dot;
                     }
                 }

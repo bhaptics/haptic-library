@@ -29,21 +29,27 @@ namespace Bhaptics.Tac
 
     public class PathPoint
     {
-        public PathPoint(float x, float y, int intensity)
+        public PathPoint(float x, float y, int intensity, int motorCount = 3)
         {
             X = CommonUtils.Clamp(x, 0f, 1f);
             Y = CommonUtils.Clamp(y, 0f, 1f);
             Intensity = CommonUtils.Clamp(intensity, 0, 100);
+            MotorCount = CommonUtils.Clamp(motorCount, 0, 3);
         }
 
         public float X { get; set; }
         public float Y { get; set; }
         public int Intensity { get; set; }
 
+        // Number of maximum motors to vibrate
+        // if 0 means default motor count, now 3
+        public int MotorCount { get; set; }
+
         public override string ToString()
         {
             return "PathPoint { X=" + X +
                    ", Y=" + Y +
+                   ", MotorCount=" + MotorCount +
                    ", Intensity=" + Intensity + "}";
         }
     }

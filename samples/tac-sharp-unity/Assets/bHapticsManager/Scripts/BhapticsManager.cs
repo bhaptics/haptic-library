@@ -30,7 +30,7 @@ namespace Bhaptics.Tac.Unity
         [SerializeField]
         public bool visualizeFeedbacks;
 
-        [Tooltip("File Prefix")]
+        [Tooltip("File Prefix - Need to change when you build!")]
         [SerializeField]
         private string PathPrefix = "Assets/bHapticsManager/Feedbacks/";
 
@@ -38,9 +38,8 @@ namespace Bhaptics.Tac.Unity
         [SerializeField]
         private bool useStreamingPath;
 
-        [Tooltip("Feedback Mapping Infos")]
-        [SerializeField]
-        internal List<SignalMapping> FeedbackMappings;
+        internal Dictionary<string, Dictionary<string, Project>> FeedbackFileMapping = new Dictionary<string, Dictionary<string, Project>>();
+        internal string RootPath = "";
 
         private readonly List<HapticFeedback> _changedFeedbacks = new List<HapticFeedback>();
 
@@ -204,12 +203,13 @@ namespace Bhaptics.Tac.Unity
 
         private void LoadFeedbackFile()
         {
-            FeedbackMappings.Clear();
-            string fileRootPath = PathPrefix;
+            //            FeedbackMappings.Clear();
+            FeedbackFileMapping.Clear();
+            RootPath = PathPrefix;
 
             if (useStreamingPath)
             {
-                fileRootPath = Application.dataPath + "/StreamingAssets/" + PathPrefix;
+                RootPath = Application.dataPath + "/StreamingAssets/" + PathPrefix;
             }
 
             try
@@ -218,7 +218,7 @@ namespace Bhaptics.Tac.Unity
 
                 foreach (var extension in extensions)
                 {
-                    string[] allPaths = Directory.GetFiles(fileRootPath, extension, SearchOption.AllDirectories);
+                    string[] allPaths = Directory.GetFiles(RootPath, extension, SearchOption.AllDirectories);
 
                     foreach (var filePath in allPaths)
                     {
@@ -229,7 +229,23 @@ namespace Bhaptics.Tac.Unity
                             var file = CommonUtils.ConvertJsonStringToTactosyFile(json);
 
                             _hapticPlayer.Register(fileName, file.Project);
-                            FeedbackMappings.Add(new SignalMapping(fileName, fileName + ".tact"));
+//                            FeedbackMappings.Add(new SignalMapping(fileName, filePath));
+
+                            if (fileName == null)
+                            {
+                                Debug.LogError("file name is null " + filePath);
+                                continue;
+                            }
+
+                            if (Application.isEditor)
+                            {
+                                string path = filePath.Replace(RootPath, "").Replace(".tact", "").Replace(".tactosy", "").Replace("\\", "/").Replace(fileName, "");
+                                if (!FeedbackFileMapping.ContainsKey(path))
+                                {
+                                    FeedbackFileMapping[path] = new Dictionary<string, Project>();
+                                }
+                                FeedbackFileMapping[path][fileName] = file.Project;
+                            }
                         }
                         catch (Exception e)
                         {
@@ -366,6 +382,11 @@ namespace Bhaptics.Tac.Unity
         }
 
         public void SubmitRegistered(string key, float intensity, float duration)
+        {
+            // nothing to do
+        }
+
+        public void SubmitRegistered(string key, TransformOption option)
         {
             // nothing to do
         }

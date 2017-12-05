@@ -232,6 +232,22 @@ namespace Bhaptics.Tac.Sender
             AddSubmit(submitRequest);
         }
 
+
+        public void SubmitRegistered(string key, TransformOption option)
+        {
+            var submitRequest = new SubmitRequest
+            {
+                Key = key,
+                Type = "key",
+                Parameters = new Dictionary<string, object>
+                {
+                    { "transformOption", option},
+                }
+            };
+
+            AddSubmit(submitRequest);
+        }
+
         public void Submit(string key, Frame req)
         {
             if (!_enable)
@@ -335,11 +351,26 @@ namespace Bhaptics.Tac.Sender
         public Frame Frame { get; set; }
     }
 
+    public class TransformOption
+    {
+        public double DeltaX { get; set; }
+        public double DeltaY { get; set; }
+        public bool IsValueRotate { get; set; }
+
+        public TransformOption(double deltaX, double deltaY, bool isValueRotate = true)
+        {
+            DeltaX = deltaX;
+            DeltaY = deltaY;
+            IsValueRotate = isValueRotate;
+        }
+    }
+
     public class PlayerResponse
     {
         public List<string> RegisteredKeys { get; set; }
         public List<string> ActiveKeys { get; set; }
         public int ConnectedDeviceCount { get; set; }
+        public List<PositionType> ConnectedPositions { get; set; }
         public Dictionary<string, int[]> Status { get; set; }
     }
 

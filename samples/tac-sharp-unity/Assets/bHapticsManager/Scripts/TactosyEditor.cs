@@ -9,24 +9,42 @@ namespace Bhaptics.Tac.Unity
     [CustomEditor(typeof(BhapticsManager))]
     public class TactosyEditor : Editor
     {
-        private bool init;
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
 
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+
             BhapticsManager manager = (BhapticsManager) target;
 
-            if (!init)
+            GUILayout.Space(15);
+            GUILayout.Label("File Path (Base)");
+            GUILayout.TextArea(manager.RootPath);
+            foreach (var mappings in manager.FeedbackFileMapping)
             {
-                init = true;
-            }
-            
-            foreach (var mappings in manager.FeedbackMappings)
-            {
-                var key = mappings.Key;
-                if (GUILayout.Button(key))
-                { 
-                    manager.Play(key);
+                var innerMappings = mappings.Value;
+                GUILayout.Space(10);
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Relative Path", GUILayout.Width(100));
+                GUILayout.TextArea(mappings.Key);
+                GUILayout.EndHorizontal();
+                foreach (var mapping in innerMappings)
+                {
+                    GUILayout.BeginHorizontal();
+                    var key = mapping.Key;
+                    var project = mapping.Value;
+                    var type = project.Layout.Type;
+
+                    GUILayout.Label(type, GUILayout.Width(100));
+
+                    if (GUILayout.Button(key))
+                    {
+                        manager.Play(key);
+                    }
+                    GUILayout.EndHorizontal();
                 }
             }
 

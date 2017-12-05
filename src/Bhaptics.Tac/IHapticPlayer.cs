@@ -29,6 +29,7 @@ namespace Bhaptics.Tac
         void Submit(string key, PositionType position, PathPoint point, int durationMillis);
 
         void SubmitRegistered(string key, float intensity, float duration);
+        void SubmitRegistered(string key, TransformOption option);
         void SubmitRegistered(string key);
         void SubmitRegistered(string key, float duration);
 

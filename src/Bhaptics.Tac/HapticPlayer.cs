@@ -134,6 +134,11 @@ namespace Bhaptics.Tac
             _sender.SubmitRegistered(key, intensityRatio, durationRatio);
         }
 
+        public void SubmitRegistered(string key, TransformOption option)
+        {
+            _sender.SubmitRegistered(key, option);
+        }
+
         public void SubmitRegistered(string key)
         {
             _sender.SubmitRegistered(key);

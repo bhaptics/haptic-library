@@ -1,4 +1,6 @@
-﻿#if UNITY_EDITOR
+﻿
+using System;
+#if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -34,15 +36,22 @@ namespace Bhaptics.Tac.Unity
                 foreach (var mapping in innerMappings)
                 {
                     GUILayout.BeginHorizontal();
-                    var key = mapping.Key;
-                    var project = mapping.Value;
-                    var type = project.Layout.Type;
-
-                    GUILayout.Label(type, GUILayout.Width(100));
-
-                    if (GUILayout.Button(key))
+                    try
                     {
-                        manager.Play(key);
+                        var key = mapping.Key;
+                        var project = mapping.Value;
+                        var type = project.Layout.Type;
+
+                        GUILayout.Label(type, GUILayout.Width(100));
+
+                        if (GUILayout.Button(key))
+                        {
+                            manager.Play(key);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e.Message);
                     }
                     GUILayout.EndHorizontal();
                 }

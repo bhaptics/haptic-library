@@ -239,7 +239,7 @@ namespace Bhaptics.Tac.Unity
 
                             if (Application.isEditor)
                             {
-                                string path = filePath.Replace(RootPath, "").Replace(".tact", "").Replace(".tactosy", "").Replace("\\", "/").Replace(fileName, "");
+                                string path = filePath.Replace(RootPath, "").Replace(fileName + ".tact", "").Replace(fileName + ".tactosy", "").Replace("\\", "/");
                                 if (!FeedbackFileMapping.ContainsKey(path))
                                 {
                                     FeedbackFileMapping[path] = new Dictionary<string, Project>();

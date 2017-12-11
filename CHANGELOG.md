@@ -1,3 +1,7 @@
+## Bhaptics.Tac 1.2.0 (Dec 11th, 2017.)
+* Enable to transform on feedback file
+* Enable to set number of motors on PathPoint
+
 ## Bhaptics.Tac 1.1.1 (Nov 9th, 2017.)
 * Add new position type (HandL, HandR, FootL, FootR)
 

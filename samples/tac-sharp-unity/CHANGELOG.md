@@ -1,3 +1,8 @@
+## 1.2.0 (Dec 11th, 2017.)
+* Enable to transform on feedback file
+* Enable to set number of motors on PathPoint
+* Add more feedback files
+
 ## 1.1.1
 * Add new position type (HandL, HandR, FootL, FootR)
 

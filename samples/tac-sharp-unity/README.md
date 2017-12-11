@@ -65,11 +65,13 @@ You can find more details of the designer [here](http://bhaptics.com/studio.html
 * Play feedback effects in C# Script: List of PathPoints
 
 ```
+var motorCount = 2; // number of motors for PathPoint
 List<PathPoint> pathPoints = new List<PathPoint>
 {
     new PathPoint(x_position, y_position, intensity)
     /* x_position, y_position are floats in
         normalized value (0.0f to 1.0f) beginning from upper left of the device.*/
+    , new PathPoint(x_position, y_position, intensity, motorCount)
 };
 HapticPlayer.Submit("Point", PositionType.Right, pathPoints, duration);
 /* duration is a positive integer in milliseconds */
@@ -104,6 +106,9 @@ HapticPlayer.Submit("Bytes", PositionType.Right, bytes);
 ```
 /* Just play feedback of Fireball.tact file */
 HapticPlayer.SubmitRegistered("Fireball");
+
+/* play feedback of RifleImpact.tact file with transformation */
+HapticPlayer.SubmitRegistered("RifleImpact", new TransformOption(0.5f, .5f)););
 ```
 
 * TurnOff Signal
@@ -139,7 +144,6 @@ To avoid this problem, unity provides ['StreamingAssets'](https://docs.unity3d.c
 * If this option is checked, [bHapticsManger] reads feedback files from the 'StreamingAssets/{pathPrefix}' folder.
 * If this option is not checked, you need to manually copy feedback files to the destination folder. <br/>
 The default destination folder path for windows will be '{pathPrefix}'
-
 
 ## Notes
 * Migration from 1.0.3 to 1.0.4

@@ -10,6 +10,7 @@ namespace Bhaptics.Tac
     {
         private readonly DefaultWebSocketSender _sender;
         private readonly List<string> _activeKeys = new List<string>();
+        private readonly List<PositionType> _activePosition = new List<PositionType>();
         public event FeedbackEvent.StatusReceivedEvent StatusReceived;
 
         public HapticPlayer(FeedbackEvent.ConnectionEvent connectionChanged, bool tryReconnect = true)
@@ -23,6 +24,12 @@ namespace Bhaptics.Tac
                 {
                     _activeKeys.Clear();
                     _activeKeys.AddRange(feedback.ActiveKeys);
+                }
+
+                lock (_activePosition)
+                {
+                    _activePosition.Clear();
+                    _activePosition.AddRange(feedback.ConnectedPositions);
                 }
             };
             _sender.ConnectionChanged += (isConn) =>
@@ -50,6 +57,14 @@ namespace Bhaptics.Tac
         public void Disable()
         {
             _sender.Disable();
+        }
+
+        public bool IsActive(PositionType type)
+        {
+            lock (_activePosition)
+            {
+                return _activePosition.Contains(type);
+            }
         }
 
         public bool IsPlaying(string key)

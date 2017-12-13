@@ -26,7 +26,7 @@ namespace Bhaptics.Tac.Tests
                 }
                 Debug.WriteLine($"Active feedbacks : {string.Join(",", feedback.ActiveKeys.ToArray())}");
             };
-
+            Debug.WriteLine(hapticPlayer.IsActive(PositionType.Right));
             Thread.Sleep(100);
             hapticPlayer.SubmitRegistered(key);
             Thread.Sleep(1000);

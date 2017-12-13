@@ -16,6 +16,8 @@ namespace Bhaptics.Tac
         void Enable();
         void Disable();
         
+        bool IsActive(PositionType type);
+
         bool IsPlaying(string key);
         bool IsPlaying();
         

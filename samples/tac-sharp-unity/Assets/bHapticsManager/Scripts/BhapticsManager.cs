@@ -203,7 +203,6 @@ namespace Bhaptics.Tac.Unity
 
         private void LoadFeedbackFile()
         {
-            //            FeedbackMappings.Clear();
             FeedbackFileMapping.Clear();
             RootPath = PathPrefix;
 
@@ -229,7 +228,6 @@ namespace Bhaptics.Tac.Unity
                             var file = CommonUtils.ConvertJsonStringToTactosyFile(json);
 
                             _hapticPlayer.Register(fileName, file.Project);
-//                            FeedbackMappings.Add(new SignalMapping(fileName, filePath));
 
                             if (fileName == null)
                             {
@@ -337,6 +335,12 @@ namespace Bhaptics.Tac.Unity
         public void Disable()
         {
             // nothing to do
+        }
+
+        public bool IsActive(PositionType type)
+        {
+            // nothing to do
+            return false;
         }
 
         public bool IsPlaying(string key)

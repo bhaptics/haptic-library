@@ -111,6 +111,13 @@ HapticPlayer.SubmitRegistered("Fireball");
 HapticPlayer.SubmitRegistered("RifleImpact", new TransformOption(0.5f, .5f)););
 ```
 
+* Check if Device is connected
+
+```
+HapticPlayer.IsActive(PositionType.Right)
+```
+
+
 * TurnOff Signal
 
 ```

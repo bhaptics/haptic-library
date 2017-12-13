@@ -1,3 +1,6 @@
+## Bhaptics.Tac 1.2.1 (Dec 13th, 2017.)
+* Add IsActive(position) function on HapticPlayer
+
 ## 1.2.0 (Dec 11th, 2017.)
 * Enable to transform on feedback file
 * Enable to set number of motors on PathPoint

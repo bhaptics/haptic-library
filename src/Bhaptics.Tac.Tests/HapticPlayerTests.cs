@@ -25,14 +25,12 @@ namespace Bhaptics.Tac.Tests
             player.StatusReceived += feedback =>
             {
                 Debug.WriteLine($"{string.Join(",", feedback.ActiveKeys)}");
-
             };
 
             // Play two feeabck together
             player.Submit(head, PositionType.Head, new DotPoint(0, 100), 500);
             player.SubmitRegistered(sleeve);
             player.SubmitRegistered(vest);
-
             // Waiting for response
             Thread.Sleep(200);
             while (player.IsPlaying(vest))

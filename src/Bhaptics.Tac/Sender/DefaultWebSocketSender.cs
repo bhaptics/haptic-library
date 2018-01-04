@@ -80,6 +80,10 @@ namespace Bhaptics.Tac.Sender
         {
             if (!_websocketConnected)
             {
+                if (!_enable)
+                {
+                    return;
+                }
                 Debug.WriteLine("RetryConnect()");
                 _retryCount++;
                 _webSocket.Connect();
@@ -93,11 +97,13 @@ namespace Bhaptics.Tac.Sender
         public void Enable()
         {
             _enable = true;
+            _timer.Start();
         }
 
         public void Disable()
         {
             _enable = false;
+            _timer.Stop();
         }
 
         public void Dispose()
@@ -216,7 +222,7 @@ namespace Bhaptics.Tac.Sender
             AddSubmit(submitRequest);
         }
 
-        public void SubmitRegistered(string key, float intensityRatio, float durationRatio)
+        public void SubmitRegistered(string key, string altKey, ScaleOption option)
         {
             var submitRequest = new SubmitRequest
             {
@@ -224,8 +230,8 @@ namespace Bhaptics.Tac.Sender
                 Type = "key",
                 Parameters = new Dictionary<string, object>
                 {
-                    { "intensityRatio", intensityRatio},
-                    { "durationRatio", durationRatio}
+                    { "scaleOption", option},
+                    { "altKey", altKey}
                 }
             };
 
@@ -233,7 +239,7 @@ namespace Bhaptics.Tac.Sender
         }
 
 
-        public void SubmitRegistered(string key, TransformOption option)
+        public void SubmitRegistered(string key, string altKey, RotationOption option, ScaleOption sOption)
         {
             var submitRequest = new SubmitRequest
             {
@@ -241,7 +247,9 @@ namespace Bhaptics.Tac.Sender
                 Type = "key",
                 Parameters = new Dictionary<string, object>
                 {
-                    { "transformOption", option},
+                    { "rotationOption", option},
+                    { "scaleOption", sOption},
+                    { "altKey", altKey}
                 }
             };
 
@@ -351,17 +359,27 @@ namespace Bhaptics.Tac.Sender
         public Frame Frame { get; set; }
     }
 
-    public class TransformOption
+    public class RotationOption
     {
-        public double DeltaX { get; set; }
-        public double DeltaY { get; set; }
-        public bool IsValueRotate { get; set; }
+        public float OffsetAngleX { get; set; }
+        public float OffsetY { get; set; }
 
-        public TransformOption(double deltaX, double deltaY, bool isValueRotate = true)
+        public RotationOption(float offsetAngleX, float offsetY)
         {
-            DeltaX = deltaX;
-            DeltaY = deltaY;
-            IsValueRotate = isValueRotate;
+            OffsetAngleX = offsetAngleX;
+            OffsetY = offsetY;
+        }
+    }
+
+    public class ScaleOption
+    {
+        public float Intensity { get; set; }
+        public float Duration { get; set; }
+
+        public ScaleOption(float intensity, float duration)
+        {
+            Intensity = intensity;
+            Duration = duration;
         }
     }
 

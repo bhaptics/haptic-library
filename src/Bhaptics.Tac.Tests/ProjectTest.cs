@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Bhaptics.Tac.Sender;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Bhaptics.Tac.Tests
@@ -36,10 +37,10 @@ namespace Bhaptics.Tac.Tests
             Thread.Sleep(1000);
             hapticPlayer.Enable();
 
-            hapticPlayer.SubmitRegistered(key, 0.5f, 5f);
+            hapticPlayer.SubmitRegistered(key, new ScaleOption(.5f, 5f));
             Thread.Sleep(2000);
 
-            hapticPlayer.SubmitRegistered(key, 2f, 0.3f);
+            hapticPlayer.SubmitRegistered(key, new ScaleOption(2f, 0.3f));
             Thread.Sleep(500);
 
             hapticPlayer.SubmitRegistered(key, 0.8f);

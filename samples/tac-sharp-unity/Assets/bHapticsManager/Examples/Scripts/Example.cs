@@ -9,6 +9,11 @@ namespace Bhaptics.Tac.Unity
 
         private int _motorIndex = 0;
 
+        [Space(20)]
+        [Range(-360f, 360f)]
+        [SerializeField]
+        private float rotationAngleX;
+
         void Start()
         {
             _player = BhapticsManager.HapticPlayer;
@@ -35,12 +40,8 @@ namespace Bhaptics.Tac.Unity
 
             if (Input.GetKeyDown(KeyCode.A))
             {
-                _player.SubmitRegistered("BowShoot", new TransformOption(0.5f, .5f));
-            }
-
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                _player.SubmitRegistered("BowShoot", new TransformOption(0.7f, 0f));
+                _player.SubmitRegisteredVestRotation("ElectricFront", new RotationOption(rotationAngleX, 0f));
+                _player.SubmitRegisteredVestRotation("ElectricFront", "aaa",  new RotationOption(rotationAngleX + 180f, 0f));
             }
         }
     }

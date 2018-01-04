@@ -46,6 +46,22 @@ namespace Bhaptics.Tac.Unity
         private static IHapticPlayer _hapticPlayer;
         private static bool _isTryLaunchApp;
 
+
+        [Space(20)] [Range(0f, 360f)] [SerializeField]
+        private float vestRotationAngleX;
+
+        [Range(-1f, 1f)]
+        [SerializeField]
+        private float vestRotationOffsetY;
+
+        [Range(0.2f, 5f)]
+        [SerializeField]
+        private float intensity = 1f;
+
+        [Range(0.2f, 5f)]
+        [SerializeField]
+        private float duration =1f;
+
         public static IHapticPlayer HapticPlayer
         {
             get
@@ -75,12 +91,13 @@ namespace Bhaptics.Tac.Unity
                         });
                     }
                 }
-
+                
                 return _hapticPlayer;
             }
         }
 
         #region Unity Method
+
 
         void Awake()
         {
@@ -137,12 +154,12 @@ namespace Bhaptics.Tac.Unity
 
         void Update()
         {
-            if (!BhapticsUtils.IsPlayerInstalled())
+            if (!visualizeFeedbacks)
             {
                 return;
             }
 
-            if (!visualizeFeedbacks)
+            if (!BhapticsUtils.IsPlayerInstalled())
             {
                 return;
             }
@@ -311,7 +328,7 @@ namespace Bhaptics.Tac.Unity
 
         public void Play(string key)
         {
-            HapticPlayer.SubmitRegistered(key);
+            HapticPlayer.SubmitRegisteredVestRotation(key, key, new RotationOption(vestRotationAngleX, vestRotationOffsetY), new ScaleOption(intensity, duration));
         }
 
         public void TurnOff()
@@ -385,12 +402,27 @@ namespace Bhaptics.Tac.Unity
             // nothing to do
         }
 
-        public void SubmitRegistered(string key, float intensity, float duration)
+        public void SubmitRegistered(string key, string altKey, ScaleOption option)
         {
             // nothing to do
         }
 
-        public void SubmitRegistered(string key, TransformOption option)
+        public void SubmitRegistered(string key, ScaleOption option)
+        {
+            // nothing to do
+        }
+
+        public void SubmitRegisteredVestRotation(string key, RotationOption option)
+        {
+            // nothing to do
+        }
+
+        public void SubmitRegisteredVestRotation(string key, string altKey, RotationOption option)
+        {
+            // nothing to do
+        }
+
+        public void SubmitRegisteredVestRotation(string key, string altKey, RotationOption option, ScaleOption sOption)
         {
             // nothing to do
         }

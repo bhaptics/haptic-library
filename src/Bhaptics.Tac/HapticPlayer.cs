@@ -132,26 +132,46 @@ namespace Bhaptics.Tac
             Submit(key, position, new List<PathPoint> { point }, durationMillis);
         }
 
-        public void SubmitRegistered(string key, float intensityRatio, float durationRatio)
+        public void SubmitRegistered(string key, ScaleOption option)
         {
-            if (durationRatio < 0.01f || durationRatio > 100f)
-            {
-                Debug.WriteLine("not allowed duration " + durationRatio);
-                return;
-            }
-
-            if (intensityRatio < 0.01f || intensityRatio > 100f)
-            {
-                Debug.WriteLine("not allowed intensity " + intensityRatio);
-                return;
-            }
-
-            _sender.SubmitRegistered(key, intensityRatio, durationRatio);
+            SubmitRegistered(key, key, option);
         }
 
-        public void SubmitRegistered(string key, TransformOption option)
+        public void SubmitRegistered(string key, string altKey, ScaleOption option)
         {
-            _sender.SubmitRegistered(key, option);
+            if (option == null)
+            {
+                return;
+            }
+
+            if (option.Duration < 0.01f || option.Duration > 100f)
+            {
+                Debug.WriteLine("not allowed duration " + option.Duration);
+                return;
+            }
+
+            if (option.Intensity < 0.01f || option.Intensity > 100f)
+            {
+                Debug.WriteLine("not allowed intensity " + option.Intensity);
+                return;
+            }
+
+            _sender.SubmitRegistered(key, altKey, option);
+        }
+
+        public void SubmitRegisteredVestRotation(string key, string altKey, RotationOption option)
+        {
+            SubmitRegisteredVestRotation(key, altKey, option, new ScaleOption(1f, 1f));
+        }
+
+        public void SubmitRegisteredVestRotation(string key, RotationOption option)
+        {
+            SubmitRegisteredVestRotation(key, key, option);
+        }
+
+        public void SubmitRegisteredVestRotation(string key, string altKey, RotationOption option, ScaleOption sOption)
+        {
+            _sender.SubmitRegistered(key, altKey, option, sOption);
         }
 
         public void SubmitRegistered(string key)

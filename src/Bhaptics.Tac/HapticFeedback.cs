@@ -19,7 +19,7 @@ namespace Bhaptics.Tac
 
         public int Index { get; set; }
         public int Intensity { get; set; }
-
+        
         public override string ToString()
         {
             return "DotPoint { Index=" + Index +

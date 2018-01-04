@@ -11,6 +11,7 @@ namespace Bhaptics.Tac.Unity
     [CustomEditor(typeof(BhapticsManager))]
     public class TactosyEditor : Editor
     {
+        
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
@@ -25,6 +26,7 @@ namespace Bhaptics.Tac.Unity
             GUILayout.Space(15);
             GUILayout.Label("File Path (Base)");
             GUILayout.TextArea(manager.RootPath);
+
             foreach (var mappings in manager.FeedbackFileMapping)
             {
                 var innerMappings = mappings.Value;
@@ -42,7 +44,7 @@ namespace Bhaptics.Tac.Unity
                         var project = mapping.Value;
                         var type = project.Layout.Type;
 
-                        GUILayout.Label(type, GUILayout.Width(100));
+                        GUILayout.Label(type, GUILayout.Width(100));    
 
                         if (GUILayout.Button(key))
                         {

@@ -107,8 +107,12 @@ HapticPlayer.Submit("Bytes", PositionType.Right, bytes);
 /* Just play feedback of Fireball.tact file */
 HapticPlayer.SubmitRegistered("Fireball");
 
-/* play feedback of RifleImpact.tact file with transformation */
-HapticPlayer.SubmitRegistered("RifleImpact", new TransformOption(0.5f, .5f)););
+/* play feedback of RifleImpact.tact file with counter-clockwise angle and yOffset */
+HapticPlayer.SubmitRegisteredVestRotation("RifleImpact", new RotationOption(180f, .5f));
+
+/* play feedback of RifleImpact.tact file with different key. */
+HapticPlayer.SubmitRegisteredVestRotation("RifleImpact", "for_backward" new RotationOption(180f, .5f));
+HapticPlayer.SubmitRegisteredVestRotation("RifleImpact", "for_front" new RotationOption(0f, .5f));
 ```
 
 * Check if Device is connected
@@ -153,6 +157,34 @@ To avoid this problem, unity provides ['StreamingAssets'](https://docs.unity3d.c
 The default destination folder path for windows will be '{pathPrefix}'
 
 ## Notes
+* Migration to 1.2.2 
+
+```
+// from 
+SubmitRegistered(string key, TransformOption option)
+
+// to 
+SubmitRegisteredVestRotation(string key, RotationOption)
+
+
+// from
+SubmitRegistered(string key, float intensityRatio, float durationRatio)
+
+// to
+SubmitRegistered(string key, ScaleOption option)
+ 
+```
+
+To
+
+```
+SubmitRegisteredVestRotation(string key, RotationOption)
+
+```
+
+
+
+
 * Migration from 1.0.3 to 1.0.4
 
 ```

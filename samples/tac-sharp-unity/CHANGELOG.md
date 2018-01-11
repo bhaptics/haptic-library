@@ -1,3 +1,7 @@
+## Bhaptics.Tac 1.2.2 (Jan 11st, 2018.)
+* Add Vest rotation
+* Deprecate transform
+
 ## Bhaptics.Tac 1.2.1 (Dec 13th, 2017.)
 * Add IsActive(position) function on HapticPlayer
 

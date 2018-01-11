@@ -27,7 +27,7 @@ namespace Bhaptics.Tac.Unity
             float offsetY = (bullet.transform.position.y - transform.position.y) / boundsSize;
             Debug.Log("trigger : " + bullet.gameObject.name + ", " + angle + ", " + targetDir + ", " + offsetY + ", " + boundsSize);
 
-            player.SubmitRegisteredVestRotation(feedbackKey, "RifleImpact1", new RotationOption(angle, -offsetY), new ScaleOption(intensity, 1f));
+            player.SubmitRegisteredVestRotation(feedbackKey, "RifleImpact1", new RotationOption(angle, offsetY), new ScaleOption(intensity, 1f));
 
 
             DestroyObject(bullet.gameObject);
@@ -41,7 +41,7 @@ namespace Bhaptics.Tac.Unity
                 float angle = BhapticsUtils.Angle(contact.normal, transform.forward);
                 var boundsSize = GetComponent<CapsuleCollider>().height;
                 float offsetY = (contact.point.y - transform.position.y) / boundsSize;
-                player.SubmitRegisteredVestRotation(feedbackKey, "RifleImpact1", new RotationOption(180f + angle, -offsetY), new ScaleOption(intensity, 1f));
+                player.SubmitRegisteredVestRotation(feedbackKey, "RifleImpact1", new RotationOption(180f + angle, offsetY), new ScaleOption(intensity, 1f));
                 Debug.Log(contact.point);
             }
 

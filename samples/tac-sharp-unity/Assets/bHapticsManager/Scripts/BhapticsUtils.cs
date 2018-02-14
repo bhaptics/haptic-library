@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Bhaptics.Tac.Designer;
 using UnityEngine;
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 using Microsoft.Win32;
@@ -84,15 +85,19 @@ namespace Bhaptics.Tac.Unity
             return IntPtr.Size == 8;
         }
 
-        public static void LaunchPlayer()
+        public static void LaunchPlayer(bool tryLaunch)
         {
+            if (!tryLaunch)
+            {
+                return;
+            }
+
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             var myProcess = new System.Diagnostics.Process();
             myProcess.StartInfo.FileName = GetExePath();
             myProcess.Start();
 #endif
         }
-
 
 
         public static float Angle(Vector3 fwd, Vector3 targetDir)
@@ -130,6 +135,39 @@ namespace Bhaptics.Tac.Unity
 
             return 0;
         }
+
+        public static Project ReflectLeftRight(string projectStr)
+        {
+            var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(projectStr);
+            var project = feedbackFile.Project;
+
+            foreach (var projectTrack in project.Tracks)
+            {
+                foreach (var projectTrackEffect in projectTrack.Effects)
+                {
+                    HapticEffectMode right = null, left = null;
+                    if (projectTrackEffect.Modes.ContainsKey(TypeRight))
+                    {
+                        right = projectTrackEffect.Modes[TypeRight];
+                    }
+
+                    if (projectTrackEffect.Modes.ContainsKey(TypeLeft))
+                    {
+                        left = projectTrackEffect.Modes[TypeLeft];
+                    }
+
+                    projectTrackEffect.Modes[TypeLeft] = right;
+                    projectTrackEffect.Modes[TypeRight] = left;
+                }
+            }
+
+            return project;
+        }
+
+        public static string TypeVest = "Vest";
+        public static string TypeTactosy = "Tactosy";
+        public static string TypeRight = "Right";
+        public static string TypeLeft = "Left";
     }
 }
 

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
 using Bhaptics.Tac.Designer;
 using Bhaptics.Tac.Sender;
@@ -11,56 +9,34 @@ namespace Bhaptics.Tac.Unity
 {
     public class BhapticsManager : MonoBehaviour
     {
-        [Serializable]
-        public class SignalMapping
-        {
-            public SignalMapping(string key, string path)
-            {
-                Key = key;
-                Path = path;
-            }
+        private static BhapticsManager _manager;
 
-            public string Key;
-            public string Path;
-        }
-
-        private VisualFeedabck[] visualFeedbacks;
+        private VisualFeedback[] visualFeedbacks;
 
         [Tooltip("Show visual feedabck or not")]
         [SerializeField]
         public bool visualizeFeedbacks;
 
-        [Tooltip("File Prefix - Need to change when you build!")]
-        [SerializeField]
-        private string PathPrefix = "Assets/bHapticsManager/Feedbacks/";
-
-        [Tooltip("Use Streaming Path or not")]
-        [SerializeField]
-        private bool useStreamingPath;
-
-        internal Dictionary<string, Dictionary<string, Project>> FeedbackFileMapping = new Dictionary<string, Dictionary<string, Project>>();
-        internal string RootPath = "";
-
+        public bool launchPlayerIfNotRunning = true;
+        
+        
         private readonly List<HapticFeedback> _changedFeedbacks = new List<HapticFeedback>();
 
         private static IHapticPlayer _hapticPlayer;
         private static bool _isTryLaunchApp;
 
-
-        [Space(20)] [Range(0f, 360f)] [SerializeField]
-        private float vestRotationAngleX;
-
-        [Range(-1f, 1f)]
-        [SerializeField]
-        private float vestRotationOffsetY;
-
-        [Range(0.2f, 5f)]
-        [SerializeField]
-        private float intensity = 1f;
-
-        [Range(0.2f, 5f)]
-        [SerializeField]
-        private float duration =1f;
+        public static string GetFeedbackId(string key)
+        {
+            foreach (var file in TactFileAsset.Instance.FeedbackFiles)
+            {
+                if (file.Key == key)
+                {
+                    return file.Id;
+                }
+            }
+            Debug.LogError("Cannot find feedback file with key : " + key);
+            return "";
+        }
 
         public static IHapticPlayer HapticPlayer
         {
@@ -84,7 +60,7 @@ namespace Bhaptics.Tac.Unity
                             {
                                 if (!_isTryLaunchApp)
                                 {
-                                    BhapticsUtils.LaunchPlayer();
+                                    BhapticsUtils.LaunchPlayer(_manager.launchPlayerIfNotRunning);
                                     _isTryLaunchApp = true;
                                 }
                             }
@@ -103,6 +79,7 @@ namespace Bhaptics.Tac.Unity
         {
             var uninstalledMessage = "bHaptics Player is not installed. Plugin is now disabled. Please download here." +
                                      "\nhttp://bhaptics.com/app.html#download";
+            _manager = this;
             if (!BhapticsUtils.IsPlayerInstalled())
             {
                 Debug.LogError(uninstalledMessage);
@@ -112,7 +89,7 @@ namespace Bhaptics.Tac.Unity
             if (!BhapticsUtils.IsPlayerRunning())
             {
                 Debug.Log("bHaptics Player is not running, try launching bHaptics Player.");
-                BhapticsUtils.LaunchPlayer();
+                BhapticsUtils.LaunchPlayer(launchPlayerIfNotRunning);
             }
         }
 
@@ -210,63 +187,24 @@ namespace Bhaptics.Tac.Unity
 
         void InitVisualFeedback()
         {
-            visualFeedbacks = GetComponentsInChildren<VisualFeedabck>(true);
+            visualFeedbacks = GetComponentsInChildren<VisualFeedback>(true);
 
-            foreach (var go in visualFeedbacks)
+            var feedback = transform.GetChild(0);
+
+            if (feedback != null)
             {
-                go.gameObject.SetActive(visualizeFeedbacks);
+                feedback.gameObject.SetActive(visualizeFeedbacks);
             }
         }
 
         private void LoadFeedbackFile()
         {
-            FeedbackFileMapping.Clear();
-            RootPath = PathPrefix;
-
-            if (useStreamingPath)
-            {
-                RootPath = Application.dataPath + "/StreamingAssets/" + PathPrefix;
-            }
-
             try
             {
-                string[] extensions = { "*.tactosy", "*.tact" };
-
-                foreach (var extension in extensions)
+                foreach (var file in TactFileAsset.Instance.FeedbackFiles)
                 {
-                    string[] allPaths = Directory.GetFiles(RootPath, extension, SearchOption.AllDirectories);
-
-                    foreach (var filePath in allPaths)
-                    {
-                        try
-                        {
-                            var fileName = Path.GetFileNameWithoutExtension(filePath);
-                            string json = LoadStringFromFile(filePath);
-                            var file = CommonUtils.ConvertJsonStringToTactosyFile(json);
-
-                            _hapticPlayer.Register(fileName, file.Project);
-
-                            if (fileName == null)
-                            {
-                                Debug.LogError("file name is null " + filePath);
-                                continue;
-                            }
-
-                            if (Application.isEditor)
-                            {
-                                string path = filePath.Replace(RootPath, "").Replace(fileName + ".tact", "").Replace(fileName + ".tactosy", "").Replace("\\", "/");
-                                if (!FeedbackFileMapping.ContainsKey(path))
-                                {
-                                    FeedbackFileMapping[path] = new Dictionary<string, Project>();
-                                }
-                                FeedbackFileMapping[path][fileName] = file.Project;
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogError("failed to read feedback file " + filePath + " : " + e.Message);
-                        }
-                    }
+                    var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(file.Value);
+                    _hapticPlayer.Register(file.Id, feedbackFile.Project);
                 }
 
             }
@@ -274,26 +212,6 @@ namespace Bhaptics.Tac.Unity
             {
                 Debug.LogError("FeedbackFile Loading failed : " + e.Message);
             }
-        }
-
-        private string LoadStringFromFile(string filePath)
-        {
-            string json;
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                WWW www = new WWW(filePath);
-
-                while (!www.isDone)
-                {
-                }
-
-                json = www.text;
-            }
-            else
-            {
-                json = File.ReadAllText(filePath);
-            }
-            return json;
         }
 
         private void OnStatusChanged(PlayerResponse playerResponse)
@@ -324,16 +242,6 @@ namespace Bhaptics.Tac.Unity
                     _changedFeedbacks.Add(feedback);
                 }
             }
-        }
-
-        public void Play(string key)
-        {
-            HapticPlayer.SubmitRegisteredVestRotation(key, key, new RotationOption(vestRotationAngleX, vestRotationOffsetY), new ScaleOption(intensity, duration));
-        }
-
-        public void TurnOff()
-        {
-            HapticPlayer.TurnOff();
         }
     }
 

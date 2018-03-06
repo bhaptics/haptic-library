@@ -5,6 +5,7 @@ namespace Bhaptics.Tac.Unity
     public class TactReceiver : MonoBehaviour
     {
         public PositionTag PositionTag = PositionTag.Body;
+        public bool IsActive = true;
 
         void Awake()
         {
@@ -18,12 +19,19 @@ namespace Bhaptics.Tac.Unity
 
         void OnTriggerEnter(Collider bullet)
         {
-            Handle(bullet.transform.position, bullet.GetComponent<TactSender>());
+            if (IsActive)
+            {
+                Handle(bullet.transform.position, bullet.GetComponent<TactSender>());
+            }
+            
         }
 
         void OnCollisionEnter(Collision bullet)
         {
-            Handle(bullet.contacts[0].point, bullet.gameObject.GetComponent<TactSender>());
+            if (IsActive)
+            {
+                Handle(bullet.contacts[0].point, bullet.gameObject.GetComponent<TactSender>());
+            }
         }
 
         private void Handle(Vector3 contactPoint, TactSender tactSender)

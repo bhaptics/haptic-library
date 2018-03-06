@@ -8,11 +8,11 @@ namespace Bhaptics.Tac.Unity
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
             {
-                foreach (var tactClip in Sources)
+                foreach (var tactSource in Sources)
                 {
-                    tactClip.Play();
+                    tactSource.Play();
                 }
             }
         }

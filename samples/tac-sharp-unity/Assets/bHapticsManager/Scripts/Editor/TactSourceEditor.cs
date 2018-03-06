@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 
 namespace Bhaptics.Tac.Unity
@@ -21,10 +22,12 @@ namespace Bhaptics.Tac.Unity
 
         private string[] _feedbackDescOptions;
         private int _selectedFeedbackIndex;
+        
 
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
+            serializedObject.Update();
 
             var source = (TactSource)target;
 
@@ -46,7 +49,7 @@ namespace Bhaptics.Tac.Unity
                     TactFileUi();
                     break;
             }
-
+            serializedObject.ApplyModifiedProperties();
             PlayUi();
         }
 
@@ -58,7 +61,7 @@ namespace Bhaptics.Tac.Unity
                 var key = source.FeedbackFile.Id;
 
                 var length = TactFileAsset.Instance.FeedbackFiles.Length;
-
+                _selectedFeedbackIndex = -1;
                 _feedbackDescOptions = new string[length];
                 for (var i = 0; i < length; i++)
                 {
@@ -71,13 +74,34 @@ namespace Bhaptics.Tac.Unity
                 }
             }
 
+
+
             GUILayout.BeginHorizontal();
             GUILayout.Label("Tact File");
-
             _selectedFeedbackIndex = EditorGUILayout.Popup(_selectedFeedbackIndex, _feedbackDescOptions);
-            source.FeedbackFile = TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex];
+
 
             GUILayout.EndHorizontal();
+            if (_selectedFeedbackIndex >= 0)
+            {
+                source.FeedbackFile = TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex];
+            }
+            
+
+            if (GUI.changed && !Application.isPlaying)
+            {
+                EditorUtility.SetDirty(source);
+                EditorUtility.SetDirty(source.gameObject);
+                Undo.RecordObject(source, "TactFile Changed TactSource");
+                EditorSceneManager.MarkSceneDirty(source.gameObject.scene);
+            }
+            //            GUILayout.BeginHorizontal();
+            //            GUILayout.Label("Tact File");
+            //
+            //            EditorGUILayout.LabelField(source.FeedbackFile.Type + " - " + source.FeedbackFile.Key);
+            //
+            //            GUILayout.EndHorizontal();
+
 
             if (source.FeedbackFile.Type == BhapticsUtils.TypeTactosy)
             {
@@ -102,7 +126,7 @@ namespace Bhaptics.Tac.Unity
             {
                 GUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 120f;
-                source.TactFileOffsetX = Mathf.Clamp(EditorGUILayout.FloatField("Tact File Offset (X)", source.TactFileOffsetX),
+                source.TactFileOffsetX = Mathf.Clamp(EditorGUILayout.FloatField("Tact File Angle (X)", source.TactFileOffsetX),
                     0, 360);
 
                 source.TactFileOffsetY = Mathf.Clamp(EditorGUILayout.FloatField("Tact File Offset (Y)", source.TactFileOffsetY),
@@ -148,12 +172,12 @@ namespace Bhaptics.Tac.Unity
 
         private void PlayUi()
         {
+            var source = (TactSource)target;
             if (!Application.isPlaying)
             {
                 return;
             }
-
-            var source = (TactSource)target;
+            
             if (GUILayout.Button("Play"))
             {
                 source.Play();

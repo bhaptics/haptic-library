@@ -52,6 +52,7 @@ namespace Bhaptics.Tac.Unity
         public float TactFileOffsetY;
 
         [HideInInspector]
+        [SerializeField]
         public FeedbackFile FeedbackFile;
 
         #endregion
@@ -173,14 +174,13 @@ namespace Bhaptics.Tac.Unity
                     return PositionType.FootL;
                 case Pos.FootR:
                     return PositionType.FootR;
-                   
+                case Pos.Racket:
+                    return PositionType.Racket;
             }
 
             return PositionType.Right;
         }
     }
-
-
 
     [Serializable]
     public class Point
@@ -201,15 +201,15 @@ namespace Bhaptics.Tac.Unity
         }
     }
 
+    [Serializable]
     public enum FeedbackType
     {
         TactFile = 0, DotMode = 1, PathMode = 2
     }
 
+    [Serializable]
     public enum Pos
     {
-        RightArm, LeftArm, VestFront, VestBack, Head, HandL, HandR, FootL, FootR
+        RightArm, LeftArm, VestFront, VestBack, Head, HandL, HandR, FootL, FootR, Racket
     }
-
-    
 }

@@ -1,3 +1,7 @@
+## Unity plugin 1.3.0 (Mar 6th, 2018.)
+* Add TactSource.cs, TactReceiver.cs, TactSource.cs
+* Add Excample Scenes
+
 ## Bhaptics.Tac 1.2.2 (Jan 11st, 2018.)
 * Add Vest rotation
 * Deprecate transform

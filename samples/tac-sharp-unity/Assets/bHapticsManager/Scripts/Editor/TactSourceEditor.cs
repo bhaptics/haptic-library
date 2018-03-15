@@ -177,11 +177,17 @@ namespace Bhaptics.Tac.Unity
             {
                 return;
             }
-            
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("Play"))
             {
                 source.Play();
             }
+
+            if (GUILayout.Button("Stop"))
+            {
+                source.Stop();
+            }
+            GUILayout.EndHorizontal();
         }
 
         private void DotPointUi()

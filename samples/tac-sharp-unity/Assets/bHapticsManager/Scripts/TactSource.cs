@@ -80,7 +80,6 @@ namespace Bhaptics.Tac.Unity
             {
                 option = new ScaleOption(Intensity, Duration);
             }
-
             switch (FeedbackType)
             {
                 case FeedbackType.DotMode:
@@ -124,6 +123,11 @@ namespace Bhaptics.Tac.Unity
 
                     break;
             }
+        }
+
+        public void Stop()
+        {
+            player.TurnOff(_key);
         }
 
         public void AddPathPoint()

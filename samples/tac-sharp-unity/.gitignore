@@ -31,5 +31,8 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
+/Assets/bHapticsManager/Resources/
+/Assets/bHapticsManager/Resources.meta
+
 # SteamVR Dependency
 /Assets/SteamVR/

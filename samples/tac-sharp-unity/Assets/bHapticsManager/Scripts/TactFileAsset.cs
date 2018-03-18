@@ -79,6 +79,11 @@ namespace Bhaptics.Tac.Unity
             string assetPath = scriptPath +  "TactFileAsset" + ".asset";
             var existingAsset = AssetDatabase.LoadAssetAtPath<TactFileAsset>(assetPath);
 
+            if (!AssetDatabase.IsValidFolder(scriptPath))
+            {
+                Directory.CreateDirectory(scriptPath);
+            }
+
             if (existingAsset == null)
             {
                 AssetDatabase.CreateAsset(item, assetPath);

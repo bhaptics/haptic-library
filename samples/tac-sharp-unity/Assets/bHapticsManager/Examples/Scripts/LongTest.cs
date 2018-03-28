@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Bhaptics.Tac.Unity
+namespace Bhaptics.Tact.Unity
 {
     public class LongTest : MonoBehaviour
     {

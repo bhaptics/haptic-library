@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Bhaptics.Tac.Unity
+namespace Bhaptics.Tact.Unity
 {
     public class ExamplePrev : MonoBehaviour
     {

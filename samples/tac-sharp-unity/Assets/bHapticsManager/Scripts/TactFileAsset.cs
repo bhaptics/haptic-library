@@ -9,7 +9,7 @@ using System.Text;
 using UnityEditor;
 #endif
 
-namespace Bhaptics.Tac.Unity
+namespace Bhaptics.Tact.Unity
 {
     public class TactFileAsset : ScriptableObject
     {
@@ -126,7 +126,7 @@ namespace Bhaptics.Tac.Unity
                         {
                             var fileName = Path.GetFileNameWithoutExtension(filePath);
                             string json = LoadStringFromFile(filePath);
-                            var file = CommonUtils.ConvertJsonStringToTactosyFile(json);
+                            var file = DotNetUtils.ConvertJsonStringToTactosyFile(json);
 
                             if (fileName == null)
                             {

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using Bhaptics.Tac.Designer;
 using UnityEngine;
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
 using Microsoft.Win32;
 #endif
 
-namespace Bhaptics.Tac.Unity
+namespace Bhaptics.Tact.Unity
 {
     public class BhapticsUtils
     {
@@ -138,7 +137,7 @@ namespace Bhaptics.Tac.Unity
 
         public static Project ReflectLeftRight(string projectStr)
         {
-            var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(projectStr);
+            var feedbackFile = DotNetUtils.ConvertJsonStringToTactosyFile(projectStr);
             var project = feedbackFile.Project;
 
             foreach (var projectTrack in project.Tracks)

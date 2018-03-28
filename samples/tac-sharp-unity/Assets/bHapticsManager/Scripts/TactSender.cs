@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Bhaptics.Tac.Unity
+namespace Bhaptics.Tact.Unity
 {
     public class TactSender : MonoBehaviour
     {

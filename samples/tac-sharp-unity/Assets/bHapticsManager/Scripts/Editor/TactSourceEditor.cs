@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 
 
-namespace Bhaptics.Tac.Unity
+namespace Bhaptics.Tact.Unity
 {
     [CustomEditor(typeof(TactSource))]
     public class TactSourceEditor : Editor

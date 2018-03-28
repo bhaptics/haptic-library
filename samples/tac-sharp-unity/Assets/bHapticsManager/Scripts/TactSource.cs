@@ -1,9 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
-using Bhaptics.Tac.Sender;
 
-namespace Bhaptics.Tac.Unity
+namespace Bhaptics.Tact.Unity
 {
     public class TactSource : MonoBehaviour
     {

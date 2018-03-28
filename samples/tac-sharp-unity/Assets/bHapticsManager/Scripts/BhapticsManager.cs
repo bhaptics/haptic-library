@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Bhaptics.Tac.Designer;
-using Bhaptics.Tac.Sender;
 using UnityEngine;
 
-namespace Bhaptics.Tac.Unity
+namespace Bhaptics.Tact.Unity
 {
     public class BhapticsManager : MonoBehaviour
     {
@@ -50,7 +48,8 @@ namespace Bhaptics.Tac.Unity
                     }
                     else
                     {
-                        _hapticPlayer = new HapticPlayer(connected =>
+                        DotNetWebSocketSender sender = new DotNetWebSocketSender();
+                        sender.ConnectionChanged += connected =>
                         {
                             if (connected)
                             {
@@ -64,7 +63,10 @@ namespace Bhaptics.Tac.Unity
                                     _isTryLaunchApp = true;
                                 }
                             }
-                        });
+                        };
+                        sender.Initialize(true);
+
+                        _hapticPlayer = new HapticPlayer(sender);
                     }
                 }
                 
@@ -203,7 +205,7 @@ namespace Bhaptics.Tac.Unity
             {
                 foreach (var file in TactFileAsset.Instance.FeedbackFiles)
                 {
-                    var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(file.Value);
+                    var feedbackFile = DotNetUtils.ConvertJsonStringToTactosyFile(file.Value);
                     _hapticPlayer.Register(file.Id, feedbackFile.Project);
                 }
 
@@ -360,6 +362,6 @@ namespace Bhaptics.Tac.Unity
             // nothing to do
         }
 
-        public event FeedbackEvent.StatusReceivedEvent StatusReceived;
+        public event Action<PlayerResponse> StatusReceived;
     }
 }

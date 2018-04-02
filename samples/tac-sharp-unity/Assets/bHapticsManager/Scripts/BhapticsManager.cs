@@ -48,8 +48,7 @@ namespace Bhaptics.Tact.Unity
                     }
                     else
                     {
-                        DotNetWebSocketSender sender = new DotNetWebSocketSender();
-                        sender.ConnectionChanged += connected =>
+                        _hapticPlayer = new HapticPlayer((connected) =>
                         {
                             if (connected)
                             {
@@ -63,10 +62,7 @@ namespace Bhaptics.Tact.Unity
                                     _isTryLaunchApp = true;
                                 }
                             }
-                        };
-                        sender.Initialize(true);
-
-                        _hapticPlayer = new HapticPlayer(sender);
+                        });
                     }
                 }
                 
@@ -205,7 +201,7 @@ namespace Bhaptics.Tact.Unity
             {
                 foreach (var file in TactFileAsset.Instance.FeedbackFiles)
                 {
-                    var feedbackFile = DotNetUtils.ConvertJsonStringToTactosyFile(file.Value);
+                    var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(file.Value);
                     _hapticPlayer.Register(file.Id, feedbackFile.Project);
                 }
 

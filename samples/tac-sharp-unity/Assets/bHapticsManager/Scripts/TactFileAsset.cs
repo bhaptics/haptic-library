@@ -126,7 +126,7 @@ namespace Bhaptics.Tact.Unity
                         {
                             var fileName = Path.GetFileNameWithoutExtension(filePath);
                             string json = LoadStringFromFile(filePath);
-                            var file = DotNetUtils.ConvertJsonStringToTactosyFile(json);
+                            var file = CommonUtils.ConvertJsonStringToTactosyFile(json);
 
                             if (fileName == null)
                             {

@@ -137,7 +137,7 @@ namespace Bhaptics.Tact.Unity
 
         public static Project ReflectLeftRight(string projectStr)
         {
-            var feedbackFile = DotNetUtils.ConvertJsonStringToTactosyFile(projectStr);
+            var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(projectStr);
             var project = feedbackFile.Project;
 
             foreach (var projectTrack in project.Tracks)

@@ -44,7 +44,19 @@ You can check each feedback effect by pushing the corresponding button while pla
 ### LaunchPlayerIfNotRunning
 * Enable/disable launching bHaptics Player if it is installed and it is not running.
 
+### Issues on UWP
+* Please check uwp-issue.pdf
+
 ## Notes
+* Migration to 1.3.1
+   * namespace changed from Bhaptics.Tac to Bhaptics.Tact
+   
+```
+Bhaptics.Tac --> Bhaptics.Tact 
+Bhaptics.Tac.Unity --> Bhaptics.Tact.Unity
+```
+
+
 * Migration to 1.3.0
 
 ```
@@ -84,5 +96,7 @@ var hapticPlayer = BhapticsManager.HapticPlayer;
 ```
 
 
+<br>
+Last update of README.md: Apr 4th, 2018.
 <br>
 Copyright 2017 bHaptics Inc.

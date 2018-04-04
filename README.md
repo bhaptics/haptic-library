@@ -1,6 +1,6 @@
 # bHaptics haptic devices C# plugin
 This project helps to utilize haptic devices in Unity and other C# based platform.
-Current version is 1.2.2
+Current version is 1.3.0
 
 ## Prerequisite
 * bHaptics Player has to be installed (Windows)
@@ -34,8 +34,8 @@ $ git clone https://github.com/bhaptics/tac-sharp.git
  * Import namespaces into classes that will be using haptic feedback.
 
 ```
-using Bhaptics.Tac;
-using Bhaptics.Tac.Unity;
+using Bhaptics.Tact;
+using Bhaptics.Tact.Unity;
 ```
 
 * Use HapticPlayer
@@ -151,6 +151,7 @@ bool isAnyFeedbackPlaying = HapticPlayer.IsPlaying();
 * E-mail: developer@bhaptics.com
 * Issues : https://github.com/bhaptics/tac-sharp/issues/new
 
-Last update of README.md: Mar 6th, 2018.
+Last update of README.md: Apr 4th, 2018.
+Last update of README.md: Apr 4th, 2018.
 
 ###### Copyright (c) 2018 bHaptics Inc. All rights reserved.

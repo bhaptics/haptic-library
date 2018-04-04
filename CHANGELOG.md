@@ -1,3 +1,7 @@
+## Bhaptics.Tac 1.3.0 (Apr 4th, 2018.)
+* Support UWP
+* Change namepsace to Bhaptics.Tact
+
 ## Bhaptics.Tac 1.2.2 (Jan 11st, 2018.)
 * Add Vest rotation
 * Deprecate transform

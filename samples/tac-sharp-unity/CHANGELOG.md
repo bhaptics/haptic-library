@@ -1,3 +1,7 @@
+## Unity plugin 1.3.1 (Apr 4th, 2018.)
+* Support UWP 
+* Change Namespace
+
 ## Unity plugin 1.3.0 (Mar 6th, 2018.)
 * Add TactSource.cs, TactReceiver.cs, TactSource.cs
 * Add Excample Scenes

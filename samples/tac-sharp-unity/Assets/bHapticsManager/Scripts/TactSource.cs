@@ -38,6 +38,8 @@ namespace Bhaptics.Tact.Unity
 
         private bool isRegistered;
 
+        private bool isOriginFileRegistered = false;
+
         [HideInInspector]
         public float VestRotationAngleX;
 
@@ -66,6 +68,21 @@ namespace Bhaptics.Tact.Unity
             player = BhapticsManager.HapticPlayer;
             VestRotationAngleX = 0;
             VestRotationOffsetY = 0;
+        }
+
+        void OnDisable()
+        {
+            isOriginFileRegistered = false;
+            isRegistered = false;
+        }
+
+        void OnApplicationPause(bool pauseStatus)
+        {
+            if (pauseStatus)
+            {
+                isOriginFileRegistered = false;
+                isRegistered = false;
+            }
         }
 
         public bool IsPlaying()
@@ -98,8 +115,17 @@ namespace Bhaptics.Tact.Unity
                         player.Submit(_key, ToPositionType(Position), new List<PathPoint>(Convert(Points)), TimeMillis);
                     break;
                 case FeedbackType.TactFile:
+                    if (!isOriginFileRegistered)
+                    {
+                        isOriginFileRegistered = true;
+                        var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(FeedbackFile.Value);
+                        Debug.Log("test " + FeedbackFile.Id + ", " + FeedbackFile.Key);
+                        player.Register(FeedbackFile.Id, feedbackFile.Project);
+                    }
+
                     if (FeedbackFile.Type == BhapticsUtils.TypeVest)
                     {
+
                         player.SubmitRegisteredVestRotation(FeedbackFile.Id, _key, 
                             new RotationOption(VestRotationAngleX + TactFileOffsetX, VestRotationOffsetY + TactFileOffsetY),
                             option);
@@ -117,6 +143,7 @@ namespace Bhaptics.Tact.Unity
                     }
                     else
                     {
+
                         player.SubmitRegistered(FeedbackFile.Id, _key, option);
                     }
 

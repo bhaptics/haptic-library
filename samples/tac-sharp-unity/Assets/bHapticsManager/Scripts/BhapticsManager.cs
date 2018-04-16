@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using Bhaptics.fastJSON;
 using UnityEngine;
 
 namespace Bhaptics.Tact.Unity
@@ -48,21 +49,28 @@ namespace Bhaptics.Tact.Unity
                     }
                     else
                     {
-                        _hapticPlayer = new HapticPlayer((connected) =>
+                        if (Application.platform == RuntimePlatform.Android)
                         {
-                            if (connected)
+                            _hapticPlayer = new AndroidHapticPlayer();
+                        }
+                        else
+                        {
+                            _hapticPlayer = new HapticPlayer(connected =>
                             {
-                                _isTryLaunchApp = true;
-                            }
-                            else
-                            {
-                                if (!_isTryLaunchApp)
+                                if (connected)
                                 {
-                                    BhapticsUtils.LaunchPlayer(_manager.launchPlayerIfNotRunning);
                                     _isTryLaunchApp = true;
                                 }
-                            }
-                        });
+                                else
+                                {
+                                    if (!_isTryLaunchApp)
+                                    {
+                                        BhapticsUtils.LaunchPlayer(_manager.launchPlayerIfNotRunning);
+                                        _isTryLaunchApp = true;
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
                 
@@ -70,7 +78,7 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        #region Unity Method
+#region Unity Method
 
 
         void Awake()
@@ -116,6 +124,24 @@ namespace Bhaptics.Tact.Unity
             HapticPlayer.TurnOff();
             HapticPlayer.Disable();
             HapticPlayer.StatusReceived -= OnStatusChanged;
+        }
+        
+        // only for Android
+        public void Received(string message)
+        {
+            
+            var response = JSON.ToObject<PlayerResponse>(message);
+
+            try
+            {
+                object[] item = { response };
+                HapticPlayer.GetType().GetMethod("Receive").Invoke(HapticPlayer, item);
+            }
+            catch (Exception e)
+            {
+                
+                Debug.Log(e);
+            }
         }
 
         void OnDestroy()
@@ -181,7 +207,7 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        #endregion
+#endregion
 
         void InitVisualFeedback()
         {
@@ -199,16 +225,30 @@ namespace Bhaptics.Tact.Unity
         {
             try
             {
-                foreach (var file in TactFileAsset.Instance.FeedbackFiles)
+                if (TactFileAsset.Instance == null)
                 {
-                    var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(file.Value);
-                    _hapticPlayer.Register(file.Id, feedbackFile.Project);
+                    Debug.LogError("Failed to Read TactFileAsset");
+                    return;
                 }
+                
+                var files = TactFileAsset.Instance.FeedbackFiles;
+
+                if (files == null)
+                {
+                    Debug.LogError("Failed to Get Feedback files");
+                    return;
+                }
+
+//                foreach (var file in files)
+//                {
+//                    var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(file.Value);
+//                    _hapticPlayer.Register(file.Id, feedbackFile.Project);
+//                }
 
             }
             catch (Exception e)
             {
-                Debug.LogError("FeedbackFile Loading failed : " + e.Message);
+                Debug.LogError("LoadFeedbackFile() failed : " + e.Message);
             }
         }
 

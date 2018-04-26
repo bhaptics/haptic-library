@@ -39,6 +39,7 @@ using Bhaptics.Tact.Unity;
 ```
 
 * Use HapticPlayer
+
 ```C#
 var hapticPlayer = new HapticPlayer((connected) =>
 {

@@ -1,3 +1,6 @@
+## Unity plugin 1.4.0 (Jul 5th, 2018.)
+* Support Android Devices Including and Daydream
+
 ## Unity plugin 1.3.1 (Apr 4th, 2018.)
 * Support UWP 
 * Change Namespace

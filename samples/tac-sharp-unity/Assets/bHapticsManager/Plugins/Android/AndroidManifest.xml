@@ -20,14 +20,6 @@
           <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
-	          <service android:name="com.bhaptics.tact.ble.BhapticsService">
-            <intent-filter>
-                <action android:name="com.bhaptics.player.Service" />
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </service>
       <activity android:name="com.unity3d.player.UnityPlayerActivity"
                 android:label="@string/app_name"
                 android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
@@ -39,6 +31,14 @@
         <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="true" />
 		
       </activity>
+
+      <service android:name="com.bhaptics.tact.ble.BhapticsService">
+        <intent-filter>
+            <action android:name="com.bhaptics.player.Service" />
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+      </service>
 	  
 	  <activity android:name="com.bhaptics.tact.unity.HapticPlayerWrapper"
                 android:label="@string/app_name"

@@ -12,15 +12,15 @@
         android:allowBackup="true"
         android:label="@string/app_name"
         android:supportsRtl="true" >
-      <activity android:name="com.unity3d.player.UnityPlayerProxyActivity"
+        <activity android:name="com.unity3d.player.UnityPlayerProxyActivity"
                   android:label="@string/app_name"
                   android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
-        <intent-filter>
-          <action android:name="android.intent.action.MAIN" />
-          <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-      </activity>
-	          <service android:name="com.bhaptics.tact.ble.BhapticsService">
+            <intent-filter>
+              <action android:name="android.intent.action.MAIN" />
+              <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+	    <service android:name="com.bhaptics.tact.ble.BhapticsService">
             <intent-filter>
                 <action android:name="com.bhaptics.player.Service" />
                 <action android:name="android.intent.action.MAIN" />
@@ -28,22 +28,22 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-      <activity android:name="com.unity3d.player.UnityPlayerActivity"
+        <activity android:name="com.unity3d.player.UnityPlayerActivity"
                 android:label="@string/app_name"
                 android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
-      </activity>
-      <activity android:name="com.unity3d.player.UnityPlayerNativeActivity"
+        </activity>
+        <activity android:name="com.unity3d.player.UnityPlayerNativeActivity"
                 android:label="@string/app_name"
                 android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
-        <meta-data android:name="android.app.lib_name" android:value="unity" />
-        <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="true" />
+            <meta-data android:name="android.app.lib_name" android:value="unity" />
+            <meta-data android:name="unityplayer.ForwardNativeEventsToDalvik" android:value="true" />
 		
-      </activity>
+        </activity>
 	  
-	  <activity android:name="com.bhaptics.tact.unity.HapticPlayerWrapper"
+	    <activity android:name="com.bhaptics.tact.unity.HapticPlayerWrapper"
                 android:label="@string/app_name"
                 android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
-      </activity>
+        </activity>
     </application>
 
 </manifest>

@@ -12,6 +12,9 @@ namespace Bhaptics.Tact.Unity
 
         private GameObject[] motors;
 
+        [SerializeField] private float offsetX;
+        [SerializeField] private float offsetY;
+
         void Start()
         {
             if (motorPrefab != null && column > 0 && row > 0)
@@ -34,7 +37,7 @@ namespace Bhaptics.Tact.Unity
                     {
                         var dot = (GameObject)Instantiate(motorPrefab, Vector3.zero, Quaternion.identity);
                         dot.transform.parent = transform;
-                        dot.transform.localPosition = new Vector3(c * c_distance, r * r_distance, 0);
+                        dot.transform.localPosition = new Vector3(offsetX + c * c_distance, offsetY + r * r_distance, 0);
                         motors[(row - r - 1) * column + c] = dot;
                     }
                 }

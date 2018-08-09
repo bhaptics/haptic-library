@@ -61,6 +61,16 @@ namespace Bhaptics.Tact.Unity
         void Awake()
         {
             _key = GetInstanceID() + "";
+
+            if (DotPoints == null || DotPoints.Length != 20)
+            {
+                DotPoints = new byte[20];
+            }
+
+            if (Points == null)
+            {
+                Points = new Point[] { new Point(0.5f, 0.5f, 100) };
+            }
         }
 
         void OnEnable()

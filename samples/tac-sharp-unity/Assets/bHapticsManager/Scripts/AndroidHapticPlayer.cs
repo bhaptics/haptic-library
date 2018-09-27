@@ -5,7 +5,7 @@ using Bhaptics.Tact;
 using UnityEngine;
 
 
-public class AndroidHapticPlayer : MonoBehaviour, IHapticPlayer
+public class AndroidHapticPlayer :IHapticPlayer
 {
     private AndroidJavaObject hapticPlayer;
     private readonly JSONParameters DEFAULT_PARAM = new JSONParameters
@@ -24,22 +24,55 @@ public class AndroidHapticPlayer : MonoBehaviour, IHapticPlayer
         Debug.Log("dispose() ");
         if (hapticPlayer != null)
         {
-            hapticPlayer.Call("onDestroy");
+            hapticPlayer.Call("dispose");
             hapticPlayer = null;
         }
     }
 
     public void Enable()
     {
+        if (hapticPlayer != null)
+        {
+            Debug.LogError("AndroidHapticPlayer not null");
+            return;
+        }
+
         AndroidJavaClass player = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
         AndroidJavaObject currentActivity = player.GetStatic<AndroidJavaObject>("currentActivity");
         Debug.Log("Enable() activity : " + currentActivity);
         hapticPlayer = new AndroidJavaObject("com.bhaptics.tact.unity.HapticPlayerWrapper", currentActivity);
+        hapticPlayer.Call("start");
+
+        Debug.Log("Enable() StopScan");
+    }
+
+    public void StopScan()
+    {
+        Debug.Log("StopScan()");
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("stopScan");
+        }
+    }
+
+    public void StartScan()
+    {
+        Debug.Log("StartScan()");
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("startScan");
+        }
     }
 
     public void Disable()
     {
-        Dispose();
+        Debug.Log("Disable() ");
+        //        Dispose();
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("stop");
+            hapticPlayer = null;
+        }
     }
 
     public bool IsActive(PositionType type)
@@ -284,7 +317,6 @@ public class AndroidHapticPlayer : MonoBehaviour, IHapticPlayer
             lock (_activeKeys)
             {
                 _activeKeys.Clear();
-                _activeKeys.AddRange(response.ActiveKeys);
             }
 
             lock (_activePosition)

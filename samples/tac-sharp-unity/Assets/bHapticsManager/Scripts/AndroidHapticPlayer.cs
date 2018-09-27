@@ -22,7 +22,11 @@ public class AndroidHapticPlayer : MonoBehaviour, IHapticPlayer
     public void Dispose()
     {
         Debug.Log("dispose() ");
-        hapticPlayer.Call("onDestroy");
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("onDestroy");
+            hapticPlayer = null;
+        }
     }
 
     public void Enable()
@@ -35,7 +39,7 @@ public class AndroidHapticPlayer : MonoBehaviour, IHapticPlayer
 
     public void Disable()
     {
-        hapticPlayer.Call("onDestroy");
+        Dispose();
     }
 
     public bool IsActive(PositionType type)
@@ -136,7 +140,16 @@ public class AndroidHapticPlayer : MonoBehaviour, IHapticPlayer
     {
         var request = PlayerRequest.Create();
         request.Submit.Add(submitRequest);
-        hapticPlayer.Call("submit", JSON.ToJSON(request, DEFAULT_PARAM));
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("submit", JSON.ToJSON(request, DEFAULT_PARAM));
+        }
+        else
+        {
+            Debug.Log("hapticPlayer is null.");
+        }
+
+
     }
 
     public void SubmitRegistered(string key, ScaleOption option)
@@ -260,22 +273,30 @@ public class AndroidHapticPlayer : MonoBehaviour, IHapticPlayer
 
     public void Receive(PlayerResponse response)
     {
-        if (StatusReceived != null)
+        try
         {
-            StatusReceived(response);
-        }
+            if (StatusReceived != null)
+            {
+                StatusReceived(response);
+            }
 
 
-        lock (_activeKeys)
-        {
-            _activeKeys.Clear();
-            _activeKeys.AddRange(response.ActiveKeys);
-        }
+            lock (_activeKeys)
+            {
+                _activeKeys.Clear();
+                _activeKeys.AddRange(response.ActiveKeys);
+            }
 
-        lock (_activePosition)
-        {
-            _activePosition.Clear();
-            _activePosition.AddRange(response.ConnectedPositions);
+            lock (_activePosition)
+            {
+                _activePosition.Clear();
+                _activePosition.AddRange(response.ConnectedPositions);
+            }
         }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
+        
     }
 }

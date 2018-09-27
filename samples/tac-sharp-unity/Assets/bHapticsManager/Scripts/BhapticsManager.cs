@@ -18,7 +18,6 @@ namespace Bhaptics.Tact.Unity
 
         public bool launchPlayerIfNotRunning = true;
         
-        
         private readonly List<HapticFeedback> _changedFeedbacks = new List<HapticFeedback>();
 
         private static IHapticPlayer _hapticPlayer;

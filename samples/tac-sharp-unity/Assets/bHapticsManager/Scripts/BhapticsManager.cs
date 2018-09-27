@@ -79,6 +79,27 @@ namespace Bhaptics.Tact.Unity
 
 #region Unity Method
 
+        void AndroidStopScan()
+        {
+            Invoke("AndroidStartScan", 3f);
+            AndroidHapticPlayer player = HapticPlayer as AndroidHapticPlayer;
+            if (player != null)
+            {
+                player.StopScan();
+            }
+        }
+
+        void AndroidStartScan()
+        {
+            Invoke("AndroidStopScan", 17f);
+
+            AndroidHapticPlayer player = HapticPlayer as AndroidHapticPlayer;
+            if (player != null)
+            {
+                player.StartScan();
+            }
+        }
+
 
         void Awake()
         {
@@ -95,6 +116,11 @@ namespace Bhaptics.Tact.Unity
             {
                 Debug.Log("bHaptics Player is not running, try launching bHaptics Player.");
                 BhapticsUtils.LaunchPlayer(launchPlayerIfNotRunning);
+            }
+
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                Invoke("AndroidStopScan", 3f);
             }
         }
 

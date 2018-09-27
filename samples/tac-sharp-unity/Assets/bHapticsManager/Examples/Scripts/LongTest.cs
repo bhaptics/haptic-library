@@ -8,12 +8,12 @@ namespace Bhaptics.Tact.Unity
         // Use this for initialization
         void Start()
         {
-            InvokeRepeating("TriggerBowShoot", .1f, 2f);
+            InvokeRepeating("TriggerPlay", 1f, 4f);
 
-            Invoke("ReloadScene", 5f);
+            Invoke("ReloadScene", 10f);
         }
 
-        void TriggerBowShoot()
+        void TriggerPlay()
         {
             var tactClips = GetComponents<TactSource>();
             foreach (var tactClip in tactClips)

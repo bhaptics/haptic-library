@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Bhaptics.Tact.Unity
 {
+    [Serializable]
     public class TactSource : MonoBehaviour
     {
         private IHapticPlayer player;
@@ -14,27 +15,33 @@ namespace Bhaptics.Tact.Unity
         public FeedbackType FeedbackType = FeedbackType.TactFile;
         
         [HideInInspector]
+        [SerializeField]
         public Pos Position = Pos.RightArm;
 
         // PathMode
-        [HideInInspector]
-        public Point[] Points = {new Point(0.5f, 0.5f, 100) };
-
+        //[HideInInspector]
+        [SerializeField]
+        public Point[] Points; // = {new Point(0.5f, 0.5f, 100) };
+        
         // DotMode
         [HideInInspector]
+        [SerializeField]
         public byte[] DotPoints = new byte[20];
 
         [HideInInspector]
+        [Range(20, 10000)]
         public int TimeMillis = 1000;
 
         #region TactFile
 
         [HideInInspector]
+        [Range(0.2f, 5f)]
         public float Intensity = 1;
         [HideInInspector]
+        [Range(0.2f, 5f)]
         public float Duration = 1;
 
-        [HideInInspector] public bool IsReflectTactosy;
+        [HideInInspector] [SerializeField] public bool IsReflectTactosy;
 
         private bool isRegistered;
 
@@ -47,9 +54,11 @@ namespace Bhaptics.Tact.Unity
         public float VestRotationOffsetY;
 
         [HideInInspector]
+        [Range(0, 360)]
         public float TactFileOffsetX;
 
         [HideInInspector]
+        [Range(-1, 1)]
         public float TactFileOffsetY;
 
         [HideInInspector]
@@ -129,7 +138,7 @@ namespace Bhaptics.Tact.Unity
                     {
                         isOriginFileRegistered = true;
                         var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(FeedbackFile.Value);
-                        Debug.Log("test " + FeedbackFile.Id + ", " + FeedbackFile.Key);
+                        //Debug.Log("Register tact file " + FeedbackFile.Id + ", " + FeedbackFile.Key);
                         player.Register(FeedbackFile.Id, feedbackFile.Project);
                     }
 
@@ -166,20 +175,6 @@ namespace Bhaptics.Tact.Unity
             player.TurnOff(_key);
         }
 
-        public void AddPathPoint()
-        {
-            var list = new List<Point>(Points);
-            list.Add(new Point(0.5f, 0.5f, 100));
-            Points = list.ToArray();
-        }
-
-        public void RemovePathPoint(int index)
-        {
-            var list = new List<Point>(Points);
-            list.RemoveAt(index);
-            Points = list.ToArray();
-        }
-
         private static List<PathPoint> Convert(Point[] points)
         {
             var result = new List<PathPoint>();
@@ -206,16 +201,14 @@ namespace Bhaptics.Tact.Unity
                     return PositionType.VestFront;
                  case Pos.VestBack:
                     return PositionType.VestBack;
-                case Pos.HandL:
+                case Pos.LeftHand:
                     return PositionType.HandL;
-                case Pos.HandR:
+                case Pos.RightHand:
                     return PositionType.HandR;
-                case Pos.FootL:
+                case Pos.LeftFoot:
                     return PositionType.FootL;
-                case Pos.FootR:
+                case Pos.RightFoot:
                     return PositionType.FootR;
-                case Pos.Racket:
-                    return PositionType.Racket;
             }
 
             return PositionType.Right;
@@ -250,6 +243,6 @@ namespace Bhaptics.Tact.Unity
     [Serializable]
     public enum Pos
     {
-        RightArm, LeftArm, VestFront, VestBack, Head, HandL, HandR, FootL, FootR, Racket
+        Head, VestFront, VestBack, RightArm, LeftArm, LeftHand, RightHand, LeftFoot, RightFoot, Racket
     }
 }

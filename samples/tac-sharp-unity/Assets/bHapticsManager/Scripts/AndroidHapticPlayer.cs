@@ -48,7 +48,6 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     public void StopScan()
     {
-        Debug.Log("StopScan()");
         if (hapticPlayer != null)
         {
             hapticPlayer.Call("stopScan");
@@ -56,8 +55,7 @@ public class AndroidHapticPlayer :IHapticPlayer
     }
 
     public void StartScan()
-    {
-        Debug.Log("StartScan()");
+    {   
         if (hapticPlayer != null)
         {
             hapticPlayer.Call("startScan");

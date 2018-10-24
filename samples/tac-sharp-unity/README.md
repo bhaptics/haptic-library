@@ -1,6 +1,6 @@
 # Unity plugin
 * This project will help to integrate bHaptics' haptic devices into Unity environments. 
-* Current version is 1.4.0
+* Current version is 1.4.1
 
 ## 1. Prerequisite
 ### bHaptics Player needs to be installed (Windows 8.1, 10, Android)
@@ -60,7 +60,8 @@ You can check each feedback effect by pushing the corresponding button while pla
 ### (2) If there is not a paired device, then the SDK will do nothing.
 
 ### (3) setting for AndroidManifest.xml 
-* Add BhapticsService and HapticPlayerWrapper as below.
+* Please refer to AndroidManifest-bhaptics.xml
+* If your project contains a custom AndroidManifest.xml file, copy 
 
 ```
       <service android:name="com.bhaptics.tact.ble.BhapticsService">
@@ -75,6 +76,11 @@ You can check each feedback effect by pushing the corresponding button while pla
                 android:label="@string/app_name"
                 android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
       </activity>
+```
+
+* Otherwise, copy this file to this location in your project:
+```
+        Assets/Plugins/Android/AndroidManifest.xml.
 ```
 
 ### (4) Checkout how unity manage AndroidMenifest.xml 
@@ -135,6 +141,6 @@ var hapticPlayer = BhapticsManager.HapticPlayer;
 
 
 <br>
-Last update of README.md: Jul 5th, 2018.
+Last update of README.md: Oct 24th, 2018.
 <br>
 Copyright 2017 bHaptics Inc.

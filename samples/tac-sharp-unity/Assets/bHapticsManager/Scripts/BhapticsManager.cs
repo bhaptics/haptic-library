@@ -23,6 +23,8 @@ namespace Bhaptics.Tact.Unity
         private static IHapticPlayer _hapticPlayer;
         private static bool _isTryLaunchApp;
 
+        private bool isInBackgroundForAndroid= false;
+
         public static string GetFeedbackId(string key)
         {
             foreach (var file in TactFileAsset.Instance.FeedbackFiles)
@@ -224,10 +226,19 @@ namespace Bhaptics.Tact.Unity
         {
             if (pauseState)
             {
+                Debug.Log("background");
+                isInBackgroundForAndroid = true;
+                CancelInvoke("AndroidStopScan");
+                CancelInvoke("AndroidStartScan");
+                AndroidStopScan();
                 OnDisable();
             }
             else
             {
+                Debug.Log("foreground");
+                isInBackgroundForAndroid = false;
+                AndroidStartScan();
+                
                 OnEnable();
             }
         }

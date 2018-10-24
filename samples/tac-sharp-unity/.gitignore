@@ -36,3 +36,5 @@ sysinfo.txt
 
 # SteamVR Dependency
 /Assets/SteamVR/
+/Assets/Plugins/
+/Assets/Plugins.meta

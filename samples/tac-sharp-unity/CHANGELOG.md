@@ -1,3 +1,9 @@
+## Unity plugin 1.4.1 (Oct 24th, 2018.)
+* Update : Change UI layout for hand and foot devices
+* Fix : the change on TactSource is not applied sometimes
+* Fix (Android) : bugs on path points
+* Update (Android) : resolve battery problem  
+
 ## Unity plugin 1.4.0 (Jul 5th, 2018.)
 * Support Android Devices Including and Daydream
 

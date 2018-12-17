@@ -209,9 +209,13 @@ namespace Bhaptics.Tact.Unity
                     return PositionType.FootL;
                 case Pos.RightFoot:
                     return PositionType.FootR;
+                case Pos.RightForearm:
+                    return PositionType.ForearmR;
+                case Pos.LeftForearm:
+                    return PositionType.ForearmL;
             }
 
-            return PositionType.Right;
+            return PositionType.ForearmR;
         }
     }
 
@@ -243,6 +247,6 @@ namespace Bhaptics.Tact.Unity
     [Serializable]
     public enum Pos
     {
-        Head, VestFront, VestBack, RightArm, LeftArm, LeftHand, RightHand, LeftFoot, RightFoot, Racket
+        Head, VestFront, VestBack, RightArm, LeftArm, LeftHand, RightHand, LeftFoot, RightFoot, RightForearm, LeftForearm
     }
 }

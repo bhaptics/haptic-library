@@ -1,3 +1,6 @@
+## Bhaptics.Tac 1.4.2 (Dec 19th, 2018.)
+* Update : Support tactosy2
+
 ## Bhaptics.Tac 1.3.0 (Apr 4th, 2018.)
 * Support UWP
 * Change namepsace to Bhaptics.Tact

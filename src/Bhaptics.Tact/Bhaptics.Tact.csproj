@@ -65,9 +65,6 @@
     <Compile Include="..\Bhaptics.Tact.Uwp\WebSocketSender.cs">
       <Link>WebSocketSender.cs</Link>
     </Compile>
-    <Compile Include="..\Bhaptics.Tact.Uwp\What.cs">
-      <Link>What.cs</Link>
-    </Compile>
     <Compile Include="CustomWebSocketSharp\ByteOrder.cs" />
     <Compile Include="CustomWebSocketSharp\CloseEventArgs.cs" />
     <Compile Include="CustomWebSocketSharp\CloseStatusCode.cs" />

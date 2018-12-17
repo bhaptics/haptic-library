@@ -110,6 +110,7 @@ namespace Bhaptics.Tact
         HandR = 7,
         FootL = 8,
         FootR = 9,
+        ForearmL = 10, ForearmR = 11,
         VestFront =201, VestBack=202,
         GloveLeft =203, GloveRight=204,
         Custom1 =251, Custom2 = 252, Custom3 = 253, Custom4 = 254

@@ -115,7 +115,6 @@
     <Compile Include="PlayerRequest.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="WebSocketSender.cs" />
-    <Compile Include="What.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Bhaptics.Tact.Uwp.rd.xml" />
   </ItemGroup>

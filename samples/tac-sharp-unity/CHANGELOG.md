@@ -1,3 +1,6 @@
+## Unity plugin 1.4.2 (Dec 19th, 2018.)
+* Update : Support tactosy2
+
 ## Unity plugin 1.4.1 (Oct 24th, 2018.)
 * Update : Change UI layout for hand and foot devices
 * Fix : the change on TactSource is not applied sometimes

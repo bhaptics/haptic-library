@@ -1,6 +1,6 @@
 # bHaptics haptic devices C# plugin
 This project helps to utilize haptic devices in Unity and other C# based platform.
-Current version is 1.3.0
+Current version is 1.4.2
 
 ## Prerequisite
 * bHaptics Player has to be installed (Windows)
@@ -35,7 +35,6 @@ $ git clone https://github.com/bhaptics/tac-sharp.git
 
 ```
 using Bhaptics.Tact;
-using Bhaptics.Tact.Unity;
 ```
 
 * Use HapticPlayer
@@ -79,7 +78,7 @@ List<PathPoint> pathPoints = new List<PathPoint>
         normalized value (0.0f to 1.0f) beginning from upper left of the device.*/
     , new PathPoint(x_position, y_position, intensity, motorCount)
 };
-HapticPlayer.Submit("Point", PositionType.Right, pathPoints, duration);
+HapticPlayer.Submit("Point", PositionType.VestFront, pathPoints, duration);
 /* duration is a positive integer in milliseconds */
 ```
 	
@@ -103,7 +102,7 @@ byte[] bytes =
 }; 
 /* Values should be an int (0~100)
 /* Each number is the intensity of the point*/
-HapticPlayer.Submit("Bytes", PositionType.Right, bytes);
+HapticPlayer.Submit("Bytes", PositionType.VestBack, bytes);
 ```
 
 * Play registered .tact feedback effects using file names
@@ -124,7 +123,7 @@ HapticPlayer.SubmitRegisteredVestRotation("RifleImpact", "for_front" new Rotatio
 * Check if Device is connected
 
 ```
-HapticPlayer.IsActive(PositionType.Right)
+HapticPlayer.IsActive(PositionType.ForearmL)
 ```
 
 
@@ -152,7 +151,6 @@ bool isAnyFeedbackPlaying = HapticPlayer.IsPlaying();
 * E-mail: developer@bhaptics.com
 * Issues : https://github.com/bhaptics/tac-sharp/issues/new
 
-Last update of README.md: Apr 4th, 2018.
-Last update of README.md: Apr 4th, 2018.
+Last update of README.md: Dec 19th, 2018.
 
 ###### Copyright (c) 2018 bHaptics Inc. All rights reserved.

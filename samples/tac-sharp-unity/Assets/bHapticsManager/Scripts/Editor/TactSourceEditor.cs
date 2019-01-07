@@ -82,7 +82,8 @@ namespace Bhaptics.Tact.Unity
                     TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Type;
             }
 
-            if (_selectedFeedbackIndex >= 0 && serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeTactosy)
+            if (_selectedFeedbackIndex >= 0 && (serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeTactosy ||
+                                                serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeTactosy2))
             {
                 GUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 120f;

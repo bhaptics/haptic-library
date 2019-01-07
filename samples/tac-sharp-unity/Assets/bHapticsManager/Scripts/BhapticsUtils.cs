@@ -163,10 +163,41 @@ namespace Bhaptics.Tact.Unity
             return project;
         }
 
+        public static Project ReflectLeftRightTactosy2(string projectStr)
+        {
+            var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(projectStr);
+            var project = feedbackFile.Project;
+
+            foreach (var projectTrack in project.Tracks)
+            {
+                foreach (var projectTrackEffect in projectTrack.Effects)
+                {
+                    HapticEffectMode right = null, left = null;
+                    if (projectTrackEffect.Modes.ContainsKey(TypeForearmRight))
+                    {
+                        right = projectTrackEffect.Modes[TypeForearmRight];
+                    }
+
+                    if (projectTrackEffect.Modes.ContainsKey(TypeForearmLeft))
+                    {
+                        left = projectTrackEffect.Modes[TypeForearmLeft];
+                    }
+
+                    projectTrackEffect.Modes[TypeForearmLeft] = right;
+                    projectTrackEffect.Modes[TypeForearmRight] = left;
+                }
+            }
+
+            return project;
+        }
+
         public static string TypeVest = "Vest";
         public static string TypeTactosy = "Tactosy";
+        public static string TypeTactosy2 = "Tactosy2";
         public static string TypeRight = "Right";
         public static string TypeLeft = "Left";
+        public static string TypeForearmLeft = "ForearmL";
+        public static string TypeForearmRight = "ForearmR";
     }
 }
 

@@ -160,6 +160,18 @@ namespace Bhaptics.Tact.Unity
                         }
                         player.SubmitRegistered(FeedbackFile.Id + "Reflect", _key, option);
                     }
+                    else if (FeedbackFile.Type == BhapticsUtils.TypeTactosy2 && IsReflectTactosy)
+                    {
+                        Debug.Log("here");
+                        if (!isRegistered)
+                        {
+                            isRegistered = true;
+                            var project = BhapticsUtils.ReflectLeftRightTactosy2(FeedbackFile.Value);
+
+                            player.Register(FeedbackFile.Id + "Reflect", project);
+                        }
+                        player.SubmitRegistered(FeedbackFile.Id + "Reflect", _key, option);
+                    }
                     else
                     {
 

@@ -100,7 +100,9 @@ namespace Bhaptics.Tact.Unity
 
             GUILayout.EndHorizontal();
 
-            if (_selectedFeedbackIndex >= 0 && serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeVest)
+            if (_selectedFeedbackIndex >= 0 && 
+                (serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeVest || 
+                 serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeTactot))
             {
                 GUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 120f;

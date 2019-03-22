@@ -192,6 +192,7 @@ namespace Bhaptics.Tact.Unity
         }
 
         public static string TypeVest = "Vest";
+        public static string TypeTactot = "Tactot";
         public static string TypeTactosy = "Tactosy";
         public static string TypeTactosy2 = "Tactosy2";
         public static string TypeRight = "Right";

@@ -311,10 +311,10 @@ public class AndroidHapticPlayer :IHapticPlayer
                 StatusReceived(response);
             }
 
-
             lock (_activeKeys)
             {
                 _activeKeys.Clear();
+                _activeKeys.AddRange(response.ActiveKeys);
             }
 
             lock (_activePosition)

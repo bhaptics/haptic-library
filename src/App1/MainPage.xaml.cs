@@ -57,7 +57,7 @@ namespace App1
         {
             HapticPlayer.Submit(
                 "test2",
-                PositionType.Left,
+                PositionType.ForearmL,
                 new List<DotPoint>()
                 {
                     new DotPoint(0, 100)

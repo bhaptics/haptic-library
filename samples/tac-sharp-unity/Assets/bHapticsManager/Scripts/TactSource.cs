@@ -142,7 +142,7 @@ namespace Bhaptics.Tact.Unity
                         player.Register(FeedbackFile.Id, feedbackFile.Project);
                     }
 
-                    if (FeedbackFile.Type == BhapticsUtils.TypeVest)
+                    if (FeedbackFile.Type == BhapticsUtils.TypeVest || FeedbackFile.Type == BhapticsUtils.TypeTactot)
                     {
 
                         player.SubmitRegisteredVestRotation(FeedbackFile.Id, _key, 

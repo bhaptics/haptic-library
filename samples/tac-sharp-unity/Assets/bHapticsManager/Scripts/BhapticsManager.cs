@@ -163,8 +163,6 @@ namespace Bhaptics.Tact.Unity
                 HapticPlayer.Dispose();
             }
             _hapticPlayer = null;
-
-            HapticApi.Destroy();
         }
 
         void Update()
@@ -179,49 +177,48 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            foreach (var vis in visualFeedbacks)
+            if (Application.platform == RuntimePlatform.Android)
             {
-                HapticApi.status status;
-                HapticApi.TryGetResponseForPosition(vis.Position, out status);
-
-                byte[] result = new byte[20];
-                for (int i = 0; i < result.Length; i++)
+                if (!Monitor.TryEnter(_changedFeedbacks))
                 {
-                    result[i] = (byte)status.values[i];
+                    Debug.Log("failed to enter");
+                    return;
                 }
-
-                HapticFeedback feedback = new HapticFeedback(vis.Position, result);
-                vis.UpdateFeedbacks(feedback);
-            }
-
-            return;
-            if (_changedFeedbacks.Count <= 0)
-            {
-                return;
-            }
-
-            if (!Monitor.TryEnter(_changedFeedbacks))
-            {
-                Debug.Log("failed to enter");
-                return;
-            }
-            try
-            {
-                foreach (var feedback in _changedFeedbacks)
+                try
                 {
-                    foreach (var vis in visualFeedbacks)
+                    foreach (var feedback in _changedFeedbacks)
                     {
-                        if (vis.Position == feedback.Position)
+                        foreach (var vis in visualFeedbacks)
                         {
-                            vis.UpdateFeedbacks(feedback);
+                            if (vis.Position == feedback.Position)
+                            {
+                                vis.UpdateFeedbacks(feedback);
+                            }
                         }
                     }
+                    _changedFeedbacks.Clear();
                 }
-                _changedFeedbacks.Clear();
+                finally
+                {
+                    Monitor.Exit(_changedFeedbacks);
+                }
             }
-            finally
+            else
             {
-                Monitor.Exit(_changedFeedbacks);
+                foreach (var vis in visualFeedbacks)
+                {
+                    HapticApi.status status;
+                    HapticApi.TryGetResponseForPosition(vis.Position, out status);
+
+                    byte[] result = new byte[20];
+                    for (int i = 0; i < result.Length; i++)
+                    {
+                        result[i] = (byte)status.values[i];
+                    }
+
+                    HapticFeedback feedback = new HapticFeedback(vis.Position, result);
+                    vis.UpdateFeedbacks(feedback);
+                }
             }
         }
 
@@ -275,14 +272,7 @@ namespace Bhaptics.Tact.Unity
                 if (files == null)
                 {
                     Debug.LogError("Failed to Get Feedback files");
-                    return;
                 }
-
-//                foreach (var file in files)
-//                {
-//                    var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(file.Value);
-//                    _hapticPlayer.Register(file.Id, feedbackFile.Project);
-//                }
 
             }
             catch (Exception e)

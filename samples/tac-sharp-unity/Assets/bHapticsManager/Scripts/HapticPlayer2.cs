@@ -76,7 +76,7 @@ namespace Bhaptics.Tact.Unity
 
         public void Submit(string key, PositionType position, DotPoint point, int durationMillis)
         {
-            throw new NotImplementedException();
+            Submit(key, position, new List<DotPoint>() { point }, durationMillis);
         }
 
         public void Submit(string key, PositionType position, List<PathPoint> points, int durationMillis)

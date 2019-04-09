@@ -20,6 +20,8 @@ namespace Bhaptics.Tact
         bool IsPlaying();
         
         void Register(string key, Project project );
+        void RegisterTactFileStr(string key, string tactFileStr);
+        void RegisterTactFileStrReflected(string key, string tactFileStr);
         
         void Submit(string key, PositionType position, byte[] motorBytes, int durationMillis);
         void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis);

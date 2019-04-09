@@ -16,7 +16,7 @@ namespace Bhaptics.Tact.Unity
         
         [HideInInspector]
         [SerializeField]
-        public Pos Position = Pos.RightArm;
+        public Pos Position = Pos.RightForearm;
 
         // PathMode
         //[HideInInspector]
@@ -137,10 +137,13 @@ namespace Bhaptics.Tact.Unity
                     if (!isOriginFileRegistered)
                     {
                         isOriginFileRegistered = true;
-                        var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(FeedbackFile.Value);
-                        //Debug.Log("Register tact file " + FeedbackFile.Id + ", " + FeedbackFile.Key);
-                        player.Register(FeedbackFile.Id, feedbackFile.Project);
+                        player.RegisterTactFileStr(FeedbackFile.Id, FeedbackFile.Value);
                     }
+
+//#if UNITY_EDITOR_WIN
+//                    // WHEN CHANGED // TODO
+                    player.RegisterTactFileStr(FeedbackFile.Id, FeedbackFile.Value);
+//#endif
 
                     if (FeedbackFile.Type == BhapticsUtils.TypeVest || FeedbackFile.Type == BhapticsUtils.TypeTactot)
                     {
@@ -149,32 +152,20 @@ namespace Bhaptics.Tact.Unity
                             new RotationOption(VestRotationAngleX + TactFileOffsetX, VestRotationOffsetY + TactFileOffsetY),
                             option);
 
-                    } else if (FeedbackFile.Type == BhapticsUtils.TypeTactosy && IsReflectTactosy)
+                    } else if (IsReflectTactosy && (FeedbackFile.Type == BhapticsUtils.TypeTactosy ||
+                                                    FeedbackFile.Type == BhapticsUtils.TypeTactosy2))
                     {
+                        var reflectKey = FeedbackFile.Id + "Reflect";
                         if (!isRegistered)
                         {
                             isRegistered = true;
-                            var project = BhapticsUtils.ReflectLeftRight(FeedbackFile.Value);
-
-                            player.Register(FeedbackFile.Id + "Reflect", project);
+                            player.RegisterTactFileStrReflected(reflectKey,
+                                FeedbackFile.Value);
                         }
-                        player.SubmitRegistered(FeedbackFile.Id + "Reflect", _key, option);
-                    }
-                    else if (FeedbackFile.Type == BhapticsUtils.TypeTactosy2 && IsReflectTactosy)
-                    {
-                        Debug.Log("here");
-                        if (!isRegistered)
-                        {
-                            isRegistered = true;
-                            var project = BhapticsUtils.ReflectLeftRightTactosy2(FeedbackFile.Value);
-
-                            player.Register(FeedbackFile.Id + "Reflect", project);
-                        }
-                        player.SubmitRegistered(FeedbackFile.Id + "Reflect", _key, option);
+                        player.SubmitRegistered(reflectKey, _key, option);
                     }
                     else
                     {
-
                         player.SubmitRegistered(FeedbackFile.Id, _key, option);
                     }
 

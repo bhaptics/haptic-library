@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
@@ -139,24 +140,45 @@ namespace Bhaptics.Tact.Unity
         {
             var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(projectStr);
             var project = feedbackFile.Project;
+            
+            List<string> keys = new List<string>();
 
             foreach (var projectTrack in project.Tracks)
             {
                 foreach (var projectTrackEffect in projectTrack.Effects)
                 {
+                    foreach (var modesKey in projectTrackEffect.Modes.Keys)
+                    {
+                        keys.Add(modesKey);
+                        break;
+                    }
+                }
+            }
+
+            if (keys.Count != 2)
+            {
+                return feedbackFile.Project;
+            }
+
+            string rightType = keys[0];
+            string reftType = keys[1];
+            foreach (var projectTrack in project.Tracks)
+            {
+                foreach (var projectTrackEffect in projectTrack.Effects)
+                {
                     HapticEffectMode right = null, left = null;
-                    if (projectTrackEffect.Modes.ContainsKey(TypeRight))
+                    if (projectTrackEffect.Modes.ContainsKey(rightType))
                     {
-                        right = projectTrackEffect.Modes[TypeRight];
+                        right = projectTrackEffect.Modes[rightType];
                     }
 
-                    if (projectTrackEffect.Modes.ContainsKey(TypeLeft))
+                    if (projectTrackEffect.Modes.ContainsKey(reftType))
                     {
-                        left = projectTrackEffect.Modes[TypeLeft];
+                        left = projectTrackEffect.Modes[reftType];
                     }
 
-                    projectTrackEffect.Modes[TypeLeft] = right;
-                    projectTrackEffect.Modes[TypeRight] = left;
+                    projectTrackEffect.Modes[reftType] = right;
+                    projectTrackEffect.Modes[rightType] = left;
                 }
             }
 

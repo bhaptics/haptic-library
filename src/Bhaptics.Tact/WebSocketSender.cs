@@ -2,73 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-#if NETFX_CORE
-using Windows.Networking.Sockets;
-using Windows.Storage.Streams;
-using System.Threading.Tasks;
-#else 
 using Bhaptics.fastJSON;
 using CustomWebSocketSharp;
 using System.Timers;
-#endif
 
 namespace Bhaptics.Tact
 {
+    [Obsolete("WebSocketSender is deprecated, please use HapticLibrary instead.")]
     public class WebSocketSender : ISender
     {
-#if NETFX_CORE
-        private MessageWebSocket messageWebSocket;
-        private DataWriter messageWriter;
-
-        private async void Connect()
-        {
-            try
-            {
-                if (messageWebSocket == null)
-                {
-                    messageWebSocket = new MessageWebSocket();
-                    messageWebSocket.Control.MessageType = SocketMessageType.Utf8;
-                    messageWebSocket.MessageReceived += (sender, args) =>
-                    {
-                        using (DataReader reader = args.GetDataReader())
-                        {
-                            reader.UnicodeEncoding = UnicodeEncoding.Utf8;
-
-                            try
-                            {
-                                string read = reader.ReadString(reader.UnconsumedBufferLength);
-                                var response = PlayerResponse.ToObject(read);
-                                StatusReceived?.Invoke(response);
-                            }
-                            catch (Exception ex)
-                            {
-                                LogReceived?.Invoke(ex.Message);
-                            }
-                        }
-                    };
-                    messageWebSocket.Closed += (sender, args) =>
-                    {
-                        _websocketConnected = false;
-                        ConnectionChanged?.Invoke(_websocketConnected);
-                    };
-                }
-
-                await messageWebSocket.ConnectAsync(new Uri(WebsocketUrl));
-                messageWriter = new DataWriter(messageWebSocket.OutputStream);
-
-                _websocketConnected = true;
-                ConnectionChanged?.Invoke(_websocketConnected);
-                AddRegister(_registered);
-            }
-            catch (Exception)
-            {
-                _websocketConnected = false;
-                ConnectionChanged?.Invoke(_websocketConnected);
-                await Task.CompletedTask;
-            }
-        }
-
-#else 
         private WebSocket _webSocket;
         private Timer _timer;
         private readonly JSONParameters DEFAULT_PARAM = new JSONParameters
@@ -76,7 +18,7 @@ namespace Bhaptics.Tact
             EnableAnonymousTypes = true,
             UsingGlobalTypes = false,
             UseValuesOfEnums = false,
-            SerializeToLowerCaseNames = false,
+            SerializeToLowerCaseNames = true,
             UseExtensions = true
         };
 
@@ -110,7 +52,6 @@ namespace Bhaptics.Tact
             StatusReceived?.Invoke(response);
 
         }
-#endif
 
 
         private bool _websocketConnected = false;
@@ -138,9 +79,6 @@ namespace Bhaptics.Tact
 
         public void Initialize(bool tryReconnect)
         {
-#if NETFX_CORE
-            Connect();
-#else
             if (_webSocket != null)
             {
                 Console.Write("Initialized\n");
@@ -171,55 +109,23 @@ namespace Bhaptics.Tact
             };
 
             _webSocket.Connect();
-#endif
             _enable = true;
         }
 
         public void Enable()
         {
             _enable = true;
-#if NETFX_CORE
-#else
             _timer.Start();
-#endif
         }
 
         public void Disable()
         {
             _enable = false;
-#if NETFX_CORE
-#else
             _timer.Stop();
-#endif
         }
 
         public void Dispose()
         {
-#if NETFX_CORE
-            if (messageWriter != null)
-            {
-                // In order to reuse the socket with another DataWriter, the socket's output stream needs to be detached.
-                // Otherwise, the DataWriter's destructor will automatically close the stream and all subsequent I/O operations
-                // invoked on the socket's output stream will fail with ObjectDisposedException.
-                //
-                // This is only added for completeness, as this sample closes the socket in the very next code block.
-                messageWriter.DetachStream();
-                messageWriter.Dispose();
-                messageWriter = null;
-            }
-
-            if (messageWebSocket != null)
-            {
-                try
-                {
-                    messageWebSocket.Close(1000, "Closed due to user request.");
-                }
-                catch (Exception ex)
-                {
-                    LogReceived?.Invoke(ex.Message);
-                }
-            }
-#else
             try
             {
                 _webSocket.CloseAsync();
@@ -228,7 +134,6 @@ namespace Bhaptics.Tact
             {
                 Console.WriteLine(e);
             }
-#endif
 
         }
 
@@ -406,28 +311,6 @@ namespace Bhaptics.Tact
 
         private void Send()
         {
-#if NETFX_CORE
-            try
-            {
-                if (!_websocketConnected)
-                {
-                    return;
-                }
-
-                var req = GetActiveRequest();
-                
-                var jsonStr = req.ToJsonObject().Stringify();
-                LogReceived?.Invoke("Send() " + jsonStr);
-                messageWriter.WriteString(jsonStr);
-                messageWriter.StoreAsync();
-                _activeRequest = null;
-
-            }
-            catch (Exception e)
-            {
-                LogReceived?.Invoke("Send() " + e.Message);
-            }
-#else
 
             try
             {
@@ -448,7 +331,6 @@ namespace Bhaptics.Tact
             {
                 Console.Write($"{e.Message} {e}\n");
             }
-#endif
         }
     }
 }

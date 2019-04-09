@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Bhaptics.fastJSON;
 using UnityEngine;
 
 namespace Bhaptics.Tact.Unity
@@ -56,21 +55,7 @@ namespace Bhaptics.Tact.Unity
                         }
                         else
                         {
-                            _hapticPlayer = new HapticPlayer(connected =>
-                            {
-                                if (connected)
-                                {
-                                    _isTryLaunchApp = true;
-                                }
-                                else
-                                {
-                                    if (!_isTryLaunchApp)
-                                    {
-                                        BhapticsUtils.LaunchPlayer(_manager.launchPlayerIfNotRunning);
-                                        _isTryLaunchApp = true;
-                                    }
-                                }
-                            });
+                            _hapticPlayer = new HapticPlayer2();
                         }
                     }
                 }
@@ -157,7 +142,7 @@ namespace Bhaptics.Tact.Unity
         public void Received(string message)
         {
             
-            var response = JSON.ToObject<PlayerResponse>(message);
+            var response = Bhaptics.fastJSON.JSON.ToObject<PlayerResponse>(message);
 
             try
             {
@@ -178,6 +163,8 @@ namespace Bhaptics.Tact.Unity
                 HapticPlayer.Dispose();
             }
             _hapticPlayer = null;
+
+            HapticApi.Destroy();
         }
 
         void Update()
@@ -192,6 +179,22 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
+            foreach (var vis in visualFeedbacks)
+            {
+                HapticApi.status status;
+                HapticApi.TryGetResponseForPosition(vis.Position, out status);
+
+                byte[] result = new byte[20];
+                for (int i = 0; i < result.Length; i++)
+                {
+                    result[i] = (byte)status.values[i];
+                }
+
+                HapticFeedback feedback = new HapticFeedback(vis.Position, result);
+                vis.UpdateFeedbacks(feedback);
+            }
+
+            return;
             if (_changedFeedbacks.Count <= 0)
             {
                 return;
@@ -357,6 +360,16 @@ namespace Bhaptics.Tact.Unity
         public void Register(string key, string path)
         {
             // nothing to do
+        }
+
+        public void RegisterTactFileStr(string key, string tactFileStr)
+        {
+            // nothing to do
+        }
+
+        public void RegisterTactFileStrReflected(string key, string tactFileStr)
+        {
+            // nothing
         }
 
         public void Submit(string key, PositionType position, byte[] motorBytes, int durationMillis)

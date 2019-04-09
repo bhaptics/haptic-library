@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Bhaptics.fastJSON;
 using Bhaptics.Tact;
+using Bhaptics.Tact.Unity;
 using UnityEngine;
 
 
@@ -110,6 +111,18 @@ public class AndroidHapticPlayer :IHapticPlayer
         var request = PlayerRequest.Create();
         request.Register = registerRequests;
         hapticPlayer.Call("submit", JSON.ToJSON(request, DEFAULT_PARAM));
+    }
+
+    public void RegisterTactFileStr(string key, string tactFileStr)
+    {
+        var file = CommonUtils.ConvertJsonStringToTactosyFile(tactFileStr);
+        Register(key, file.Project);
+    }
+
+    public void RegisterTactFileStrReflected(string key, string tactFileStr)
+    {
+        var project = BhapticsUtils.ReflectLeftRight(tactFileStr);
+        Register(key, project);
     }
 
     public void Submit(string key, PositionType position, byte[] motorBytes, int durationMillis)

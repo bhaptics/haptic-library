@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-#if NETFX_CORE
-using Windows.Data.Json;
-#endif
 
 namespace Bhaptics.Tact
 {
@@ -27,16 +24,6 @@ namespace Bhaptics.Tact
             return "DotPoint { Index=" + Index +
                    ", Intensity=" + Intensity + "}";
         }
-#if NETFX_CORE
-        public JsonObject ToJsonObject()
-        {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.SetNamedValue("Index", JsonValue.CreateNumberValue(Index));
-            jsonObject.SetNamedValue("Intensity", JsonValue.CreateNumberValue(Intensity));
-
-            return jsonObject;
-        }
-#endif
     }
 
     public class PathPoint
@@ -64,18 +51,6 @@ namespace Bhaptics.Tact
                    ", MotorCount=" + MotorCount +
                    ", Intensity=" + Intensity + "}";
         }
-#if NETFX_CORE
-        public JsonObject ToJsonObject()
-        {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.SetNamedValue("X", JsonValue.CreateNumberValue(X));
-            jsonObject.SetNamedValue("Y", JsonValue.CreateNumberValue(Y));
-            jsonObject.SetNamedValue("Intensity", JsonValue.CreateNumberValue(Intensity));
-            jsonObject.SetNamedValue("MotorCount", JsonValue.CreateNumberValue(MotorCount));
-
-            return jsonObject;
-        }
-#endif
     }
 
     public class HapticFeedback

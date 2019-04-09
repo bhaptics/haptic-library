@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace Bhaptics.Tact
 {
+    [Obsolete("HapticPlayer is deprecated, please use HapticPlayer2 instead.")]
     public class HapticPlayer : IHapticPlayer
     {
         private readonly WebSocketSender _sender;
@@ -82,6 +83,18 @@ namespace Bhaptics.Tact
         public void Register(string key, Project project)
         {
             _sender.Register(key, project);
+        }
+
+
+        public void RegisterTactFileStr(string key, string tactFileStr)
+        {
+            var file = CommonUtils.ConvertJsonStringToTactosyFile(tactFileStr);
+            Register(key, file.Project);
+        }
+
+        public void RegisterTactFileStrReflected(string key, string tactFileStr)
+        {
+            // not supported
         }
 
         public void Submit(string key, PositionType position, 

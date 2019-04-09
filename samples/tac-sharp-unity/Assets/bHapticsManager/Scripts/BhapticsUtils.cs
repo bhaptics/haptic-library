@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-using Microsoft.Win32;
-#endif
 
 namespace Bhaptics.Tact.Unity
 {
@@ -21,7 +18,7 @@ namespace Bhaptics.Tact.Unity
                 return exeFilePath;
             }
             isInit = true;
-            RegistryKey rkey = Registry.ClassesRoot.OpenSubKey(@"bhaptics-app\shell\open\command");
+            Microsoft.Win32.RegistryKey rkey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(@"bhaptics-app\shell\open\command");
             if (rkey == null)
             {
                 return null;
@@ -150,8 +147,10 @@ namespace Bhaptics.Tact.Unity
                     foreach (var modesKey in projectTrackEffect.Modes.Keys)
                     {
                         keys.Add(modesKey);
-                        break;
+                        
                     }
+
+                    break;
                 }
             }
 
@@ -185,42 +184,10 @@ namespace Bhaptics.Tact.Unity
             return project;
         }
 
-        public static Project ReflectLeftRightTactosy2(string projectStr)
-        {
-            var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(projectStr);
-            var project = feedbackFile.Project;
-
-            foreach (var projectTrack in project.Tracks)
-            {
-                foreach (var projectTrackEffect in projectTrack.Effects)
-                {
-                    HapticEffectMode right = null, left = null;
-                    if (projectTrackEffect.Modes.ContainsKey(TypeForearmRight))
-                    {
-                        right = projectTrackEffect.Modes[TypeForearmRight];
-                    }
-
-                    if (projectTrackEffect.Modes.ContainsKey(TypeForearmLeft))
-                    {
-                        left = projectTrackEffect.Modes[TypeForearmLeft];
-                    }
-
-                    projectTrackEffect.Modes[TypeForearmLeft] = right;
-                    projectTrackEffect.Modes[TypeForearmRight] = left;
-                }
-            }
-
-            return project;
-        }
-
         public static string TypeVest = "Vest";
         public static string TypeTactot = "Tactot";
         public static string TypeTactosy = "Tactosy";
         public static string TypeTactosy2 = "Tactosy2";
-        public static string TypeRight = "Right";
-        public static string TypeLeft = "Left";
-        public static string TypeForearmLeft = "ForearmL";
-        public static string TypeForearmRight = "ForearmR";
     }
 }
 

@@ -157,14 +157,19 @@ void RegisterFeedbackFromTactFileReflected(const char* key, const char* tactFile
 
     vector<std::string> v;
 
+    bool finished = false;
+
     for (auto& projectTrack : project.tracks)
     {
         for (auto& projectTrackEffect : projectTrack.effects)
         {
+            if (finished) {
+                continue;
+            }
             for(auto it = projectTrackEffect.modes.begin(); it != projectTrackEffect.modes.end(); ++it) {
                 v.push_back(it->first);
             }
-            break;
+            finished = true;
         }
     }
 

@@ -139,7 +139,7 @@ namespace Bhaptics.Tact.Unity
                             feedbackFile.Type = file.Project.Layout.Type;
                             
                             // File Path is unique
-                            feedbackFile.Id = GetHash(json);
+                            feedbackFile.Id = GetHash(filePath);
                             files.Add(feedbackFile);
                         }
                         catch (Exception e)

@@ -32,7 +32,7 @@ void test() {
     cout << "3. Read File" << endl;
 
     // test.tact file should be in the same folder
-    std::ifstream inFile("test.tact");
+    std::ifstream inFile("Pistal_L.tact");
 
     if (inFile.good()) {
         char inputString[100000];

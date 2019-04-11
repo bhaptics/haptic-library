@@ -159,10 +159,8 @@ namespace Bhaptics.Tact.Unity
                         if (!isRegistered)
                         {
                             isRegistered = true;
-                            var test = BhapticsUtils.ReflectLeftRight(FeedbackFile.Value);
-                            player.Register(reflectKey, test);
-//                            player.RegisterTactFileStrReflected(reflectKey,
-//                                FeedbackFile.Value);
+                            player.RegisterTactFileStrReflected(reflectKey,
+                                FeedbackFile.Value);
                         }
                         player.SubmitRegistered(reflectKey, _key, option);
                     }

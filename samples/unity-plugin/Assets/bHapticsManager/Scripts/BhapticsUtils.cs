@@ -171,16 +171,24 @@ namespace Bhaptics.Tact.Unity
             
             List<string> keys = new List<string>();
 
+            bool isFinished = false;
+
             foreach (var projectTrack in project.Tracks)
             {
                 foreach (var projectTrackEffect in projectTrack.Effects)
                 {
+                    if (isFinished)
+                    {
+                        continue;
+                    }
+
                     foreach (var modesKey in projectTrackEffect.Modes.Keys)
                     {
                         keys.Add(modesKey);
                         
                     }
 
+                    isFinished = true;
                     break;
                 }
             }

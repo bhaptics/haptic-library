@@ -1,3 +1,9 @@
+## Unity plugin 1.4.4 (Apr 12th, 2019.)
+* Fix: IL2CPP build fail
+* Fix: IsPlaying is not working as expected
+* Fix: Minor issues on Android
+* Fix: Concurrent issue on Android
+
 ## Unity plugin 1.4.2 (Dec 19th, 2018.)
 * Update : Support tactosy2
 

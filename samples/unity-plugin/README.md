@@ -1,6 +1,6 @@
 # Unity plugin
 * This project will help to integrate bHaptics' haptic devices into Unity environments. 
-* Current version is 1.4.2
+* Current version is 1.4.4
 
 ## 1. Prerequisite
 ### bHaptics Player needs to be installed (Windows 8.1, 10, Android)
@@ -10,16 +10,11 @@
 
 ## 2. How to install
 ### (1) Download from the Unity Asset Store 
-* https://www.assetstore.unity3d.com/en/#!/content/76647
+* https://assetstore.unity.com/packages/tools/integration/bhaptics-haptic-plugin-76647
 
 ### (2) Download the package file, then import it into a Unity Project
-* https://github.com/bhaptics/tac-sharp/releases
+* https://github.com/bhaptics/haptic-library/releases
   
-### (3) Clone from the github repository, then open it in Unity
-
-```
-git clone https://github.com/bhaptics/tac-sharp.git
-```
 
 ## 3. Tutorial Videos
 * Tutorials : https://www.youtube.com/playlist?list=PLfaa78_N6dlvd0Ha0s0Y_LT62-Oqp8N2A
@@ -47,11 +42,7 @@ You can check each feedback effect by pushing the corresponding button while pla
 * Enable/disable launching bHaptics Player if it is installed and it is not running.
 
 
-## 6. UWP Issues
-* Please check uwp-issue.pdf
-
-
-## 7. Android Issues
+## 6. Android Issues
 ### (1) Prerequisite
 * Make sure that all the android setting with unity must be fininshed.
 * https://unity3d.com/kr/learn/tutorials/topics/mobile-touch/building-your-unity-game-android-device-testing
@@ -90,8 +81,14 @@ You can check each feedback effect by pushing the corresponding button while pla
 * https://uploadvr.com/android-daydream-app-standalone-how-to/
 
 
-## 8. Notes
-### (1) Migration to 1.3.1
+## 7. Notes
+### (1) Migration to 1.4.4
+* Tact File setting will be broken. Please reconnect tact file in TactSource.
+
+![image](https://user-images.githubusercontent.com/1837913/56008174-39afd880-5d16-11e9-8453-a88258296df6.png)
+
+
+### (2) Migration to 1.3.1
 
 * namespace changed from Bhaptics.Tac to Bhaptics.Tact
    
@@ -101,7 +98,7 @@ Bhaptics.Tac.Unity --> Bhaptics.Tact.Unity
 ```
 
 
-### (2) Migration to 1.3.0
+### (3) Migration to 1.3.0
 
 ```
 // from 
@@ -112,7 +109,7 @@ BhapticsManager.HapticPlayer.SubmitRegistered(BhapticsManager.GetFeedbackId("Bow
 ```
 
 
-### (3) Migration to 1.2.2 
+### (4) Migration to 1.2.2 
 
 ```
 // from 
@@ -130,7 +127,7 @@ SubmitRegistered(string key, ScaleOption option)
 
 
 
-### (4) Migration from 1.0.3 to 1.0.4
+### (5) Migration from 1.0.3 to 1.0.4
 
 ```
 var hapticPlayer = FindObjectOfType<BhapticsManager>().HapticPlayer();
@@ -140,7 +137,6 @@ var hapticPlayer = BhapticsManager.HapticPlayer;
 ```
 
 
-<br>
-Last update of README.md: Dec 19th, 2018.
-<br>
-Copyright 2017 bHaptics Inc.
+##### Last update of README.md: Apr 12th, 2019.
+
+##### Copyright 2017~19 bHaptics Inc.

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Bhaptics.fastJSON;
 using Bhaptics.Tact;
 using Bhaptics.Tact.Unity;
 using UnityEngine;
@@ -8,43 +7,24 @@ using UnityEngine;
 
 public class AndroidHapticPlayer :IHapticPlayer
 {
-    private AndroidJavaObject hapticPlayer;
-    private readonly JSONParameters DEFAULT_PARAM = new JSONParameters
-    {
-        EnableAnonymousTypes = true,
-        UsingGlobalTypes = false,
-        UseValuesOfEnums = false,
-        SerializeToLowerCaseNames = false,
-        UseExtensions = true
-    };
-
+    private static AndroidJavaObject hapticPlayer;
     private readonly List<string> _activeKeys = new List<string>();
     private readonly List<PositionType> _activePosition = new List<PositionType>();
     public void Dispose()
     {
-        Debug.Log("dispose() ");
-        if (hapticPlayer != null)
-        {
-            hapticPlayer.Call("dispose");
-            hapticPlayer = null;
-        }
     }
 
     public void Enable()
     {
         if (hapticPlayer != null)
         {
-            Debug.LogError("AndroidHapticPlayer not null");
             return;
         }
 
-        AndroidJavaClass player = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        AndroidJavaObject currentActivity = player.GetStatic<AndroidJavaObject>("currentActivity");
+        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
         Debug.Log("Enable() activity : " + currentActivity);
-        hapticPlayer = new AndroidJavaObject("com.bhaptics.tact.unity.HapticPlayerWrapper", currentActivity);
-        hapticPlayer.Call("start");
-
-        Debug.Log("Enable() StopScan");
+        hapticPlayer = new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity);
     }
 
     public void StopScan()
@@ -59,19 +39,101 @@ public class AndroidHapticPlayer :IHapticPlayer
     {   
         if (hapticPlayer != null)
         {
-            hapticPlayer.Call("startScan");
+            hapticPlayer.Call("scan");
+        }
+    }
+
+    public void Pair(string address)
+    {
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("pair", address);
+        }
+    }
+
+    public void Unpair(string address)
+    {
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("unpair", address);
+        }
+    }
+    public void UnpairAll()
+    {
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("unpairAll");
+        }
+    }
+
+    public void TogglePosition(string address)
+    {
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("togglePosition", address);
+        }
+    }
+
+    public void Ping(string address)
+    {
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("ping", address);
+        }
+    }
+
+
+    public List<BhapticsDevice> GetDeviceList()
+    {
+        if (hapticPlayer != null)
+        {
+           string result = hapticPlayer.Call<string>("getDeviceList"); 
+            var devicesJson = JSON.Parse(result); 
+            if (devicesJson.IsArray)
+            {
+                var deviceList = new List<BhapticsDevice>();
+                var arr = devicesJson.AsArray;
+
+                foreach (var deviceJson in arr.Children)
+                {
+                    var device = new BhapticsDevice();
+                    device.IsPaired = deviceJson["IsPaired"];
+                    device.Address = deviceJson["Address"];
+                    device.Battery = deviceJson["Battery"];
+                    device.ConnectionStatus = deviceJson["ConnectionStatus"];
+                    device.DeviceName = deviceJson["DeviceName"];
+                    device.Position = deviceJson["Position"];
+                    device.Rssi = deviceJson["Rssi"];
+                    deviceList.Add(device);
+                }
+                return deviceList;
+            }
+        }
+        return null;
+    }
+
+
+    public bool IsScanning()
+    {
+        if (hapticPlayer != null)
+        {
+            return hapticPlayer.Call<bool>("isScanning");
+           
+        }
+        return false;
+    }
+
+
+    public void PingAll()
+    {
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("pingAll");
         }
     }
 
     public void Disable()
     {
-        Debug.Log("Disable() ");
-        //        Dispose();
-        if (hapticPlayer != null)
-        {
-            hapticPlayer.Call("stop");
-            hapticPlayer = null;
-        }
     }
 
     public bool IsActive(PositionType type)
@@ -110,7 +172,10 @@ public class AndroidHapticPlayer :IHapticPlayer
         var registerRequests = new List<RegisterRequest> {req};
         var request = PlayerRequest.Create();
         request.Register = registerRequests;
-        hapticPlayer.Call("submit", JSON.ToJSON(request, DEFAULT_PARAM));
+        if (hapticPlayer == null) {
+            return;
+        }
+        hapticPlayer.Call("submit", request.ToJsonObject().ToString());
     }
 
     public void RegisterTactFileStr(string key, string tactFileStr)
@@ -186,14 +251,12 @@ public class AndroidHapticPlayer :IHapticPlayer
         request.Submit.Add(submitRequest);
         if (hapticPlayer != null)
         {
-            hapticPlayer.Call("submit", JSON.ToJSON(request, DEFAULT_PARAM));
+            hapticPlayer.Call("submit", request.ToJsonObject().ToString());
         }
         else
         {
             Debug.Log("hapticPlayer is null.");
         }
-
-
     }
 
     public void SubmitRegistered(string key, ScaleOption option)

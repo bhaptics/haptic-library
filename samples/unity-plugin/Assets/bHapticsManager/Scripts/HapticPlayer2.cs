@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Bhaptics.fastJSON;
 
 namespace Bhaptics.Tact.Unity
 {
@@ -44,7 +43,7 @@ namespace Bhaptics.Tact.Unity
 
         public void Register(string key, Project project)
         {
-            HapticApi.RegisterFeedback(key, JSON.ToJSON(project));
+            HapticApi.RegisterFeedback(key, project.ToJsonObject().ToString());
         }
 
         public void RegisterTactFileStr(string key, string tactFileStr)

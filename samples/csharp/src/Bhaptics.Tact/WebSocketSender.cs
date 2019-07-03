@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using Bhaptics.fastJSON;
 using CustomWebSocketSharp;
 using System.Timers;
 
@@ -13,14 +12,6 @@ namespace Bhaptics.Tact
     {
         private WebSocket _webSocket;
         private Timer _timer;
-        private readonly JSONParameters DEFAULT_PARAM = new JSONParameters
-        {
-            EnableAnonymousTypes = true,
-            UsingGlobalTypes = false,
-            UseValuesOfEnums = false,
-            SerializeToLowerCaseNames = true,
-            UseExtensions = true
-        };
 
         private void TimerOnElapsed(object o, ElapsedEventArgs args)
         {
@@ -48,7 +39,7 @@ namespace Bhaptics.Tact
             }
             var msg = args.Data;
 
-            var response = JSON.ToObject<PlayerResponse>(msg);
+            var response = PlayerResponse.ToObject(msg);
             StatusReceived?.Invoke(response);
 
         }
@@ -320,7 +311,7 @@ namespace Bhaptics.Tact
                     return;
                 }
 
-                var msg = JSON.ToJSON(GetActiveRequest(), DEFAULT_PARAM);
+                var msg = GetActiveRequest().ToJsonObject().ToString();
                 Debug.WriteLine("Send() String " + msg);
                 _webSocket.SendAsync(msg, b =>
                 {

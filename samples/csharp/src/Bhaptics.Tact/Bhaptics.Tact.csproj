@@ -122,17 +122,10 @@
     <Compile Include="HapticPlayer.cs" />
     <Compile Include="IHapticPlayer.cs" />
     <Compile Include="ISender.cs" />
-    <Compile Include="Json\dynamic.cs" />
-    <Compile Include="Json\Formatter.cs" />
-    <Compile Include="Json\Getters.cs" />
-    <Compile Include="Json\JSON.cs" />
-    <Compile Include="Json\JsonParser.cs" />
-    <Compile Include="Json\JsonSerializer.cs" />
-    <Compile Include="Json\Reflection.cs" />
-    <Compile Include="Json\SafeDictionary.cs" />
     <Compile Include="PlayerRequest.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleJSON.cs" />
     <Compile Include="WebSocketSender.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

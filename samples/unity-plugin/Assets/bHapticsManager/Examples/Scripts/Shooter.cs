@@ -13,7 +13,6 @@ namespace Bhaptics.Tact.Unity
         private float speed = 2f;
         private LineRenderer laserLineRenderer;
         private float laserWidth = 0.01f;
-        private float laserMaxLength = 10f;
 
         private bool isEnableControl = true;
         #endregion

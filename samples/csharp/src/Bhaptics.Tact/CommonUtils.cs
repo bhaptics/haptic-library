@@ -28,9 +28,8 @@ namespace Bhaptics.Tact
 
         private static HapticFeedbackFile Parse(string json)
         {
-            var obj = fastJSON.JSON.ToObject<HapticFeedbackFile>(json);
-
-            return obj;
+            return HapticFeedbackFile.ToHapticFeedbackFile(json);
         }
+        
     }
 }

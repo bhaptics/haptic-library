@@ -7,11 +7,13 @@ namespace Bhaptics.Tact.Unity
 {
     public class BhapticsManager : MonoBehaviour
     {
+        [SerializeField] private bool dontDestroyOnLoad;
         private static BhapticsManager _manager;
+
 
         private VisualFeedback[] visualFeedbacks;
 
-        [Tooltip("Show visual feedabck or not")]
+        [Tooltip("Show visual feedback or not")]
         [SerializeField]
         public bool visualizeFeedbacks;
 
@@ -21,8 +23,6 @@ namespace Bhaptics.Tact.Unity
 
         private static IHapticPlayer _hapticPlayer;
         private static bool _isTryLaunchApp;
-
-        private bool isInBackgroundForAndroid= false;
 
         public static string GetFeedbackId(string key)
         {
@@ -65,31 +65,21 @@ namespace Bhaptics.Tact.Unity
         }
 
 #region Unity Method
-
-        void AndroidStopScan()
-        {
-            Invoke("AndroidStartScan", 3f);
-            AndroidHapticPlayer player = HapticPlayer as AndroidHapticPlayer;
-            if (player != null)
-            {
-                player.StopScan();
-            }
-        }
-
-        void AndroidStartScan()
-        {
-            Invoke("AndroidStopScan", 17f);
-
-            AndroidHapticPlayer player = HapticPlayer as AndroidHapticPlayer;
-            if (player != null)
-            {
-                player.StartScan();
-            }
-        }
-
-
         void Awake()
         {
+            if (dontDestroyOnLoad)
+            {
+                if (_manager == null)
+                {
+                    DontDestroyOnLoad(gameObject);
+                }
+                else
+                {
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+
             var uninstalledMessage = "bHaptics Player is not installed. Plugin is now disabled. Please download here." +
                                      "\nhttp://bhaptics.com/app.html#download";
             _manager = this;
@@ -103,11 +93,6 @@ namespace Bhaptics.Tact.Unity
             {
                 Debug.Log("bHaptics Player is not running, try launching bHaptics Player.");
                 BhapticsUtils.LaunchPlayer(launchPlayerIfNotRunning);
-            }
-
-            if (Application.platform == RuntimePlatform.Android)
-            {
-                Invoke("AndroidStopScan", 3f);
             }
         }
 
@@ -136,24 +121,6 @@ namespace Bhaptics.Tact.Unity
             HapticPlayer.TurnOff();
             HapticPlayer.Disable();
             HapticPlayer.StatusReceived -= OnStatusChanged;
-        }
-        
-        // only for Android
-        public void Received(string message)
-        {
-            
-            var response = Bhaptics.fastJSON.JSON.ToObject<PlayerResponse>(message);
-
-            try
-            {
-                object[] item = { response };
-                HapticPlayer.GetType().GetMethod("Receive").Invoke(HapticPlayer, item);
-            }
-            catch (Exception e)
-            {
-                
-                Debug.Log(e);
-            }
         }
 
         void OnDestroy()
@@ -222,30 +189,11 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        void OnApplicationPause(bool pauseState)
-        {
-            if (pauseState)
-            {
-                Debug.Log("background");
-                isInBackgroundForAndroid = true;
-                CancelInvoke("AndroidStopScan");
-                CancelInvoke("AndroidStartScan");
-                AndroidStopScan();
-                OnDisable();
-            }
-            else
-            {
-                Debug.Log("foreground");
-                isInBackgroundForAndroid = false;
-                AndroidStartScan();
-                
-                OnEnable();
-            }
-        }
 
-#endregion
+        #endregion
 
-        void InitVisualFeedback()
+
+        private void InitVisualFeedback()
         {
             visualFeedbacks = GetComponentsInChildren<VisualFeedback>(true);
 

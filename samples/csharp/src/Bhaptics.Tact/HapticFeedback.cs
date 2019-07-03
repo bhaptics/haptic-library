@@ -24,6 +24,15 @@ namespace Bhaptics.Tact
             return "DotPoint { Index=" + Index +
                    ", Intensity=" + Intensity + "}";
         }
+
+        public JSONObject ToJsonObject()
+        {
+            var jsonObject = new JSONObject();
+            jsonObject["index"] = Index;
+            jsonObject["intensity"] = Intensity;
+
+            return jsonObject;
+        }
     }
 
     public class PathPoint
@@ -50,6 +59,17 @@ namespace Bhaptics.Tact
                    ", Y=" + Y +
                    ", MotorCount=" + MotorCount +
                    ", Intensity=" + Intensity + "}";
+        }
+
+        public JSONObject ToJsonObject()
+        {
+            var jsonObject = new JSONObject();
+            jsonObject["x"] = X;
+            jsonObject["y"] = Y;
+            jsonObject["intensity"] = Intensity;
+            jsonObject["motorCount"] = MotorCount;
+
+            return jsonObject;
         }
     }
 

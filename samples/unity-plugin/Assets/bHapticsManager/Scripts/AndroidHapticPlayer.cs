@@ -247,15 +247,24 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     private void SubmitRequest(SubmitRequest submitRequest)
     {
+        if (submitRequest == null)
+        {
+            return;
+        }
+
         var request = PlayerRequest.Create();
         request.Submit.Add(submitRequest);
         if (hapticPlayer != null)
         {
-            hapticPlayer.Call("submit", request.ToJsonObject().ToString());
-        }
-        else
-        {
-            Debug.Log("hapticPlayer is null.");
+            try
+            {
+                hapticPlayer.Call("submit", request.ToJsonObject().ToString());
+            }
+            catch (Exception e)
+            {
+                Debug.Log("SubmitRequest() : " + e.Message);
+            }
+            
         }
     }
 
@@ -371,6 +380,7 @@ public class AndroidHapticPlayer :IHapticPlayer
     {
         var req = new SubmitRequest
         {
+            Key = "",
             Type = "turnOffAll"
         };
         SubmitRequest(req);

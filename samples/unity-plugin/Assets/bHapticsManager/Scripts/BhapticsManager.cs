@@ -11,11 +11,11 @@ namespace Bhaptics.Tact.Unity
         private static BhapticsManager _manager;
 
 
-        private VisualFeedback[] visualFeedbacks;
+        private VisualFeedback[] visualFeedback;
 
         [Tooltip("Show visual feedback or not")]
         [SerializeField]
-        public bool visualizeFeedbacks;
+        public bool visualizeFeedback;
 
         public bool launchPlayerIfNotRunning = true;
         
@@ -134,7 +134,7 @@ namespace Bhaptics.Tact.Unity
 
         void Update()
         {
-            if (!visualizeFeedbacks)
+            if (!visualizeFeedback)
             {
                 return;
             }
@@ -155,7 +155,7 @@ namespace Bhaptics.Tact.Unity
                 {
                     foreach (var feedback in _changedFeedbacks)
                     {
-                        foreach (var vis in visualFeedbacks)
+                        foreach (var vis in visualFeedback)
                         {
                             if (vis.Position == feedback.Position)
                             {
@@ -172,7 +172,7 @@ namespace Bhaptics.Tact.Unity
             }
             else
             {
-                foreach (var vis in visualFeedbacks)
+                foreach (var vis in visualFeedback)
                 {
                     HapticApi.status status;
                     HapticApi.TryGetResponseForPosition(vis.Position, out status);
@@ -195,13 +195,13 @@ namespace Bhaptics.Tact.Unity
 
         private void InitVisualFeedback()
         {
-            visualFeedbacks = GetComponentsInChildren<VisualFeedback>(true);
+            visualFeedback = GetComponentsInChildren<VisualFeedback>(true);
 
             var feedback = transform.GetChild(0);
 
             if (feedback != null)
             {
-                feedback.gameObject.SetActive(visualizeFeedbacks);
+                feedback.gameObject.SetActive(visualizeFeedback);
             }
         }
 
@@ -231,7 +231,7 @@ namespace Bhaptics.Tact.Unity
 
         private void OnStatusChanged(PlayerResponse playerResponse)
         {
-            if (visualizeFeedbacks == false)
+            if (visualizeFeedback == false)
             {
                 return;
             }

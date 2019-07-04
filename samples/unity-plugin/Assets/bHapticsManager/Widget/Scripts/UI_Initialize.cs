@@ -12,18 +12,17 @@ namespace Bhaptics.Tact.Unity
         [SerializeField] private Button unpairAllButton;
         public Button scanButton;
 
+        private AudioSource buttonClickAudio;
         private Animator animator;
         private bool widgetActive;
         
         void Start()
         {
-            ButtonInitialize();
+            buttonClickAudio = GetComponent<AudioSource>();
             animator = GetComponent<Animator>();
             animator.Play("HideWidget", -1, 1);
             GetComponent<Canvas>().worldCamera = Camera.main;  
-            var canvasGroup = uiContainer.GetComponent<CanvasGroup>();
-            canvasGroup.alpha = 0f;
-            canvasGroup.blocksRaycasts = false;
+            ButtonInitialize();
         }
 
         private void ButtonInitialize()
@@ -37,6 +36,7 @@ namespace Bhaptics.Tact.Unity
                     RectTransform rect = btn.GetComponent<RectTransform>();
                     col.size = new Vector3(rect.sizeDelta.x, rect.sizeDelta.y, 0f);
                 }
+                btn.onClick.AddListener(ButtonClickSound);
             }  
             scanButton.onClick.AddListener(DeviceManager.Instance.ScanButton);
             pingAllButton.onClick.AddListener(DeviceManager.Instance.PingAll);
@@ -81,5 +81,9 @@ namespace Bhaptics.Tact.Unity
         {
             uiContainer.SetActive(false);
         } 
+        public void ButtonClickSound()
+        {
+            buttonClickAudio.Play();
+        }
     } 
 }

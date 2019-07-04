@@ -1,3 +1,8 @@
+## Unity plugin 1.4.5 (Jul 4th, 2019.)
+* Update: Add Pairing UI for Android
+* Update: Support android including Oculus Quest
+* Fix: Fixes IL2CPP in Android
+
 ## Unity plugin 1.4.4 (Apr 12th, 2019.)
 * Fix: IL2CPP build fail
 * Fix: IsPlaying is not working as expected

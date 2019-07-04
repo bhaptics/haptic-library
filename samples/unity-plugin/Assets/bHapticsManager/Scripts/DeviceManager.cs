@@ -36,6 +36,12 @@ namespace Bhaptics.Tact.Unity
         public void ForceUpdateDeviceList()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+
             devices = androidHapticPlayer.GetDeviceList();
             IsScanning = androidHapticPlayer.IsScanning();
             RefreshDeviceListUi();

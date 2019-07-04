@@ -1,14 +1,17 @@
-## bHaptics Haptic Library
+## bHaptics Haptic Library (C++ STL)
 * Current version is 1.4.4
 
 ## Prerequisite
 * bHaptics Player has to be installed (Windows)
    * The app can be found in
    bHaptics webpage: [http://www.bhaptics.com](http://bhaptics.com/)
+   
+## Latest library files
+* https://github.com/bhaptics/haptic-library/tree/master/bin
 
 
 ## Documentation
-* https://github.com/bhaptics/tac-sharp/wiki/Documentation
+* https://github.com/bhaptics/haptic-library/wiki/Documentation
 
 
 ## 3rd party dependencies
@@ -26,6 +29,6 @@
 * E-mail: developer@bhaptics.com
 * Issues : https://github.com/bhaptics/tac-sharp/issues/new
 
-Last update of README.md: Apr 10th, 2019.
+Last update of README.md: Jul 4th, 2019.
 
 #### Copyright (c) 2016-2019 bHaptics Inc. All rights reserved.

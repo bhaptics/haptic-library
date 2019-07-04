@@ -7,9 +7,9 @@ namespace Bhaptics.Tact.Unity
 {
 
     public class ScannedDeviceUI : MonoBehaviour
-    {
-
-        [Header("[UI]")] [SerializeField] private Image deviceImage;
+    { 
+        [Header("[UI]")]
+        [SerializeField] private Image deviceImage;
         [SerializeField] private Text deviceName;
         [SerializeField] private Button pairButton;
 

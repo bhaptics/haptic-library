@@ -9,7 +9,6 @@ namespace Bhaptics.Tact.Unity
     {
 
         [SerializeField] private TactDeviceType DeviceType;
-        //[SerializeField] private DeviceManager deviceManager;
 
         [Header("Images")] [SerializeField] private Sprite defaultImage;
         [SerializeField] private Sprite pairImage;
@@ -25,8 +24,7 @@ namespace Bhaptics.Tact.Unity
         private bool canPair;
 
         private bool isLeft;
-
-        // Use this for initialization
+        
         void Start()
         {
             isLeft = DeviceType.ToString().Contains("Left");
@@ -51,7 +49,7 @@ namespace Bhaptics.Tact.Unity
             if (pairedDevices.Count > 0)
             {
                 button.image.sprite = pairImage;
-                button.onClick.RemoveAllListeners();
+                button.onClick.RemoveListener(OnPairDevice);
                 button.onClick.AddListener(OnPingDevice);
                 unPairButton.SetActive(true);
                 unPairButton.GetComponent<Button>().onClick.AddListener(OnUnpairDevice);
@@ -85,9 +83,9 @@ namespace Bhaptics.Tact.Unity
             else
             {
                 button.image.sprite = defaultImage;
-                button.onClick.RemoveAllListeners();
+                button.onClick.RemoveListener(OnPingDevice);
                 button.onClick.AddListener(OnPairDevice);
-                unPairButton.GetComponent<Button>().onClick.RemoveAllListeners();
+                unPairButton.GetComponent<Button>().onClick.RemoveListener(OnUnpairDevice);
                 unPairButton.SetActive(false);
                 var spriteState = button.spriteState;
                 spriteState.highlightedSprite = defaultHoverImage;
@@ -199,7 +197,6 @@ namespace Bhaptics.Tact.Unity
                     return true;
                 }
             }
-
             return false;
         }
     }

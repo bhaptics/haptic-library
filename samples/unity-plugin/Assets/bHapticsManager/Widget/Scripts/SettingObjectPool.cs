@@ -14,7 +14,7 @@ public class SettingObjectPool : MonoBehaviour {
     
     private List<PairedDeviceUI> pairedUIList;
     private List<ScannedDeviceUI> scannedUIList;
-	// Use this for initialization
+
 	void Start () {
         pairedUIList = new List<PairedDeviceUI>();
         scannedUIList = new List<ScannedDeviceUI>();

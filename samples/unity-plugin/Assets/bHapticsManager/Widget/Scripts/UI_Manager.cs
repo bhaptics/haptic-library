@@ -14,10 +14,17 @@ namespace Bhaptics.Tact.Unity
         public Sprite unpairImage;
         public Sprite scanImage;
     }
+    public enum WidgetType
+    {
+        Dark, Light
+    }
     public class UI_Manager : MonoBehaviour
     {
         [SerializeField] private bool IsActivateWidget = true;
-        [SerializeField] private GameObject widgetPrefab;
+        [SerializeField] private WidgetType WidgetType;
+
+        [SerializeField] private GameObject darkWidgetPrefab;
+        [SerializeField] private GameObject lightWidgetPrefab;
 
         private Transform scanButton; 
         private ScrollRect pairedDeviceScrollrect; 
@@ -39,7 +46,16 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-            var widget = Instantiate(widgetPrefab, transform);
+            GameObject widget;
+            if (WidgetType == WidgetType.Dark)
+            {
+                widget = Instantiate(darkWidgetPrefab, transform);
+            }
+            else
+            {
+                widget = Instantiate(lightWidgetPrefab, transform);
+            }
+
             scanButton = widget.GetComponent<UI_Initialize>().scanButton.transform;
             settingObjectPool = widget.GetComponent<SettingObjectPool>();
         }

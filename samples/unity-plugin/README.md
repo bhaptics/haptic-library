@@ -92,6 +92,7 @@ GetComponent<TactSource>().Play();
 
 ### (3) Samples 
 * https://github.com/bhaptics/unity-examples
+* sample game demo apk: http://release.bhaptics.com/oculus-quest/latest-solodemo-oculusquest
 
 
 ## 7. Notes

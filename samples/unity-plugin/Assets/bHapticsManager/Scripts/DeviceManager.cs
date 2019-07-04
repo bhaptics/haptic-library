@@ -16,6 +16,10 @@ namespace Bhaptics.Tact.Unity
 
         private void Awake()
         {
+            #if !UNITY_ANDROID
+                    return;
+            #endif
+
             if (Instance == null)
             {
                 uiManager = GetComponent<UI_Manager>();

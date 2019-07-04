@@ -7,10 +7,10 @@ namespace Bhaptics.Tact.Unity
         #region TactFile
         public TactSource DefaultSource;
 
-        public TactSource[] BodySources;
         public TactSource[] HeadSources;
-        public TactSource[] RightArmSources;
+        public TactSource[] BodySources;
         public TactSource[] LeftArmSources;
+        public TactSource[] RightArmSources;
         #endregion
 
         public float yOffsetMultiplier = 1f;

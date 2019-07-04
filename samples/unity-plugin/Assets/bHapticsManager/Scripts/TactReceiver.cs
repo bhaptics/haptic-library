@@ -4,8 +4,8 @@ namespace Bhaptics.Tact.Unity
 {
     public class TactReceiver : MonoBehaviour
     {
-        public PositionTag PositionTag = PositionTag.Body;
         public bool IsActive = true;
+        public PositionTag PositionTag = PositionTag.Body;
 
         void Awake()
         {

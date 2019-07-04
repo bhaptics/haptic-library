@@ -42,6 +42,10 @@ namespace Bhaptics.Tact.Unity
 
         private void Awake()
         {
+            #if !UNITY_ANDROID
+                    return;
+            #endif
+
             if (!IsActivateWidget)
             {
                 return;

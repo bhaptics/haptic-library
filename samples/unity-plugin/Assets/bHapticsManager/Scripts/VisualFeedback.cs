@@ -49,18 +49,17 @@ namespace Bhaptics.Tact.Unity
                 {
                     for (var c = 0; c < column; c++)
                     {
-                        var dot = (GameObject)Instantiate(motorPrefab, Vector3.zero, Quaternion.identity);
-                        dot.transform.parent = motorsGameObject.transform;
+                        var dot = (GameObject)Instantiate(motorPrefab, motorsGameObject.transform);
                         dot.transform.localPosition = new Vector3(offsetX + c * c_distance, offsetY + r * r_distance, 0f);
                         motors[(row - r - 1) * column + c] = dot;
                     }
                 }
 
-                UpdateFeedbacks(new HapticFeedback(Position, new byte[column * row]));
+                UpdateFeedback(new HapticFeedback(Position, new byte[column * row]));
             }
         }
 
-        public void UpdateFeedbacks(HapticFeedback feedback)
+        public void UpdateFeedback(HapticFeedback feedback)
         {
             if (motors == null)
             {

@@ -19,7 +19,7 @@ namespace Bhaptics.Tact.Unity
 
         public bool launchPlayerIfNotRunning = true;
         
-        private readonly List<HapticFeedback> _changedFeedbacks = new List<HapticFeedback>();
+        private readonly List<HapticFeedback> _changedFeedback = new List<HapticFeedback>();
 
         private static IHapticPlayer _hapticPlayer;
         private static bool _isTryLaunchApp;
@@ -146,28 +146,28 @@ namespace Bhaptics.Tact.Unity
 
             if (Application.platform == RuntimePlatform.Android)
             {
-                if (!Monitor.TryEnter(_changedFeedbacks))
+                if (!Monitor.TryEnter(_changedFeedback))
                 {
                     Debug.Log("failed to enter");
                     return;
                 }
                 try
                 {
-                    foreach (var feedback in _changedFeedbacks)
+                    foreach (var feedback in _changedFeedback)
                     {
                         foreach (var vis in visualFeedback)
                         {
                             if (vis.Position == feedback.Position)
                             {
-                                vis.UpdateFeedbacks(feedback);
+                                vis.UpdateFeedback(feedback);
                             }
                         }
                     }
-                    _changedFeedbacks.Clear();
+                    _changedFeedback.Clear();
                 }
                 finally
                 {
-                    Monitor.Exit(_changedFeedbacks);
+                    Monitor.Exit(_changedFeedback);
                 }
             }
             else
@@ -184,7 +184,7 @@ namespace Bhaptics.Tact.Unity
                     }
 
                     HapticFeedback feedback = new HapticFeedback(vis.Position, result);
-                    vis.UpdateFeedbacks(feedback);
+                    vis.UpdateFeedback(feedback);
                 }
             }
         }
@@ -236,12 +236,12 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            if (_changedFeedbacks == null)
+            if (_changedFeedback == null)
             {
                 return;
             }
 
-            lock (_changedFeedbacks)
+            lock (_changedFeedback)
             {
                 foreach (var status in playerResponse.Status)
                 {
@@ -254,7 +254,7 @@ namespace Bhaptics.Tact.Unity
                         result[i] = (byte)val[i];
                     }
                     var feedback = new HapticFeedback(pos, result);
-                    _changedFeedbacks.Add(feedback);
+                    _changedFeedback.Add(feedback);
                 }
             }
         }

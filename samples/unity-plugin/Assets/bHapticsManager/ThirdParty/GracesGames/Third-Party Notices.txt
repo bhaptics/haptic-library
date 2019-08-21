@@ -1,0 +1,11 @@
+Asset is governed by the Asset Store EULA; however, the following components are governed by the licenses indicated below:
+
+1. Sprites (File/Folder)
+Name of license: Iconmonstr License
+
+[license and copyright/accreditation details—determined by relevant license]
+
+2. Sprites (All Other)
+Name of license: Creative Commons Zero, CC0
+
+[license and copyright/accreditation details—determined by relevant license]

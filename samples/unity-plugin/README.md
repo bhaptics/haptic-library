@@ -146,4 +146,8 @@ var hapticPlayer = BhapticsManager.HapticPlayer;
 
 ##### Last update of README.md: Jul 4th, 2019.
 
+
+## 8. Open source libraries
+* SimpleFileBrowser: https://github.com/GracesGames/SimpleFileBrowser (MIT)
+
 ##### Copyright 2017~19 bHaptics Inc.

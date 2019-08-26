@@ -20,8 +20,8 @@ namespace Bhaptics.Tact.Unity
     }
     public class UI_Manager : MonoBehaviour
     {
-        [SerializeField] private bool IsActivateWidget = true;
         [SerializeField] private WidgetType WidgetType;
+        [SerializeField] private bool isActivateWidget = true;
 
         [SerializeField] private GameObject darkWidgetPrefab;
         [SerializeField] private GameObject lightWidgetPrefab;
@@ -46,10 +46,11 @@ namespace Bhaptics.Tact.Unity
                     return;
             #endif
 
-            if (!IsActivateWidget)
+            if (!isActivateWidget)
             {
                 return;
             }
+
             GameObject widget;
             if (WidgetType == WidgetType.Dark)
             {
@@ -59,14 +60,14 @@ namespace Bhaptics.Tact.Unity
             {
                 widget = Instantiate(lightWidgetPrefab, transform);
             }
-
+            
             scanButton = widget.GetComponent<UI_Initialize>().scanButton.transform;
             settingObjectPool = widget.GetComponent<SettingObjectPool>();
         }
 
         public void Refresh(List<BhapticsDevice> devices, bool isScanning)
         {
-            if (!IsActivateWidget)
+            if (!isActivateWidget)
             {
                 return;
             }
@@ -82,7 +83,7 @@ namespace Bhaptics.Tact.Unity
         
         private void PairedUiRefresh(List<BhapticsDevice> devices)
         {
-            if (!IsActivateWidget)
+            if (!isActivateWidget)
             {
                 return;
             }
@@ -104,7 +105,7 @@ namespace Bhaptics.Tact.Unity
 
         private void ScannedUiRefresh(List<BhapticsDevice> devices)
         {
-            if (!IsActivateWidget)
+            if (!isActivateWidget)
             {
                 return;
             }
@@ -121,9 +122,10 @@ namespace Bhaptics.Tact.Unity
                 }
             }
         } 
+
         private void RefreshScanButtonUi(bool isScanning)
         {
-            if (!IsActivateWidget)
+            if (!isActivateWidget)
             {
                 return;
             }

@@ -27,7 +27,7 @@ namespace Bhaptics.Tact.Unity
         
         void Start()
         {
-            isLeft = DeviceType.ToString().Contains("Left");
+            isLeft = DeviceType.ToString().Contains("Left"); 
             button = GetComponent<Button>(); 
         }
 
@@ -135,19 +135,22 @@ namespace Bhaptics.Tact.Unity
 
             if (index != -1)
             {
-                DeviceManager.Instance.Pair(devices[index].Address);
-                StartCoroutine(CheckPosition(devices[index], isLeft));
-            }
-        }
+                
+                if(DeviceType == TactDeviceType.TactosyLeft)
+                {
+                    DeviceManager.Instance.Pair(devices[index].Address, "ForearmL");
+                }
+                else if(DeviceType == TactDeviceType.TactosyRight)
+                {
+                    DeviceManager.Instance.Pair(devices[index].Address, "ForearmR");
+                }
+                else
+                {
+                    DeviceManager.Instance.Pair(devices[index].Address);
+                }
 
-        private IEnumerator CheckPosition(BhapticsDevice device, bool isLeft)
-        {
-            if (device.IsLeft() != isLeft)
-            {
-                DeviceManager.Instance.TogglePosition(device.Address);
-            }
 
-            yield return null;
+            }
         }
 
 

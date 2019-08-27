@@ -68,12 +68,10 @@ namespace Bhaptics.Tact.Unity
                     return;
                 }
                 DeviceManager.Instance.ForceUpdateDeviceList();
-                //DeviceManager.Instance.Scan();
             }
             else
             {
                 animator.Play("HideWidget");
-                //DeviceManager.Instance.ScanStop();
             }
 
             widgetActive = !widgetActive;

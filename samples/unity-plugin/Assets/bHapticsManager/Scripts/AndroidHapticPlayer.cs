@@ -43,11 +43,19 @@ public class AndroidHapticPlayer :IHapticPlayer
         }
     }
 
-    public void Pair(string address)
+    public void Pair(string address, string position)
     {
         if (hapticPlayer != null)
         {
-            hapticPlayer.Call("pair", address);
+            //hapticPlayer.Call("pair", address);                        
+            if (position != "")
+            {
+                hapticPlayer.Call("pair", address, position);
+            }
+            else
+            {
+                hapticPlayer.Call("pair", address);
+            }
         }
     }
 

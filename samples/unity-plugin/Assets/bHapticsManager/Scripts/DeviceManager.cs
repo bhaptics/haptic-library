@@ -27,6 +27,14 @@ namespace Bhaptics.Tact.Unity
             } 
         }
 
+        private void Start()
+        {
+            #if !UNITY_ANDROID
+                        return;
+            #endif
+            CheckUnconnectedDevice();
+        }
+
         private bool ScanTest()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
@@ -66,7 +74,7 @@ namespace Bhaptics.Tact.Unity
             RefreshDeviceListUi();
         }
 
-        public void Pair(string address)
+        public void Pair(string address, string position = "")
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
             if (androidHapticPlayer == null)
@@ -74,7 +82,7 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            androidHapticPlayer.Pair(address);
+            androidHapticPlayer.Pair(address, position);
         }
 
         public void Unpair(string address)
@@ -173,7 +181,7 @@ namespace Bhaptics.Tact.Unity
         }
 
 
-        #region Callback Functions from native code
+#region Callback Functions from native code
 
         public void OnChangeResponse(string message)
         {
@@ -229,7 +237,31 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        #endregion
+#endregion
+
+
+#region Check for unconnected devices
+        public void CheckUnconnectedDevice()
+        {
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                Invoke("CheckUnconnectedDevice", 0.5f);
+                return;
+            }
+
+            var checkDevices = androidHapticPlayer.GetDeviceList();
+            for (int i = 0; i < checkDevices.Count; i++)
+            {
+                if (checkDevices[i].IsPaired && CompareDeviceString.convertConnectionStatus(checkDevices[i].ConnectionStatus) == 2 &&
+                    !IsScanning)
+                {
+                    Scan();
+                }
+            }
+            Invoke("CheckUnconnectedDevice", 3f);
+        }
+#endregion
     }
 
 

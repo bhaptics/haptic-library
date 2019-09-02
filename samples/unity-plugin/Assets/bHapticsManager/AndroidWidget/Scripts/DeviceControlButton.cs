@@ -27,8 +27,8 @@ namespace Bhaptics.Tact.Unity
         
         void Start()
         {
-            isLeft = DeviceType.ToString().Contains("Left");
-            button = GetComponent<Button>();
+            isLeft = DeviceType.ToString().Contains("Left"); 
+            button = GetComponent<Button>(); 
         }
 
         private void OnEnable()
@@ -50,6 +50,7 @@ namespace Bhaptics.Tact.Unity
             {
                 button.image.sprite = pairImage;
                 button.onClick.RemoveListener(OnPairDevice);
+                button.onClick.RemoveListener(OnPingDevice);
                 button.onClick.AddListener(OnPingDevice);
                 unPairButton.SetActive(true);
                 unPairButton.GetComponent<Button>().onClick.AddListener(OnUnpairDevice);
@@ -83,6 +84,7 @@ namespace Bhaptics.Tact.Unity
             else
             {
                 button.image.sprite = defaultImage;
+                button.onClick.RemoveListener(OnPairDevice);
                 button.onClick.RemoveListener(OnPingDevice);
                 button.onClick.AddListener(OnPairDevice);
                 unPairButton.GetComponent<Button>().onClick.RemoveListener(OnUnpairDevice);
@@ -91,6 +93,7 @@ namespace Bhaptics.Tact.Unity
                 spriteState.highlightedSprite = defaultHoverImage;
                 button.spriteState = spriteState;
                 canPairImage.gameObject.SetActive(CanPairedDevice());
+                
 
                 for (int i = 0; i < pairDeviceCount.childCount; i++)
                 {
@@ -132,19 +135,22 @@ namespace Bhaptics.Tact.Unity
 
             if (index != -1)
             {
-                DeviceManager.Instance.Pair(devices[index].Address);
-                StartCoroutine(CheckPosition(devices[index], isLeft));
-            }
-        }
+                
+                if(DeviceType == TactDeviceType.TactosyLeft)
+                {
+                    DeviceManager.Instance.Pair(devices[index].Address, "ForearmL");
+                }
+                else if(DeviceType == TactDeviceType.TactosyRight)
+                {
+                    DeviceManager.Instance.Pair(devices[index].Address, "ForearmR");
+                }
+                else
+                {
+                    DeviceManager.Instance.Pair(devices[index].Address);
+                }
 
-        private IEnumerator CheckPosition(BhapticsDevice device, bool isLeft)
-        {
-            if (device.IsLeft() != isLeft)
-            {
-                DeviceManager.Instance.TogglePosition(device.Address);
-            }
 
-            yield return null;
+            }
         }
 
 
@@ -191,7 +197,16 @@ namespace Bhaptics.Tact.Unity
             var deviceList = DeviceManager.Instance.GetDeviceList();
             string position = CompareDeviceString.GetDeviceNameString(DeviceType);
             foreach (var device in deviceList)
-            {
+            { 
+                if(position == "Tactosy")
+                {
+                    if(!device.IsPaired && (device.DeviceName.StartsWith("Tactosy_") || device.DeviceName.StartsWith("Tactosy2")))
+                    {
+                        return true;
+                    } 
+                    continue; 
+                }
+
                 if (!device.IsPaired && device.DeviceName.StartsWith(position))
                 {
                     return true;

@@ -1,3 +1,6 @@
+## Unity plugin 1.4.7(Sep 2th, 2019.)
+* Fix : Fixes Android widget minor issue(Pairing, ping, auto connect issue)
+
 ## Unity plugin 1.4.5 (Jul 4th, 2019.)
 * Update: Add Pairing UI for Android
 * Update: Support android including Oculus Quest

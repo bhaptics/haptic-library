@@ -33,7 +33,7 @@
                     break;
                 case TactDeviceType.TactosyLeftHand:
                 case TactDeviceType.TactosyRightHand:
-                    pairDevice = "TactosyH";
+                    pairDevice = "TactosyH"; 
                     break;
                 case TactDeviceType.Tactot:
                     pairDevice = "Tactot";

@@ -6,9 +6,9 @@ namespace Bhaptics.Tact.Unity
     public class HapticPlayer2 : IHapticPlayer
     {
 
-        public HapticPlayer2()
+        public HapticPlayer2(string appId, string appName)
         {
-            HapticApi.Initialise();
+            HapticApi.Initialise(appId, appName);
         }
 
         public void Dispose()

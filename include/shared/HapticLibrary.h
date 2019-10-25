@@ -53,7 +53,7 @@ DLL_PUBLIC bool TryGetExePath(char* buf, int& size);
 DLL_PUBLIC const char* GetExePath();
 
 // Initialises a connection to the bHaptics Player. Should only be called once: when the game starts.
-DLL_PUBLIC void Initialise();
+DLL_PUBLIC void Initialise(const char* appId, const char* appNmae);
 
 // End the connecection to the bHaptics Player. Should only be called once: when the game ends.
 DLL_PUBLIC void Destroy();

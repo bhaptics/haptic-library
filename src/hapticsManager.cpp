@@ -237,7 +237,7 @@ namespace bhaptics
             return;
         std::function<void()> callback = std::bind(&HapticPlayer::callbackFunc, this);
         timer.add_timer_handler(callback);
-        ws = std::unique_ptr<WebSocket>(WebSocket::from_url(url));
+        ws = std::unique_ptr<WebSocket>(WebSocket::from_url(url + "?app_id=" + appId + "&app_name=" + appName));
 
         connectionCheck();
         timer.start();
@@ -459,32 +459,13 @@ namespace bhaptics
         return keys;
     }
 
-    void HapticPlayer::registerConnection(std::string Id)
+    void HapticPlayer::registerConnection(std::string appId, std::string appName)
     {
-        componentIds.push_back(Id);
-        connectionCount = (int)componentIds.size();
+        this->appId = appId;
+        this->appName = appName;
         if (!ws)
         {
             init();
-        }
-    }
-
-    void HapticPlayer::unregisterConnection(std::string Id)
-    {
-        auto component = std::find(componentIds.begin(), componentIds.end(), Id);
-        if (component != componentIds.end())
-        {
-            componentIds.erase(component);
-        }
-        else
-        {
-            return;
-        }
-        connectionCount = (int)componentIds.size();
-        if (componentIds.size() <= 0)
-        {
-            destroy();
-            connectionCount = 0;
         }
     }
 

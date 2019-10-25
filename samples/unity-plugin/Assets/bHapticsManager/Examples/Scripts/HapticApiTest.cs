@@ -7,7 +7,7 @@ namespace Bhaptics.Tact.Unity
         // Use this for initialization
         void Start()
         {
-            HapticApi.Initialise();
+            HapticApi.Initialise(Application.identifier, Application.productName);
         }
 
         // Update is called once per frame

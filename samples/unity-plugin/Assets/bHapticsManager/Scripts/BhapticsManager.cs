@@ -55,7 +55,7 @@ namespace Bhaptics.Tact.Unity
                         }
                         else
                         {
-                            _hapticPlayer = new HapticPlayer2();
+                            _hapticPlayer = new HapticPlayer2(Application.identifier, Application.productName);
                         }
                     }
                 }

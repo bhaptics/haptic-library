@@ -9,7 +9,6 @@
         static std::string readFile(const std::string& path);
         static bhaptics::HapticFile parse(const std::string& path);
         static bhaptics::HapticFile parseFromTactFileString(const std::string& jsonStr);
-
     };
 
 #endif

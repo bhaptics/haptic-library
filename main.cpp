@@ -27,7 +27,7 @@ void test() {
     cout << "defined" << endl;
 #endif
     cout << "2. Initialise()" << endl;
-    Initialise();
+    Initialise("com.bhaptics.yourAppId", "SampleApp");
 
     cout << "3. Read File" << endl;
 

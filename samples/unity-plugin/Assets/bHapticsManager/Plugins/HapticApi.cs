@@ -22,7 +22,7 @@ namespace Bhaptics.Tact.Unity
         extern public static bool TryGetExePath(byte[] buf, ref int size);
 
         [DllImport("haptic_library")]
-        extern public static void Initialise();
+        extern public static void Initialise(string appId, string appName);
 
         [DllImport("haptic_library")]
         extern public static void Destroy();

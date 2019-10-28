@@ -32,7 +32,8 @@ namespace bhaptics
         std::vector<std::string> _activeKeys;
         std::vector<PositionType> _activeDevices;
 
-        std::vector<std::string> componentIds;
+        std::string appId = "appId";
+        std::string appName = "appName";
 
         std::map<std::string, std::vector<int>> _activeFeedback;
 
@@ -43,7 +44,6 @@ namespace bhaptics
 
         int _currentTime = 0;
         int _interval = 20;
-        int _motorSize = 20;
         HapticTimer timer;
 
         bool isRunning = false;
@@ -55,8 +55,6 @@ namespace bhaptics
         std::chrono::steady_clock::time_point prevReconnect;
 
         bool isRegisterSent = true;
-
-        int connectionCount = 0;
 
         //functions
         void reconnect();
@@ -132,7 +130,7 @@ namespace bhaptics
 
         std::vector<std::string> fileNames();
 
-        void registerConnection(std::string Id);
+        void registerConnection(std::string id, std::string appName);
 
         void unregisterConnection(std::string Id);
 

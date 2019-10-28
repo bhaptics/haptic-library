@@ -127,14 +127,13 @@ void ChangeUrl(const char* url)
 }
 
 
-void Initialise()
+void Initialise(const char* appId, const char* appName)
 {
-    bhaptics::HapticPlayer::instance()->registerConnection("Plugin");
+    bhaptics::HapticPlayer::instance()->registerConnection(appId, appName);
 }
 
 void Destroy()
 {
-    //bhaptics::HapticPlayer::inxstance()->unregisterConnection("Plugin");
     bhaptics::HapticPlayer::instance()->destroy();
 }
 

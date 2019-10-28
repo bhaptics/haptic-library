@@ -87,6 +87,8 @@ namespace Bhaptics.Tact.Unity
                 transform.Translate(Vector3.back * Time.deltaTime * speed, Camera.main.transform);
             }
 
+            transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0.8f, 2f), transform.position.z);
+
             if (Input.GetMouseButtonDown(0))
             {
                 Shoot();

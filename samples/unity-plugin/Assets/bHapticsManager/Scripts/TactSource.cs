@@ -43,10 +43,6 @@ namespace Bhaptics.Tact.Unity
 
         [HideInInspector] [SerializeField] public bool IsReflectTactosy;
 
-        private bool isRegistered;
-
-        private bool isOriginFileRegistered = false;
-
         [HideInInspector]
         public float VestRotationAngleX;
 
@@ -66,6 +62,9 @@ namespace Bhaptics.Tact.Unity
         public FeedbackFile FeedbackFile;
 
         #endregion
+
+        private string currentFeedbackFileKey = "";
+        private string currentFeedbackFileKeyReflect = "";
 
         void Awake()
         {
@@ -89,24 +88,14 @@ namespace Bhaptics.Tact.Unity
             VestRotationOffsetY = 0;
         }
 
-        void OnDisable()
-        {
-            isOriginFileRegistered = false;
-            isRegistered = false;
-        }
-
-        void OnApplicationPause(bool pauseStatus)
-        {
-            if (pauseStatus)
-            {
-                isOriginFileRegistered = false;
-                isRegistered = false;
-            }
-        }
-
         public bool IsPlaying()
         {
             return player.IsPlaying(_key);
+        }
+
+        internal void SetKey(string key)
+        {
+            _key = key;
         }
 
         public void Play(ScaleOption option = null)
@@ -134,21 +123,16 @@ namespace Bhaptics.Tact.Unity
                         player.Submit(_key, ToPositionType(Position), new List<PathPoint>(Convert(Points)), TimeMillis);
                     break;
                 case FeedbackType.TactFile:
-                    if (!isOriginFileRegistered)
+                    if (currentFeedbackFileKey != FeedbackFile.Id)
                     {
-                        isOriginFileRegistered = true;
-                        player.RegisterTactFileStr(FeedbackFile.Id, FeedbackFile.Value);
+                        currentFeedbackFileKey = FeedbackFile.Id;
+                        player.RegisterTactFileStr(currentFeedbackFileKey, FeedbackFile.Value);
                     }
-
-//#if UNITY_EDITOR_WIN
-//                    // WHEN CHANGED // TODO
-                    player.RegisterTactFileStr(FeedbackFile.Id, FeedbackFile.Value);
-//#endif
 
                     if (FeedbackFile.Type == BhapticsUtils.TypeVest || FeedbackFile.Type == BhapticsUtils.TypeTactot)
                     {
 
-                        player.SubmitRegisteredVestRotation(FeedbackFile.Id, _key, 
+                        player.SubmitRegisteredVestRotation(currentFeedbackFileKey, _key, 
                             new RotationOption(VestRotationAngleX + TactFileOffsetX, VestRotationOffsetY + TactFileOffsetY),
                             option);
 
@@ -156,17 +140,17 @@ namespace Bhaptics.Tact.Unity
                                                     FeedbackFile.Type == BhapticsUtils.TypeTactosy2))
                     {
                         var reflectKey = FeedbackFile.Id + "Reflect";
-                        if (!isRegistered)
+                        if (currentFeedbackFileKeyReflect != reflectKey)
                         {
-                            isRegistered = true;
                             player.RegisterTactFileStrReflected(reflectKey,
                                 FeedbackFile.Value);
+                            currentFeedbackFileKeyReflect = reflectKey;
                         }
                         player.SubmitRegistered(reflectKey, _key, option);
                     }
                     else
                     {
-                        player.SubmitRegistered(FeedbackFile.Id, _key, option);
+                        player.SubmitRegistered(currentFeedbackFileKey, _key, option);
                     }
 
                     break;

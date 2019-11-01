@@ -1,3 +1,7 @@
+## Unity plugin 1.4.8(Nov 1st, 2019.)
+* Fix : Fixes frame drop issue on android.
+* Update: Add new demo scene.
+
 ## Unity plugin 1.4.7(Sep 2th, 2019.)
 * Fix : Fixes Android widget minor issue(Pairing, ping, auto connect issue)
 

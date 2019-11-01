@@ -10,6 +10,7 @@ public class AndroidHapticPlayer :IHapticPlayer
     private static AndroidJavaObject hapticPlayer;
     private readonly List<string> _activeKeys = new List<string>();
     private readonly List<PositionType> _activePosition = new List<PositionType>();
+    private HashSet<string> registered = new HashSet<string>();
     public void Dispose()
     {
     }
@@ -188,8 +189,14 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     public void RegisterTactFileStr(string key, string tactFileStr)
     {
+        if (registered.Contains(key))
+        {
+            return;
+        }
+
         var file = CommonUtils.ConvertJsonStringToTactosyFile(tactFileStr);
         Register(key, file.Project);
+        registered.Add(key);
     }
 
     public void RegisterTactFileStrReflected(string key, string tactFileStr)

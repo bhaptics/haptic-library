@@ -237,11 +237,32 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-#endregion
+        public void OnConnect(string address)
+        {
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            
+            androidHapticPlayer.Connected(address);
+        }
+        public void OnDisconnect(string address)
+        {
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            
+            androidHapticPlayer.Disconnected(address);
+        }
+
+        #endregion
 
 
-#region Check for unconnected devices
-        public void CheckUnconnectedDevice()
+            #region Check for unconnected devices
+            public void CheckUnconnectedDevice()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
             if (androidHapticPlayer == null)

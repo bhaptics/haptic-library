@@ -11,6 +11,9 @@ public class AndroidHapticPlayer :IHapticPlayer
     private readonly List<string> _activeKeys = new List<string>();
     private readonly List<PositionType> _activePosition = new List<PositionType>();
     private HashSet<string> registered = new HashSet<string>();
+
+    public event Action<string> OnConnect, OnDisconnect;
+
     public void Dispose()
     {
     }
@@ -402,6 +405,23 @@ public class AndroidHapticPlayer :IHapticPlayer
     }
 
     public event Action<PlayerResponse> StatusReceived;
+
+    public void Connected(string address)
+    {
+        Debug.Log("Connected " + address);
+        if (OnConnect != null)
+        {
+            OnConnect(address);
+        }
+    }
+    public void Disconnected(string address)
+    {
+        Debug.Log("Disconnected " + address);
+        if (OnDisconnect != null)
+        {
+            OnDisconnect(address);
+        }
+    }
 
     public void Receive(PlayerResponse response)
     {

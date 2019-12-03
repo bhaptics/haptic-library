@@ -265,11 +265,6 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     private void SubmitRequest(SubmitRequest submitRequest)
     {
-        if (submitRequest == null)
-        {
-            return;
-        }
-
         var request = PlayerRequest.Create();
         request.Submit.Add(submitRequest);
         if (hapticPlayer != null)
@@ -282,7 +277,6 @@ public class AndroidHapticPlayer :IHapticPlayer
             {
                 Debug.Log("SubmitRequest() : " + e.Message);
             }
-            
         }
     }
 

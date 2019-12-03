@@ -4,32 +4,32 @@ using UnityEngine;
 using Bhaptics.Tact.Unity;
 using UnityEngine.UI;
 
-public class SettingObjectPool : MonoBehaviour {
+public class AndroidWidget_ObjectPool : MonoBehaviour {
     [SerializeField] private ScrollRect pariedDeviceScrollrect;
     [SerializeField] private ScrollRect scannedDeviceScrollrect;
-    [SerializeField] private PairedDeviceUI pairedDeviceUIGameObject;
-    [SerializeField] private ScannedDeviceUI scannedDeviceUIGameObject;
+    [SerializeField] private AndroidWidget_PairedDeviceUI pairedDeviceUIGameObject;
+    [SerializeField] private AndroidWidget_ScannedDeviceUI scannedDeviceUIGameObject;
     [SerializeField] private int objectCount;
 
     
-    private List<PairedDeviceUI> pairedUIList;
-    private List<ScannedDeviceUI> scannedUIList;
+    private List<AndroidWidget_PairedDeviceUI> pairedUIList;
+    private List<AndroidWidget_ScannedDeviceUI> scannedUIList;
 
 	void Start () {
-        pairedUIList = new List<PairedDeviceUI>();
-        scannedUIList = new List<ScannedDeviceUI>();
+        pairedUIList = new List<AndroidWidget_PairedDeviceUI>();
+        scannedUIList = new List<AndroidWidget_ScannedDeviceUI>();
 
         for(int i = 0; i < objectCount; i++)
         {
-            pairedUIList.Add(Instantiate(pairedDeviceUIGameObject, pariedDeviceScrollrect.content) as PairedDeviceUI);
-            scannedUIList.Add(Instantiate(scannedDeviceUIGameObject, scannedDeviceScrollrect.content)as ScannedDeviceUI);
+            pairedUIList.Add(Instantiate(pairedDeviceUIGameObject, pariedDeviceScrollrect.content) as AndroidWidget_PairedDeviceUI);
+            scannedUIList.Add(Instantiate(scannedDeviceUIGameObject, scannedDeviceScrollrect.content)as AndroidWidget_ScannedDeviceUI);
 
             pairedUIList[i].gameObject.SetActive(false);
             scannedUIList[i].gameObject.SetActive(false);
         }
 	}
 
-    public PairedDeviceUI GetPairedDeviceUI()
+    public AndroidWidget_PairedDeviceUI GetPairedDeviceUI()
     {
         for(int i = 0; i < pairedUIList.Count; i++)
         {
@@ -41,7 +41,7 @@ public class SettingObjectPool : MonoBehaviour {
         }
         return null;
     }
-    public ScannedDeviceUI GetScannedDeviceUI()
+    public AndroidWidget_ScannedDeviceUI GetScannedDeviceUI()
     {
         for(int i = 0; i < scannedUIList.Count; i++)
         {

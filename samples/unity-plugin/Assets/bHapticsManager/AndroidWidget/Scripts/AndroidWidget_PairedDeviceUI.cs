@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Bhaptics.Tact.Unity
 {
-    public class PairedDeviceUI : MonoBehaviour
+    public class AndroidWidget_PairedDeviceUI : MonoBehaviour
     {
         [Header("[UI]")] [SerializeField] private Image deviceImage;
         [SerializeField] private Text deviceName;
@@ -58,26 +58,26 @@ namespace Bhaptics.Tact.Unity
 
         private void OnPing()
         {
-            if (CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
+            if (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
             {
-                DeviceManager.Instance.Ping(device.Address);
+                AndroidWidget_DeviceManager.Instance.Ping(device.Address);
             }
         }
 
         private void OnUnpair()
         {
-            if (CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0 ||
-                (CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 2 && device.IsPaired))
+            if (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0 ||
+                (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 2 && device.IsPaired))
             { 
-                DeviceManager.Instance.Unpair(device.Address);
+                AndroidWidget_DeviceManager.Instance.Unpair(device.Address);
             }
         }
 
         private void OnSwap()
         {
-            if (CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
+            if (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
             {
-                DeviceManager.Instance.TogglePosition(device.Address);
+                AndroidWidget_DeviceManager.Instance.TogglePosition(device.Address);
                 if (device.IsLeft())
                 {
                     toggleButton.image.sprite = leftSide;

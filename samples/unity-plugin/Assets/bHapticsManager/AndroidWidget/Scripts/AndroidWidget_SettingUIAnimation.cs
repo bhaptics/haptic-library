@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SettingUI_AnimationScript: MonoBehaviour
+public class AndroidWidget_SettingUIAnimation: MonoBehaviour
 {
     [SerializeField] private GameObject SettingUI;
 

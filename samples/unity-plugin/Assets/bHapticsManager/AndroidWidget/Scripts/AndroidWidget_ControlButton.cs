@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Bhaptics.Tact.Unity
 {
-    public class DeviceControlButton : MonoBehaviour
+    public class AndroidWidget_ControlButton : MonoBehaviour
     {
 
         [SerializeField] private TactDeviceType DeviceType;
@@ -111,15 +111,15 @@ namespace Bhaptics.Tact.Unity
 
         public void OnPairDevice()
         {
-            var devices = DeviceManager.Instance.GetDeviceList();
+            var devices = AndroidWidget_DeviceManager.Instance.GetDeviceList();
             int rssi = -9999;
             int index = -1;
 
             for(int i = 0; i < devices.Count; i++)
             {
-                string pairDevice = CompareDeviceString.GetDeviceNameString(DeviceType);
+                string pairDevice = AndroidWidget_CompareDeviceString.GetDeviceNameString(DeviceType);
                 if (devices[i].DeviceName.StartsWith(pairDevice) &&
-                    CompareDeviceString.convertConnectionStatus(devices[i].ConnectionStatus) == 2)
+                    AndroidWidget_CompareDeviceString.convertConnectionStatus(devices[i].ConnectionStatus) == 2)
                 {
                     if(rssi < int.Parse(devices[i].Rssi))
                     {
@@ -138,15 +138,15 @@ namespace Bhaptics.Tact.Unity
                 
                 if(DeviceType == TactDeviceType.TactosyLeft)
                 {
-                    DeviceManager.Instance.Pair(devices[index].Address, "ForearmL");
+                    AndroidWidget_DeviceManager.Instance.Pair(devices[index].Address, "ForearmL");
                 }
                 else if(DeviceType == TactDeviceType.TactosyRight)
                 {
-                    DeviceManager.Instance.Pair(devices[index].Address, "ForearmR");
+                    AndroidWidget_DeviceManager.Instance.Pair(devices[index].Address, "ForearmR");
                 }
                 else
                 {
-                    DeviceManager.Instance.Pair(devices[index].Address);
+                    AndroidWidget_DeviceManager.Instance.Pair(devices[index].Address);
                 }
 
 
@@ -159,10 +159,10 @@ namespace Bhaptics.Tact.Unity
             var pairedDevices = GetPariedDevice();
             foreach (var pairedDevice in pairedDevices)
             {
-                if (CompareDeviceString.convertConnectionStatus(pairedDevice.ConnectionStatus) == 0 ||
-                    (CompareDeviceString.convertConnectionStatus(pairedDevice.ConnectionStatus) == 2 &&
+                if (AndroidWidget_CompareDeviceString.convertConnectionStatus(pairedDevice.ConnectionStatus) == 0 ||
+                    (AndroidWidget_CompareDeviceString.convertConnectionStatus(pairedDevice.ConnectionStatus) == 2 &&
                      pairedDevice.IsPaired))
-                    DeviceManager.Instance.Unpair(pairedDevice.Address);
+                    AndroidWidget_DeviceManager.Instance.Unpair(pairedDevice.Address);
             }
         }
 
@@ -171,19 +171,19 @@ namespace Bhaptics.Tact.Unity
             var pairedDevices = GetPariedDevice();
             foreach (var pairedDevice in pairedDevices)
             {
-                DeviceManager.Instance.Ping(pairedDevice.Address);
+                AndroidWidget_DeviceManager.Instance.Ping(pairedDevice.Address);
             }
         }
 
         private List<BhapticsDevice> GetPariedDevice()
         {
             List<BhapticsDevice> pairedDeviceList = new List<BhapticsDevice>();
-            var deviceList = DeviceManager.Instance.GetDeviceList();
-            string position = CompareDeviceString.GetPositionString(DeviceType);
+            var deviceList = AndroidWidget_DeviceManager.Instance.GetDeviceList();
+            string position = AndroidWidget_CompareDeviceString.GetPositionString(DeviceType);
             foreach (var device in deviceList)
             {
                 if (device.IsPaired && device.Position.StartsWith(position) &&
-                    CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
+                    AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
                 {
                     pairedDeviceList.Add(device);
                 }
@@ -194,8 +194,8 @@ namespace Bhaptics.Tact.Unity
 
         private bool CanPairedDevice()
         {
-            var deviceList = DeviceManager.Instance.GetDeviceList();
-            string position = CompareDeviceString.GetDeviceNameString(DeviceType);
+            var deviceList = AndroidWidget_DeviceManager.Instance.GetDeviceList();
+            string position = AndroidWidget_CompareDeviceString.GetDeviceNameString(DeviceType);
             foreach (var device in deviceList)
             { 
                 if(position == "Tactosy")

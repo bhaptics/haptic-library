@@ -12,7 +12,7 @@
         TactosyRightFoot
     } 
 
-    public class CompareDeviceString
+    public class AndroidWidget_CompareDeviceString
     { 
         public static string GetDeviceNameString(TactDeviceType deviceType)
         {

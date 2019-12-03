@@ -16,15 +16,20 @@ namespace Bhaptics.Tact.Unity
     }
     public enum WidgetType
     {
-        Dark, Light
+        Dark, Light, Dark_Simple, Light_Simple
     }
-    public class UI_Manager : MonoBehaviour
+    public class AndroidWidget_UIManager : MonoBehaviour
     {
         [SerializeField] private WidgetType WidgetType;
         [SerializeField] private bool isActivateWidget = true;
 
-        [SerializeField] private GameObject darkWidgetPrefab;
-        [SerializeField] private GameObject lightWidgetPrefab;
+        [SerializeField] private GameObject darkWidgetObject;
+        [SerializeField] private GameObject lightWidgetObject;
+        [SerializeField] private GameObject darkSimpleWidgetObject;
+        [SerializeField] private GameObject lightSimpleWidgetObject;
+
+        private GameObject widget;
+
 
         private Transform scanButton; 
         private ScrollRect pairedDeviceScrollrect; 
@@ -38,31 +43,64 @@ namespace Bhaptics.Tact.Unity
         [SerializeField] private DeviceIcon Tactal;
 
         private IEnumerator ScanAnimationCor;
-        private SettingObjectPool settingObjectPool;
+        private AndroidWidget_ObjectPool settingObjectPool;
 
         private void Awake()
         {
-            #if !UNITY_ANDROID
-                    return;
-            #endif
-
+#if !UNITY_ANDROID
+            darkWidgetObject.SetActive(false);
+            lightWidgetObject.SetActive(false);
+            darkSimpleWidgetObject.SetActive(false);
+            lightSimpleWidgetObject.SetActive(false);
+            return;
+#endif
             if (!isActivateWidget)
             {
                 return;
             }
+        }
 
-            GameObject widget;
-            if (WidgetType == WidgetType.Dark)
+        private void OnEnable()
+        {
+            darkWidgetObject.SetActive(false);
+            lightWidgetObject.SetActive(false);
+            darkSimpleWidgetObject.SetActive(false);
+            lightSimpleWidgetObject.SetActive(false);
+
+            switch (WidgetType)
             {
-                widget = Instantiate(darkWidgetPrefab, transform);
+                case WidgetType.Dark:
+                    widget = darkWidgetObject;
+                    break;
+                case WidgetType.Light:
+                    widget = lightWidgetObject;
+                    break;
+                case WidgetType.Dark_Simple:
+                    widget = darkSimpleWidgetObject;
+                    break;
+                case WidgetType.Light_Simple:
+                    widget = lightSimpleWidgetObject;
+                    break;
+                default:
+                    widget = null;
+                    break;
+            }
+
+            if (widget != null)
+            {
+                widget.SetActive(true);
+                scanButton = widget.GetComponent<AndroidWidget_UI>().scanButton.transform;
+                settingObjectPool = widget.GetComponent<AndroidWidget_ObjectPool>();
             }
             else
             {
-                widget = Instantiate(lightWidgetPrefab, transform);
+                Debug.LogError("Widget Object is null");
             }
-            
-            scanButton = widget.GetComponent<UI_Initialize>().scanButton.transform;
-            settingObjectPool = widget.GetComponent<SettingObjectPool>();
+        }
+        private void OnDisable()
+        {
+            widget.SetActive(false);
+            widget = null;
         }
 
         public void Refresh(List<BhapticsDevice> devices, bool isScanning)
@@ -91,9 +129,9 @@ namespace Bhaptics.Tact.Unity
             {
                 if (device.IsPaired)
                 {
-                    bool isConnect = (CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0);
+                    bool isConnect = (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0);
 
-                    PairedDeviceUI deviceUI = settingObjectPool.GetPairedDeviceUI();
+                    AndroidWidget_PairedDeviceUI deviceUI = settingObjectPool.GetPairedDeviceUI();
                     if (deviceUI != null)
                     {
                         deviceUI.Setup(device, isConnect, GetPairedDeviceSprite(device.DeviceName, isConnect));
@@ -113,7 +151,7 @@ namespace Bhaptics.Tact.Unity
             {
                 if (!device.IsPaired)
                 {
-                    ScannedDeviceUI deviceUI = settingObjectPool.GetScannedDeviceUI();
+                    AndroidWidget_ScannedDeviceUI deviceUI = settingObjectPool.GetScannedDeviceUI();
                     if (deviceUI != null)
                     {
                         deviceUI.Setup(device, GetScannedDeviceSprite(device.DeviceName));

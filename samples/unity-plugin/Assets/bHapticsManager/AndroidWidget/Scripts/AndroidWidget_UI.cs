@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Bhaptics.Tact.Unity
 { 
-    public class UI_Initialize : MonoBehaviour
+    public class AndroidWidget_UI : MonoBehaviour
     {
         private const float autoHideTime = 60f;
 
@@ -25,10 +25,18 @@ namespace Bhaptics.Tact.Unity
         {
             buttonClickAudio = GetComponent<AudioSource>();
             animator = GetComponent<Animator>();
+            GetComponent<Canvas>().worldCamera = Camera.main;
             animator.Play("HideWidget", -1, 1);
-            GetComponent<Canvas>().worldCamera = Camera.main;  
             ButtonInitialize();
-        }       
+        }
+
+        private void OnEnable()
+        {
+            if(animator != null)
+            {
+                animator.Play("HideWidget", -1, 1);
+            }
+        }
 
         private void ButtonInitialize()
         {
@@ -44,9 +52,9 @@ namespace Bhaptics.Tact.Unity
                 btn.onClick.AddListener(ButtonClickSound);
                 btn.onClick.AddListener(ResetHideTimer);
             }  
-            scanButton.onClick.AddListener(DeviceManager.Instance.ScanButton);
-            pingAllButton.onClick.AddListener(DeviceManager.Instance.PingAll);
-            unpairAllButton.onClick.AddListener(DeviceManager.Instance.UnpairAll);
+            scanButton.onClick.AddListener(AndroidWidget_DeviceManager.Instance.ScanButton);
+            pingAllButton.onClick.AddListener(AndroidWidget_DeviceManager.Instance.PingAll);
+            unpairAllButton.onClick.AddListener(AndroidWidget_DeviceManager.Instance.UnpairAll);
         }
 
         public void ToggleWidgetButton()
@@ -67,7 +75,7 @@ namespace Bhaptics.Tact.Unity
                     AndroidPermissionsManager.RequestPermission();
                     return;
                 }
-                DeviceManager.Instance.ForceUpdateDeviceList();
+                AndroidWidget_DeviceManager.Instance.ForceUpdateDeviceList();
             }
             else
             {
@@ -88,7 +96,7 @@ namespace Bhaptics.Tact.Unity
             uiContainer.SetActive(false);
             if(scanCoroutine != null)
             {
-                DeviceManager.Instance.ScanStop();
+                AndroidWidget_DeviceManager.Instance.ScanStop();
                 StopCoroutine(scanCoroutine);
                 scanCoroutine = null;
             }
@@ -102,9 +110,9 @@ namespace Bhaptics.Tact.Unity
         {
             while (true)
             {
-                if (!DeviceManager.Instance.IsScanning)
+                if (!AndroidWidget_DeviceManager.Instance.IsScanning)
                 {
-                    DeviceManager.Instance.Scan();
+                    AndroidWidget_DeviceManager.Instance.Scan();
                 }
 
                 if(hideTimer < 0f)

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Bhaptics.Tact.Unity
 {
 
-    public class ScannedDeviceUI : MonoBehaviour
+    public class AndroidWidget_ScannedDeviceUI : MonoBehaviour
     { 
         [Header("[UI]")]
         [SerializeField] private Image deviceImage;
@@ -32,9 +32,9 @@ namespace Bhaptics.Tact.Unity
 
         private void OnPair()
         {
-            if (CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 2)
+            if (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 2)
             {
-                DeviceManager.Instance.Pair(device.Address);
+                AndroidWidget_DeviceManager.Instance.Pair(device.Address);
             }
         }
     }

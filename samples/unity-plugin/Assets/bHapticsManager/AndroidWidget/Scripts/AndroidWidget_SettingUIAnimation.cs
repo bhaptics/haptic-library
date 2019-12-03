@@ -32,7 +32,10 @@ public class AndroidWidget_SettingUIAnimation: MonoBehaviour
 
         if (!settingPanelEnable)
         {
-            animator.Play("ShowSettingPanel"); 
+            animator.Play("ShowSettingPanel");
+
+            SettingUI.SetActive(true);
+            SettingUI.SetActive(false);
         }
         else
         {

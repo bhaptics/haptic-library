@@ -1,3 +1,8 @@
+## Unity plugin 1.4.9(Dec 3rd, 2019.)
+* Update: Fixes performance on Android/Quest
+* UI: Add simple widget for Android/Quest
+* Fix: Fixes minor bugs on UI
+
 ## Unity plugin 1.4.8(Nov 1st, 2019.)
 * Fix : Fixes frame drop issue on android.
 * Update: Add new demo scene.

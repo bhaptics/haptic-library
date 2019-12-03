@@ -1,6 +1,6 @@
 # Unity plugin
 * This project will help integrate bHaptics' haptic devices into Unity environments. 
-* Current version is 1.4.8
+* Current version is 1.4.9
 
 ## 1. Prerequisite (Only for Windows)
 ### The bHaptics Player needs to be installed
@@ -69,6 +69,7 @@ GetComponent<TactSource>().Play();
 * https://unity3d.com/kr/learn/tutorials/topics/mobile-touch/building-your-unity-game-android-device-testing
 * The version of the Android device must be higher or equal to 4.3(API level 18) 
    - https://developer.android.com/guide/topics/connectivity/bluetooth-le
+* For Oculus Quest, check this [documentation]( https://github.com/bhaptics/haptic-library/wiki/Getting-Started-(Unity---Oculus-Quest))
 
 ### (2) AndroidManifest.xml for permission
 * Add the following permissions into the AndroidManifest.xml.
@@ -96,6 +97,11 @@ GetComponent<TactSource>().Play();
 
 
 ## 7. Notes
+### Overview
+* For migration, remove Assets/bHapticsManager/ folder and import latest plugin. 
+   * If you want to use haptic feedback files, just delete all except the feedback file's folder
+* After importing files, just press Unity editor's play button once, and feedback files will be restored.
+
 ### (1) Migration from 1.4.4
 * Tact File setting may be broken. Please reconnect the tact file in TactSource.
 
@@ -144,6 +150,6 @@ var hapticPlayer = FindObjectOfType<BhapticsManager>().HapticPlayer();
 var hapticPlayer = BhapticsManager.HapticPlayer;
 ```
 
-##### Last update of README.md: Nov 1st, 2019.
+##### Last update of README.md: Dec 3rd, 2019.
 
 ##### Copyright 2017~19 bHaptics Inc.

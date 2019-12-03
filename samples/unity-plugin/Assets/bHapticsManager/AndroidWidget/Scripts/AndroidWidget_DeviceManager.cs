@@ -34,6 +34,8 @@ namespace Bhaptics.Tact.Unity
             #if !UNITY_ANDROID
                         return;
             #endif
+
+            Scan();
         }
 
         private void OnEnable()
@@ -51,16 +53,6 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-
-        private bool ScanTest()
-        {
-            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
-            if (androidHapticPlayer == null)
-            {
-                return false;
-            }
-            return androidHapticPlayer.IsScanning();
-        }
          
         public void ForceUpdateDeviceList()
         {

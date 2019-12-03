@@ -29,6 +29,14 @@ public class AndroidHapticPlayer :IHapticPlayer
         AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
         Debug.Log("Enable() activity : " + currentActivity);
         hapticPlayer = new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity);
+
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (BhapticsManager.Instance.visualizeFeedback)
+            {
+                TurnOnVisualization();
+            }
+        }
     }
 
     public void StopScan()
@@ -135,6 +143,13 @@ public class AndroidHapticPlayer :IHapticPlayer
         return false;
     }
 
+    public void TurnOnVisualization()
+    {
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("turnOnVisualization");
+        }
+    }
 
     public void PingAll()
     {
@@ -402,7 +417,6 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     public void Connected(string address)
     {
-        Debug.Log("Connected " + address);
         if (OnConnect != null)
         {
             OnConnect(address);
@@ -410,7 +424,6 @@ public class AndroidHapticPlayer :IHapticPlayer
     }
     public void Disconnected(string address)
     {
-        Debug.Log("Disconnected " + address);
         if (OnDisconnect != null)
         {
             OnDisconnect(address);

@@ -5,8 +5,8 @@ using Bhaptics.Tact.Unity;
 using UnityEngine.UI;
 
 public class AndroidWidget_ObjectPool : MonoBehaviour {
-    [SerializeField] private ScrollRect pariedDeviceScrollrect;
-    [SerializeField] private ScrollRect scannedDeviceScrollrect;
+    [SerializeField] private ScrollRect pairedDeviceScrollRect;
+    [SerializeField] private ScrollRect scannedDeviceScrollRect;
     [SerializeField] private AndroidWidget_PairedDeviceUI pairedDeviceUIGameObject;
     [SerializeField] private AndroidWidget_ScannedDeviceUI scannedDeviceUIGameObject;
     [SerializeField] private int objectCount;
@@ -19,10 +19,16 @@ public class AndroidWidget_ObjectPool : MonoBehaviour {
         pairedUIList = new List<AndroidWidget_PairedDeviceUI>();
         scannedUIList = new List<AndroidWidget_ScannedDeviceUI>();
 
-        for(int i = 0; i < objectCount; i++)
+        pairedDeviceScrollRect.viewport.gameObject.SetActive(false);
+        pairedDeviceScrollRect.viewport.gameObject.SetActive(true);
+        scannedDeviceScrollRect.viewport.gameObject.SetActive(false);
+        scannedDeviceScrollRect.viewport.gameObject.SetActive(true);
+
+
+        for (int i = 0; i < objectCount; i++)
         {
-            pairedUIList.Add(Instantiate(pairedDeviceUIGameObject, pariedDeviceScrollrect.content) as AndroidWidget_PairedDeviceUI);
-            scannedUIList.Add(Instantiate(scannedDeviceUIGameObject, scannedDeviceScrollrect.content)as AndroidWidget_ScannedDeviceUI);
+            pairedUIList.Add(Instantiate(pairedDeviceUIGameObject, pairedDeviceScrollRect.content) as AndroidWidget_PairedDeviceUI);
+            scannedUIList.Add(Instantiate(scannedDeviceUIGameObject, scannedDeviceScrollRect.content)as AndroidWidget_ScannedDeviceUI);
 
             pairedUIList[i].gameObject.SetActive(false);
             scannedUIList[i].gameObject.SetActive(false);

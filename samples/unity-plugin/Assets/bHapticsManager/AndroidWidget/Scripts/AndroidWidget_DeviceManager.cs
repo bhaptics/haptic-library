@@ -8,7 +8,7 @@ namespace Bhaptics.Tact.Unity
     public class AndroidWidget_DeviceManager : MonoBehaviour
     {
         public static AndroidWidget_DeviceManager Instance;
-        [SerializeField] private bool alwaysScanUnConnectedDevice;
+        [SerializeField] private bool alwaysScanDisconnectedDevice;
 
 
         private List<BhapticsDevice> devices = new List<BhapticsDevice>();
@@ -40,14 +40,14 @@ namespace Bhaptics.Tact.Unity
 
         private void OnEnable()
         {
-            if (alwaysScanUnConnectedDevice)
+            if (alwaysScanDisconnectedDevice)
             {
                 InvokeRepeating("CheckUnconnectedDevice", 0.5f, 0.5f);
             }
         }
         private void OnDisable()
         {
-            if (alwaysScanUnConnectedDevice)
+            if (alwaysScanDisconnectedDevice)
             {
                 CancelInvoke();
             }

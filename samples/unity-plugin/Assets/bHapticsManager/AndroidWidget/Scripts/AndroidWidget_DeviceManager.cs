@@ -34,6 +34,8 @@ namespace Bhaptics.Tact.Unity
             #if !UNITY_ANDROID
                         return;
             #endif
+
+            Scan();
         }
 
         private void OnEnable()

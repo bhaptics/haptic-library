@@ -202,7 +202,7 @@ public class AndroidHapticPlayer :IHapticPlayer
         if (hapticPlayer == null) {
             return;
         }
-        hapticPlayer.Call("submit", request.ToJsonObject().ToString());
+        hapticPlayer.Call("register", request.ToJsonObject().ToString());
     }
 
     public void RegisterTactFileStr(string key, string tactFileStr)

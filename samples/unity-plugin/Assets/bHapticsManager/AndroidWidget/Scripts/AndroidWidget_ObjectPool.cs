@@ -19,12 +19,6 @@ public class AndroidWidget_ObjectPool : MonoBehaviour {
         pairedUIList = new List<AndroidWidget_PairedDeviceUI>();
         scannedUIList = new List<AndroidWidget_ScannedDeviceUI>();
 
-        pairedDeviceScrollRect.viewport.gameObject.SetActive(false);
-        pairedDeviceScrollRect.viewport.gameObject.SetActive(true);
-        scannedDeviceScrollRect.viewport.gameObject.SetActive(false);
-        scannedDeviceScrollRect.viewport.gameObject.SetActive(true);
-
-
         for (int i = 0; i < objectCount; i++)
         {
             pairedUIList.Add(Instantiate(pairedDeviceUIGameObject, pairedDeviceScrollRect.content) as AndroidWidget_PairedDeviceUI);

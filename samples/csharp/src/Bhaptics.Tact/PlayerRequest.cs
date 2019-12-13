@@ -174,22 +174,23 @@ namespace Bhaptics.Tact
 
             obj.ConnectedDeviceCount = (int)jsonObject["ConnectedDeviceCount"];
 
+
             obj.RegisteredKeys = new List<string>();
             foreach (var jsonValue in jsonObject["RegisteredKeys"].AsArray)
             {
-                obj.RegisteredKeys.Add(jsonValue.ToString());
+                obj.RegisteredKeys.Add(jsonValue.Value);
             }
 
             obj.ActiveKeys = new List<string>();
             foreach (var jsonValue in jsonObject["ActiveKeys"].AsArray)
             {
-                obj.ActiveKeys.Add(jsonValue.ToString());
+                obj.ActiveKeys.Add(jsonValue.Value);
             }
 
             obj.ConnectedPositions = new List<PositionType>();
             foreach (var jsonValue in jsonObject["ConnectedPositions"].AsArray)
             {
-                obj.ConnectedPositions.Add(EnumParser.ToPositionType(jsonValue.ToString()));
+                obj.ConnectedPositions.Add(EnumParser.ToPositionType(jsonValue.Value));
             }
 
             obj.Status = new Dictionary<string, int[]>();
@@ -197,7 +198,7 @@ namespace Bhaptics.Tact
             var status = jsonObject[("Status")];
             foreach (var statusKey in status.Keys)
             {
-                var arr = status[statusKey]; 
+                var arr = status[statusKey];
                 var item = new int[arr.Count];
                 var i = 0;
                 foreach (var jsonValue in arr)

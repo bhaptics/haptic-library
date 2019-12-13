@@ -22,6 +22,21 @@ namespace TestApp
             InitializeComponent();
             _player = new HapticPlayer();
 
+
+            string sssss = "[\"Head\"]";
+
+            var jsonNode = JSON.Parse(sssss);
+
+            foreach (var keyValuePair in jsonNode.AsArray)
+            {
+                Debug.WriteLine(keyValuePair);
+
+                var positionType = EnumParser.ToPositionType(keyValuePair.Value);
+
+                Debug.WriteLine(positionType);
+            }
+
+
             foreach (var s in arr)
             {
                 try

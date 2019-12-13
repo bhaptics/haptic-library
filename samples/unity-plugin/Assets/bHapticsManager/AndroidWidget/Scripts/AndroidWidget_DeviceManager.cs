@@ -65,7 +65,7 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-            androidHapticPlayer.ForcedUpdateDeviceList();
+            androidHapticPlayer.GetDeviceList();
             IsScanning = androidHapticPlayer.IsScanning();
             RefreshDeviceListUi();
         }

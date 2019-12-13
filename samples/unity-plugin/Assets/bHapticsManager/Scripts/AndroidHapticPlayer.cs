@@ -10,7 +10,6 @@ public class AndroidHapticPlayer :IHapticPlayer
     private static AndroidJavaObject hapticPlayer;
 
     private readonly List<string> _activeKeys = new List<string>();
-    private readonly List<PositionType> _activePosition = new List<PositionType>();
 
     private HashSet<string> registered = new HashSet<string>();
 
@@ -103,36 +102,6 @@ public class AndroidHapticPlayer :IHapticPlayer
         }
     }
 
-    public void ForcedUpdateDeviceList()
-    {
-        if (hapticPlayer != null)
-        {
-            string result = hapticPlayer.Call<string>("getDeviceList");
-            var devicesJson = JSON.Parse(result);
-            if (devicesJson.IsArray)
-            {
-                var deviceList = new List<BhapticsDevice>();
-                var arr = devicesJson.AsArray;
-
-                foreach (var deviceJson in arr.Children)
-                {
-                    var device = new BhapticsDevice();
-                    device.IsPaired = deviceJson["IsPaired"];
-                    device.Address = deviceJson["Address"];
-                    device.Battery = deviceJson["Battery"];
-                    device.ConnectionStatus = deviceJson["ConnectionStatus"];
-                    device.DeviceName = deviceJson["DeviceName"];
-                    device.Position = deviceJson["Position"];
-                    device.Rssi = deviceJson["Rssi"];
-                    deviceList.Add(device);
-                }
-                this.deviceList = deviceList;
-                return;
-            }
-        }
-        this.deviceList = null;
-    }
-
     public bool IsScanning()
     {
         if (hapticPlayer != null)
@@ -165,7 +134,7 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     public bool IsActive(PositionType type)
     {
-        foreach(var device in deviceList)
+        foreach(var device in GetDeviceList())
         {
             if(device.Position == type.ToString() && AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
             {
@@ -434,10 +403,6 @@ public class AndroidHapticPlayer :IHapticPlayer
     }
     public void UpdateDeviceList(List<BhapticsDevice> _deviceList)
     {
-        if(deviceList == null)
-        {
-            deviceList = new List<BhapticsDevice>();
-        }
         deviceList = _deviceList;
     }
     #endregion
@@ -469,6 +434,35 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     public List<BhapticsDevice> GetDeviceList()
     {
+        if (hapticPlayer == null)
+        {
+            return new List<BhapticsDevice>();
+        }
+
+        if (deviceList == null)
+        {
+            string result = hapticPlayer.Call<string>("getDeviceList");
+            var devicesJson = JSON.Parse(result);
+            if (devicesJson.IsArray)
+            {
+                deviceList = new List<BhapticsDevice>();
+                var arr = devicesJson.AsArray;
+
+                foreach (var deviceJson in arr.Children)
+                {
+                    var device = new BhapticsDevice();
+                    device.IsPaired = deviceJson["IsPaired"];
+                    device.Address = deviceJson["Address"];
+                    device.Battery = deviceJson["Battery"];
+                    device.ConnectionStatus = deviceJson["ConnectionStatus"];
+                    device.DeviceName = deviceJson["DeviceName"];
+                    device.Position = deviceJson["Position"];
+                    device.Rssi = deviceJson["Rssi"];
+                    deviceList.Add(device);
+                }
+            }
+        }
+
         return deviceList;
     }
 }

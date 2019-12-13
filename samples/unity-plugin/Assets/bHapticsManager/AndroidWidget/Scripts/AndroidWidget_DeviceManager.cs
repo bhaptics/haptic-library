@@ -9,9 +9,6 @@ namespace Bhaptics.Tact.Unity
     {
         public static AndroidWidget_DeviceManager Instance;
         [SerializeField] private bool alwaysScanDisconnectedDevice;
-
-
-        private List<BhapticsDevice> devices = new List<BhapticsDevice>();
         private AndroidWidget_UIManager uiManager; 
 
         [HideInInspector] public bool IsScanning; 
@@ -19,8 +16,9 @@ namespace Bhaptics.Tact.Unity
         private void Awake()
         {
 #if !UNITY_ANDROID
-                    return;
+            return;
 #endif
+
             if (Instance == null)
             {
                 uiManager = GetComponent<AndroidWidget_UIManager>();
@@ -31,7 +29,7 @@ namespace Bhaptics.Tact.Unity
         private void Start()
         {
 #if !UNITY_ANDROID
-                        return;
+            return;
 #endif
             Scan();
         }
@@ -41,6 +39,7 @@ namespace Bhaptics.Tact.Unity
 #if !UNITY_ANDROID
             return;
 #endif
+
             if (alwaysScanDisconnectedDevice)
             {
                 InvokeRepeating("CheckUnconnectedDevice", 0.5f, 0.5f);
@@ -51,6 +50,7 @@ namespace Bhaptics.Tact.Unity
 #if !UNITY_ANDROID
             return;
 #endif
+
             if (alwaysScanDisconnectedDevice)
             {
                 CancelInvoke();
@@ -65,20 +65,30 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-            devices = androidHapticPlayer.GetDeviceList();
+            androidHapticPlayer.ForcedUpdateDeviceList();
             IsScanning = androidHapticPlayer.IsScanning();
             RefreshDeviceListUi();
         }
 
-        public void UpdateDevices(List<BhapticsDevice> devices)
+        public void UpdateDeviceUI(List<BhapticsDevice> devices)
         {
-            this.devices = devices;
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            androidHapticPlayer.UpdateDeviceList(devices);
             RefreshDeviceListUi();
         }
 
         private void RefreshDeviceListUi()
         {
-            uiManager.Refresh(devices, IsScanning);
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            uiManager.Refresh(androidHapticPlayer.GetDeviceList(), IsScanning);
         }
 
         public void UpdateScanning(bool isScanning)
@@ -186,13 +196,6 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-
-        public List<BhapticsDevice> GetDeviceList()
-        {
-            return devices;
-        }
-
-
 #region Callback Functions from native code
 
         public void OnChangeResponse(string message)
@@ -220,7 +223,6 @@ namespace Bhaptics.Tact.Unity
         public void ScanStatusChanged(string message)
         {
             var isScanning = JSON.Parse((message));
-            
             UpdateScanning(isScanning.AsBool);
         }
 
@@ -231,11 +233,11 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
+            List<BhapticsDevice> deviceList = new List<BhapticsDevice>();
 
             var devicesJson = JSON.Parse(message);
             if (devicesJson.IsArray)
             {
-                devices.Clear();
                 var arr = devicesJson.AsArray;
 
                 foreach (var deviceJson in arr.Children)
@@ -248,10 +250,10 @@ namespace Bhaptics.Tact.Unity
                     device.DeviceName = deviceJson["DeviceName"];
                     device.Position = deviceJson["Position"];
                     device.Rssi = deviceJson["Rssi"];
-                    devices.Add(device);
+                    deviceList.Add(device);
                 }
-                androidHapticPlayer.deviceList = devices;
-                UpdateDevices(devices);
+                androidHapticPlayer.UpdateDeviceList(deviceList);
+                UpdateDeviceUI(deviceList);
             }
         }
 
@@ -273,12 +275,19 @@ namespace Bhaptics.Tact.Unity
             }
             androidHapticPlayer.Disconnected(address);
         }
-
 #endregion
+
+
 
 #region Check for disconnected devices
             public void CheckDisconnectedDevice()
         {
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            var devices = androidHapticPlayer.GetDeviceList();
             if (devices != null)
             {
                 for (int i = 0; i < devices.Count; i++)

@@ -52,6 +52,8 @@ namespace Bhaptics.Tact.Unity
             lightWidgetObject.SetActive(false);
             darkSimpleWidgetObject.SetActive(false);
             lightSimpleWidgetObject.SetActive(false);
+
+            enabled = false;
             return;
 #endif
             if (!isActivateWidget)

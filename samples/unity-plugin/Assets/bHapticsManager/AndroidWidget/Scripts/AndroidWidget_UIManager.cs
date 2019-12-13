@@ -62,6 +62,9 @@ namespace Bhaptics.Tact.Unity
 
         private void OnEnable()
         {
+#if !UNITY_ANDROID
+            return;
+#endif
             darkWidgetObject.SetActive(false);
             lightWidgetObject.SetActive(false);
             darkSimpleWidgetObject.SetActive(false);
@@ -99,6 +102,9 @@ namespace Bhaptics.Tact.Unity
         }
         private void OnDisable()
         {
+#if !UNITY_ANDROID
+            return;
+#endif
             widget.SetActive(false);
             widget = null;
         }
@@ -189,7 +195,7 @@ namespace Bhaptics.Tact.Unity
             ScanAnimationCor = null;
         }
 
-        #region GetSprites
+#region GetSprites
 
         public Sprite GetPairedDeviceSprite(string deviceType, bool isConnect)
         {
@@ -251,6 +257,6 @@ namespace Bhaptics.Tact.Unity
             return null;
         }
 
-        #endregion          
+#endregion
     }
 }

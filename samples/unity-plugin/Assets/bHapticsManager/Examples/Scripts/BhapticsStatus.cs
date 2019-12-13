@@ -16,7 +16,6 @@ public class BhapticsStatus : MonoBehaviour
         if (text != null)
         {
             var hapticPlayer = BhapticsManager.HapticPlayer;
-
             text.text = "Tactal isActive: " + hapticPlayer.IsActive(PositionType.Head) + "\n" +
                         "Tactot isActive: " + hapticPlayer.IsActive(PositionType.Vest) + "\n" +
                         "Tactosy(L) isActive: " + hapticPlayer.IsActive(PositionType.ForearmL) + "\n" +

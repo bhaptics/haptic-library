@@ -12,6 +12,7 @@ public class AndroidHapticPlayer :IHapticPlayer
     private readonly List<PositionType> _activePosition = new List<PositionType>();
     private HashSet<string> registered = new HashSet<string>();
 
+    public  List<BhapticsDevice> deviceList = new List<BhapticsDevice>();
     public event Action<string> OnConnect, OnDisconnect;
 
     public void Dispose()
@@ -102,13 +103,12 @@ public class AndroidHapticPlayer :IHapticPlayer
         }
     }
 
-
     public List<BhapticsDevice> GetDeviceList()
     {
         if (hapticPlayer != null)
         {
-           string result = hapticPlayer.Call<string>("getDeviceList"); 
-            var devicesJson = JSON.Parse(result); 
+            string result = hapticPlayer.Call<string>("getDeviceList");
+            var devicesJson = JSON.Parse(result);
             if (devicesJson.IsArray)
             {
                 var deviceList = new List<BhapticsDevice>();
@@ -131,7 +131,6 @@ public class AndroidHapticPlayer :IHapticPlayer
         }
         return null;
     }
-
 
     public bool IsScanning()
     {
@@ -165,10 +164,14 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     public bool IsActive(PositionType type)
     {
-        lock (_activePosition)
+        foreach(var device in deviceList)
         {
-            return _activePosition.Contains(type);
+            if(device.Position == type.ToString() && AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
+            {
+                return true;
+            }            
         }
+        return false;
     }
 
     public bool IsPlaying(string key)
@@ -417,7 +420,6 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     public void Connected(string address)
     {
-        Debug.Log("Connected " + address);
         if (OnConnect != null)
         {
             OnConnect(address);
@@ -425,7 +427,6 @@ public class AndroidHapticPlayer :IHapticPlayer
     }
     public void Disconnected(string address)
     {
-        Debug.Log("Disconnected " + address);
         if (OnDisconnect != null)
         {
             OnDisconnect(address);

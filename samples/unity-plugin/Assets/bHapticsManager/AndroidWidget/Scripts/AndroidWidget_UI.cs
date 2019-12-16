@@ -19,7 +19,7 @@ namespace Bhaptics.Tact.Unity
         private AudioSource buttonClickAudio;
         private Animator animator;
         private bool widgetActive;
-        private float hideTimer; 
+        private float hideTimer;
 
         void Start()
         {

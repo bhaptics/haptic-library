@@ -9,18 +9,15 @@ namespace Bhaptics.Tact.Unity
     {
         public static AndroidWidget_DeviceManager Instance;
         [SerializeField] private bool alwaysScanDisconnectedDevice;
-
-
-        private List<BhapticsDevice> devices = new List<BhapticsDevice>();
         private AndroidWidget_UIManager uiManager; 
 
         [HideInInspector] public bool IsScanning; 
 
         private void Awake()
         {
-            #if !UNITY_ANDROID
-                    return;
-            #endif
+#if !UNITY_ANDROID
+            return;
+#endif
 
             if (Instance == null)
             {
@@ -31,15 +28,18 @@ namespace Bhaptics.Tact.Unity
 
         private void Start()
         {
-            #if !UNITY_ANDROID
-                        return;
-            #endif
-
+#if !UNITY_ANDROID
+            return;
+#endif
             Scan();
         }
 
         private void OnEnable()
         {
+#if !UNITY_ANDROID
+            return;
+#endif
+
             if (alwaysScanDisconnectedDevice)
             {
                 InvokeRepeating("CheckUnconnectedDevice", 0.5f, 0.5f);
@@ -47,6 +47,10 @@ namespace Bhaptics.Tact.Unity
         }
         private void OnDisable()
         {
+#if !UNITY_ANDROID
+            return;
+#endif
+
             if (alwaysScanDisconnectedDevice)
             {
                 CancelInvoke();
@@ -54,16 +58,6 @@ namespace Bhaptics.Tact.Unity
         }
 
 
-        private bool ScanTest()
-        {
-            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
-            if (androidHapticPlayer == null)
-            {
-                return false;
-            }
-            return androidHapticPlayer.IsScanning();
-        }
-         
         public void ForceUpdateDeviceList()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
@@ -71,20 +65,30 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-            devices = androidHapticPlayer.GetDeviceList();
+            androidHapticPlayer.GetDeviceList();
             IsScanning = androidHapticPlayer.IsScanning();
             RefreshDeviceListUi();
         }
 
-        public void UpdateDevices(List<BhapticsDevice> devices)
+        public void UpdateDeviceUI(List<BhapticsDevice> devices)
         {
-            this.devices = devices;
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            androidHapticPlayer.UpdateDeviceList(devices);
             RefreshDeviceListUi();
         }
 
         private void RefreshDeviceListUi()
         {
-            uiManager.Refresh(devices, IsScanning);
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            uiManager.Refresh(androidHapticPlayer.GetDeviceList(), IsScanning);
         }
 
         public void UpdateScanning(bool isScanning)
@@ -122,7 +126,6 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-
             androidHapticPlayer.UnpairAll();
         }
 
@@ -193,13 +196,6 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-
-        public List<BhapticsDevice> GetDeviceList()
-        {
-            return devices;
-        }
-
-
 #region Callback Functions from native code
 
         public void OnChangeResponse(string message)
@@ -227,17 +223,21 @@ namespace Bhaptics.Tact.Unity
         public void ScanStatusChanged(string message)
         {
             var isScanning = JSON.Parse((message));
-            
             UpdateScanning(isScanning.AsBool);
         }
 
         public void OnDeviceUpdate(string message)
         {
-            var devicesJson = JSON.Parse(message);
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            List<BhapticsDevice> deviceList = new List<BhapticsDevice>();
 
+            var devicesJson = JSON.Parse(message);
             if (devicesJson.IsArray)
             {
-                var deviceList = new List<BhapticsDevice>();
                 var arr = devicesJson.AsArray;
 
                 foreach (var deviceJson in arr.Children)
@@ -252,7 +252,8 @@ namespace Bhaptics.Tact.Unity
                     device.Rssi = deviceJson["Rssi"];
                     deviceList.Add(device);
                 }
-                UpdateDevices(deviceList);
+                androidHapticPlayer.UpdateDeviceList(deviceList);
+                UpdateDeviceUI(deviceList);
             }
         }
 
@@ -274,26 +275,28 @@ namespace Bhaptics.Tact.Unity
             }
             androidHapticPlayer.Disconnected(address);
         }
+#endregion
 
-        #endregion
 
 
-            #region Check for unconnected devices
-            public void CheckUnconnectedDevice()
+#region Check for disconnected devices
+            public void CheckDisconnectedDevice()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
             if (androidHapticPlayer == null)
             {
                 return;
             }
-
-            var checkDevices = androidHapticPlayer.GetDeviceList();
-            for (int i = 0; i < checkDevices.Count; i++)
+            var devices = androidHapticPlayer.GetDeviceList();
+            if (devices != null)
             {
-                if (checkDevices[i].IsPaired && AndroidWidget_CompareDeviceString.convertConnectionStatus(checkDevices[i].ConnectionStatus) == 2 &&
-                    !IsScanning)
+                for (int i = 0; i < devices.Count; i++)
                 {
-                    Scan();
+                    if (devices[i].IsPaired && !IsScanning && AndroidWidget_CompareDeviceString.convertConnectionStatus(devices[i].ConnectionStatus) == 2)
+                    {
+                        Scan();
+                        break;
+                    }
                 }
             }
         }

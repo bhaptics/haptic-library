@@ -111,7 +111,13 @@ namespace Bhaptics.Tact.Unity
 
         public void OnPairDevice()
         {
-            var devices = AndroidWidget_DeviceManager.Instance.GetDeviceList();
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if(androidHapticPlayer == null)
+            {
+                return;
+            }
+
+            var devices = androidHapticPlayer.GetDeviceList();
             int rssi = -9999;
             int index = -1;
 
@@ -177,8 +183,14 @@ namespace Bhaptics.Tact.Unity
 
         private List<BhapticsDevice> GetPariedDevice()
         {
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return null;
+            }
+
             List<BhapticsDevice> pairedDeviceList = new List<BhapticsDevice>();
-            var deviceList = AndroidWidget_DeviceManager.Instance.GetDeviceList();
+            var deviceList = androidHapticPlayer.GetDeviceList();
             string position = AndroidWidget_CompareDeviceString.GetPositionString(DeviceType);
             foreach (var device in deviceList)
             {
@@ -194,7 +206,13 @@ namespace Bhaptics.Tact.Unity
 
         private bool CanPairedDevice()
         {
-            var deviceList = AndroidWidget_DeviceManager.Instance.GetDeviceList();
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return false;
+            }
+
+            var deviceList = androidHapticPlayer.GetDeviceList();
             string position = AndroidWidget_CompareDeviceString.GetDeviceNameString(DeviceType);
             foreach (var device in deviceList)
             { 

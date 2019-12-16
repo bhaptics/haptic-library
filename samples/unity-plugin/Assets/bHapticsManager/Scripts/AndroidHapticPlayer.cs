@@ -8,10 +8,12 @@ using UnityEngine;
 public class AndroidHapticPlayer :IHapticPlayer
 {
     private static AndroidJavaObject hapticPlayer;
+
     private readonly List<string> _activeKeys = new List<string>();
-    private readonly List<PositionType> _activePosition = new List<PositionType>();
+
     private HashSet<string> registered = new HashSet<string>();
 
+    private List<BhapticsDevice> deviceList = null;
     public event Action<string> OnConnect, OnDisconnect;
 
     public void Dispose()
@@ -24,7 +26,6 @@ public class AndroidHapticPlayer :IHapticPlayer
         {
             return;
         }
-
         AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
         AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
         Debug.Log("Enable() activity : " + currentActivity);
@@ -58,8 +59,7 @@ public class AndroidHapticPlayer :IHapticPlayer
     public void Pair(string address, string position)
     {
         if (hapticPlayer != null)
-        {
-            //hapticPlayer.Call("pair", address);                        
+        {          
             if (position != "")
             {
                 hapticPlayer.Call("pair", address, position);
@@ -102,37 +102,6 @@ public class AndroidHapticPlayer :IHapticPlayer
         }
     }
 
-
-    public List<BhapticsDevice> GetDeviceList()
-    {
-        if (hapticPlayer != null)
-        {
-           string result = hapticPlayer.Call<string>("getDeviceList"); 
-            var devicesJson = JSON.Parse(result); 
-            if (devicesJson.IsArray)
-            {
-                var deviceList = new List<BhapticsDevice>();
-                var arr = devicesJson.AsArray;
-
-                foreach (var deviceJson in arr.Children)
-                {
-                    var device = new BhapticsDevice();
-                    device.IsPaired = deviceJson["IsPaired"];
-                    device.Address = deviceJson["Address"];
-                    device.Battery = deviceJson["Battery"];
-                    device.ConnectionStatus = deviceJson["ConnectionStatus"];
-                    device.DeviceName = deviceJson["DeviceName"];
-                    device.Position = deviceJson["Position"];
-                    device.Rssi = deviceJson["Rssi"];
-                    deviceList.Add(device);
-                }
-                return deviceList;
-            }
-        }
-        return null;
-    }
-
-
     public bool IsScanning()
     {
         if (hapticPlayer != null)
@@ -165,10 +134,14 @@ public class AndroidHapticPlayer :IHapticPlayer
 
     public bool IsActive(PositionType type)
     {
-        lock (_activePosition)
+        foreach(var device in GetDeviceList())
         {
-            return _activePosition.Contains(type);
+            if(device.Position == type.ToString() && AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
+            {
+                return true;
+            }            
         }
+        return false;
     }
 
     public bool IsPlaying(string key)
@@ -413,11 +386,9 @@ public class AndroidHapticPlayer :IHapticPlayer
         SubmitRequest(req);
     }
 
-    public event Action<PlayerResponse> StatusReceived;
-
+    #region Callback function;
     public void Connected(string address)
     {
-        Debug.Log("Connected " + address);
         if (OnConnect != null)
         {
             OnConnect(address);
@@ -425,13 +396,21 @@ public class AndroidHapticPlayer :IHapticPlayer
     }
     public void Disconnected(string address)
     {
-        Debug.Log("Disconnected " + address);
         if (OnDisconnect != null)
         {
             OnDisconnect(address);
         }
     }
+    public void UpdateDeviceList(List<BhapticsDevice> _deviceList)
+    {
+        deviceList = _deviceList;
+    }
+    #endregion
 
+
+
+
+    public event Action<PlayerResponse> StatusReceived;
     public void Receive(PlayerResponse response)
     {
         try
@@ -446,17 +425,44 @@ public class AndroidHapticPlayer :IHapticPlayer
                 _activeKeys.Clear();
                 _activeKeys.AddRange(response.ActiveKeys);
             }
-
-            lock (_activePosition)
-            {
-                _activePosition.Clear();
-                _activePosition.AddRange(response.ConnectedPositions);
-            }
         }
         catch (Exception e)
         {
             Debug.Log(e);
         }
-        
+    }
+
+    public List<BhapticsDevice> GetDeviceList()
+    {
+        if (hapticPlayer == null)
+        {
+            return new List<BhapticsDevice>();
+        }
+
+        if (deviceList == null)
+        {
+            string result = hapticPlayer.Call<string>("getDeviceList");
+            var devicesJson = JSON.Parse(result);
+            if (devicesJson.IsArray)
+            {
+                deviceList = new List<BhapticsDevice>();
+                var arr = devicesJson.AsArray;
+
+                foreach (var deviceJson in arr.Children)
+                {
+                    var device = new BhapticsDevice();
+                    device.IsPaired = deviceJson["IsPaired"];
+                    device.Address = deviceJson["Address"];
+                    device.Battery = deviceJson["Battery"];
+                    device.ConnectionStatus = deviceJson["ConnectionStatus"];
+                    device.DeviceName = deviceJson["DeviceName"];
+                    device.Position = deviceJson["Position"];
+                    device.Rssi = deviceJson["Rssi"];
+                    deviceList.Add(device);
+                }
+            }
+        }
+
+        return deviceList;
     }
 }

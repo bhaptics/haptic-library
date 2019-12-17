@@ -186,7 +186,7 @@ namespace Bhaptics.Tact.Unity
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
             if (androidHapticPlayer == null)
             {
-                return null;
+                return new List<BhapticsDevice>();
             }
 
             List<BhapticsDevice> pairedDeviceList = new List<BhapticsDevice>();

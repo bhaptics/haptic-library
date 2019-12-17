@@ -42,7 +42,7 @@ namespace Bhaptics.Tact.Unity
 
             if (alwaysScanDisconnectedDevice)
             {
-                InvokeRepeating("CheckUnconnectedDevice", 0.5f, 0.5f);
+                InvokeRepeating("CheckDisconnectedDevice", 0.5f, 0.5f);
             }
         }
         private void OnDisable()

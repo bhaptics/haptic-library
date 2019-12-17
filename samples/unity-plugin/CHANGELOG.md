@@ -1,3 +1,7 @@
+## Unity plugin 1.4.10(Dec 17th, 2019.)
+* Fix : Fixes pc platform issue(isActive, isPlaying)
+* Fix : Fixes Androidwidget platform init issue
+
 ## Unity plugin 1.4.9(Dec 3rd, 2019.)
 * Update: Fixes performance on Android/Quest
 * UI: Add simple widget for Android/Quest

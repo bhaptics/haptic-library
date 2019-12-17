@@ -1,6 +1,6 @@
 # Unity plugin
 * This project will help integrate bHaptics' haptic devices into Unity environments. 
-* Current version is 1.4.9
+* Current version is 1.4.10
 
 ## 1. Prerequisite (Only for Windows)
 ### The bHaptics Player needs to be installed
@@ -150,6 +150,6 @@ var hapticPlayer = FindObjectOfType<BhapticsManager>().HapticPlayer();
 var hapticPlayer = BhapticsManager.HapticPlayer;
 ```
 
-##### Last update of README.md: Dec 3rd, 2019.
+##### Last update of README.md: Dec 17rd, 2019.
 
 ##### Copyright 2017~19 bHaptics Inc.

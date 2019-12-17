@@ -150,6 +150,6 @@ var hapticPlayer = FindObjectOfType<BhapticsManager>().HapticPlayer();
 var hapticPlayer = BhapticsManager.HapticPlayer;
 ```
 
-##### Last update of README.md: Dec 17rd, 2019.
+##### Last update of README.md: Dec 17th, 2019.
 
 ##### Copyright 2017~19 bHaptics Inc.

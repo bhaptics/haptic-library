@@ -29,7 +29,6 @@ sysinfo.txt
 
 # Builds
 *.apk
-*.unitypackage
 
 /Assets/bHapticsManager/Resources/
 /Assets/bHapticsManager/Resources.meta

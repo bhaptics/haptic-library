@@ -57,6 +57,14 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
+        private void OnApplicationQuit()
+        {
+#if !UNITY_ANDROID
+            return;
+#endif
+            Quit();
+        }
+
 
         public void ForceUpdateDeviceList()
         {
@@ -182,6 +190,17 @@ namespace Bhaptics.Tact.Unity
             }
 
             androidHapticPlayer.PingAll();
+        }
+
+        public void Quit()
+        {
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+
+            androidHapticPlayer.Quit();
         }
 
         public void ScanButton()

@@ -132,6 +132,14 @@ public class AndroidHapticPlayer :IHapticPlayer
     {
     }
 
+    public void Quit()
+    {
+        if (hapticPlayer != null)
+        {
+            hapticPlayer.Call("quit");
+        }
+    }
+
     public bool IsActive(PositionType type)
     {
         foreach(var device in GetDeviceList())

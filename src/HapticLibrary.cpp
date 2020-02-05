@@ -230,6 +230,10 @@ void Submit(const char* Key, bhaptics::PositionType Pos, std::vector<uint8_t>& M
 {
     bhaptics::HapticPlayer::instance()->submit(Key, Pos, MotorBytes, DurationMillis);
 }
+void SubmitRegisteredStartMillis(const char* key, int startMillis)
+{
+    bhaptics::HapticPlayer::instance()->submitRegistered(key, startMillis);
+}
 
 void SubmitDot(const char* Key, bhaptics::PositionType Pos, std::vector<bhaptics::DotPoint>& Points, int DurationMillis)
 {

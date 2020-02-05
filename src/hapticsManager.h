@@ -98,6 +98,8 @@ namespace bhaptics
 
         void submitRegistered(const std::string &key, const std::string &altKey, ScaleOption option, RotationOption rotOption);
 
+        void submitRegistered(const std::string &key, int startTimeMillis);
+
         void submitRegistered(const std::string &key);
 
         bool isPlaying();

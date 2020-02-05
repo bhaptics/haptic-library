@@ -299,6 +299,28 @@ namespace bhaptics
         send(playerReq);
     }
 
+    void HapticPlayer::submitRegistered(const std::string &key, int startTimeMillis)
+    {
+        if (!_enable || !connectionCheck())
+        {
+            return;
+        }
+
+        if (startTimeMillis <= 0 ) {
+            return;
+        }
+
+        SubmitRequest req;
+        PlayerRequest playerReq;
+        req.Key = key;
+        req.Type = "key";
+        req.Parameters["startTimeMillis"] = "\""+std::to_string(startTimeMillis) + "\"";
+
+        playerReq.Submit.push_back(req);
+
+        send(playerReq);
+    }
+
     void HapticPlayer::submitRegistered(const std::string &key)
     {
         if (!_enable || !connectionCheck())
@@ -323,11 +345,9 @@ namespace bhaptics
 
     bool HapticPlayer::isPlaying(const std::string &key)
     {
-        mtx.lock();
         std::vector<std::string> temp = _activeKeys;
-        mtx.unlock();
 
-        bool ret = std::find(temp.begin(), temp.end(), key) != temp.end();
+        bool ret = std::find(_activeKeys.begin(), _activeKeys.end(), key) != _activeKeys.end();
         return ret;
     }
 

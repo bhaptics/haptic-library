@@ -75,6 +75,8 @@ DLL_PUBLIC void LoadAndRegisterFeedback(const char* Key, const char* FilePath);
 // Submit a request to play a registered feedback file using its Key.
 DLL_PUBLIC void SubmitRegistered(const char* key);
 
+DLL_PUBLIC void SubmitRegisteredStartMillis(const char* key, int startMillis);
+
 // Submit a request to play a registered feedback file, with additional options.
 // ScaleOption scales the intensity and duration of the feedback by some factor.
 // RotationOption uses cylindrical projection to rotate a Vest feedback file, as well as the vertical position.

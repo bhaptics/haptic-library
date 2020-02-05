@@ -16,7 +16,7 @@ void test() {
 
     if (res) {
         cout << "1. getExePath bHaptics Player is installed:  " << playerPath << endl  << path << endl;
-        cout << "1. size:  " << size << endl;
+        cout << "1. player path size:  " << size << endl;
 
     } else {
         cout << "1. Cannot find exe path.  "  << endl;
@@ -26,8 +26,9 @@ void test() {
 #ifdef BHAPTICS_BUILDING_DLL
     cout << "defined" << endl;
 #endif
-    cout << "2. Initialise()" << endl;
-    Initialise("com.bhaptics.yourAppId", "SampleApp");
+    const char* appId = "com.bhaptics.yourAppId";
+    cout << "2. Initialise() with com.bhaptics.yourAppId" << endl;
+    Initialise(appId, "SampleApp");
 
     cout << "3. Read File" << endl;
 
@@ -42,10 +43,13 @@ void test() {
         inFile.close();
         cout << "4. RegisterFeedbackFromTactFile" << endl;
         RegisterFeedbackFromTactFileReflected("test3", inputString);
+    } else {
+        cout << "4. Cannot find Pistol_L.tact. Failed to register the feedback file.";
     }
 
-    cout << "5. SubmitRegistered" << endl;
+    cout << "5. SubmitRegistered " << endl;
     SubmitRegistered("test3");
+    SubmitRegisteredStartMillis("test4", 100);
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
     std::vector<bhaptics::DotPoint> points;
@@ -60,7 +64,14 @@ void test() {
     SubmitDot("test", bhaptics::PositionType::ForearmL, points, 1000);
     SubmitDot("test2", bhaptics::PositionType::VestFront, points, 1000);
     SubmitPath("path", bhaptics::PositionType::VestBack, points2, 3000);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    std::this_thread::sleep_for(std::chrono::seconds(4));
+    auto isPlaying = IsPlayingKey("path");
+
+    if (isPlaying) {
+        cout << "7. path feedback is now playing" << endl;
+    }
+
     cout << "7. TryGetResponseForPosition" << endl;
     try {
         status s;

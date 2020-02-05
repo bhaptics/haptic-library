@@ -37,7 +37,11 @@ namespace Bhaptics.Tact.Unity
         extern public static void RegisterFeedbackFromTactFileReflected(string str, string tactFileStr);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void SubmitRegistered(string str);
+        extern public static void SubmitRegistered(string key);
+        
+        // Works with bHaptics Player 1.5.6 onwards
+        [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
+        extern public static void SubmitRegisteredStartMillis(string key, int startTimeMillis);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
         extern public static void SubmitRegisteredWithOption(string key, string altKey, float intensity, float duration, float offsetX, float offsetY);

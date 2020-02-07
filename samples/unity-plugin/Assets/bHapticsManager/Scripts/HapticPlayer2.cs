@@ -128,9 +128,9 @@ namespace Bhaptics.Tact.Unity
             HapticApi.SubmitRegistered(key);
         }
 
-        public void SubmitRegistered(string key, float duration)
+        public void SubmitRegistered(string key, float startTimeMillis)
         {
-            throw new NotImplementedException();
+            HapticApi.SubmitRegisteredStartMillis(key, (int)startTimeMillis);
         }
 
         public void TurnOff(string key)

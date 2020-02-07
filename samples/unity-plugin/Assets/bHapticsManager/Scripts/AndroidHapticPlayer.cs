@@ -360,7 +360,7 @@ public class AndroidHapticPlayer :IHapticPlayer
         SubmitRequest(request);
     }
 
-    public void SubmitRegistered(string key, float ratio)
+    public void SubmitRegistered(string key, float startTimeMillis)
     {
         var request = new SubmitRequest()
         {
@@ -368,7 +368,7 @@ public class AndroidHapticPlayer :IHapticPlayer
             Type = "key",
             Parameters = new Dictionary<string, object>
             {
-                { "ratio", ratio}
+                { "startTimeMillis", (int)startTimeMillis + ""}
             }
         };
         SubmitRequest(request);

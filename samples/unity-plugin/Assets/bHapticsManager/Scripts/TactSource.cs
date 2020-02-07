@@ -16,7 +16,7 @@ namespace Bhaptics.Tact.Unity
         
         [HideInInspector]
         [SerializeField]
-        public Pos Position = Pos.RightForearm;
+        public Pos Position = Pos.VestFront;
 
         // PathMode
         //[HideInInspector]
@@ -65,6 +65,7 @@ namespace Bhaptics.Tact.Unity
 
         private string currentFeedbackFileKey = "";
         private string currentFeedbackFileKeyReflect = "";
+
 
         void Awake()
         {
@@ -155,6 +156,19 @@ namespace Bhaptics.Tact.Unity
 
                     break;
             }
+        }
+
+
+        // For Windows, it will be working with bHaptics Player 1.5.6 onwards. 
+        public void PlayWithStartMillis(int mediaMillis)
+        {
+            if (currentFeedbackFileKey != FeedbackFile.Id)
+            {
+                currentFeedbackFileKey = FeedbackFile.Id;
+                player.RegisterTactFileStr(currentFeedbackFileKey, FeedbackFile.Value);
+            }
+
+            player.SubmitRegistered(currentFeedbackFileKey, mediaMillis);
         }
 
         public void Stop()

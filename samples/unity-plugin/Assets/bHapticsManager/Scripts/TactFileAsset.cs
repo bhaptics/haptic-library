@@ -36,8 +36,16 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-            
-            SaveAssetFile();
+
+            try
+            {
+                SaveAssetFile();
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("Exception handling {0}", e.Message);
+            }
+
 
             var @object = Resources.Load("TactFileAsset", typeof(TactFileAsset));
 
@@ -49,7 +57,7 @@ namespace Bhaptics.Tact.Unity
             {
                 _instance = CreateInstance<TactFileAsset>();
             }
-            
+
             Initialized = true;
         }
 
@@ -66,7 +74,7 @@ namespace Bhaptics.Tact.Unity
             string scriptPath = AssetDatabase.GetAssetPath(ms);
             scriptPath = scriptPath.Replace(Path.GetFileName(scriptPath), "");
             scriptPath = scriptPath.Replace("/Scripts/", "/Resources/");
-            
+
             var item = CreateInstance<TactFileAsset>();
             item.FeedbackFiles = LoadFeedbackFile();
             item.FilesMap = new Dictionary<string, FeedbackFile>();
@@ -76,8 +84,9 @@ namespace Bhaptics.Tact.Unity
             }
             item.Types = LoadTypes(item.FeedbackFiles);
             // TODO
-            string assetPath = scriptPath +  "TactFileAsset" + ".asset";
+            string assetPath = scriptPath + "TactFileAsset" + ".asset";
             var existingAsset = AssetDatabase.LoadAssetAtPath<TactFileAsset>(assetPath);
+
 
             if (!AssetDatabase.IsValidFolder(scriptPath))
             {
@@ -87,16 +96,67 @@ namespace Bhaptics.Tact.Unity
             if (existingAsset == null)
             {
                 AssetDatabase.CreateAsset(item, assetPath);
+                AssetDatabase.Refresh();
+                AssetDatabase.SaveAssets();
             }
             else
             {
-                EditorUtility.CopySerialized(item, existingAsset);
+
+                existingAsset.FilesMap = new Dictionary<string, FeedbackFile>();
+                foreach (var itemFeedbackFile in existingAsset.FeedbackFiles)
+                {
+                    existingAsset.FilesMap[itemFeedbackFile.Key] = itemFeedbackFile;
+                }
+                existingAsset.Types = LoadTypes(item.FeedbackFiles);
+
+                if (!EqualsAsset(item, existingAsset))
+                {
+                    EditorUtility.CopySerialized(item, existingAsset);
+                    AssetDatabase.Refresh();
+                    AssetDatabase.SaveAssets();
+                }
             }
-            AssetDatabase.Refresh();
-            AssetDatabase.SaveAssets();
 #endif
         }
-        
+
+        private static bool EqualsAsset(TactFileAsset a, TactFileAsset b)
+        {
+            try
+            {
+                if (a == null || b == null)
+                {
+                    return false;
+                }
+
+                if (a.FeedbackFiles.Length != b.FeedbackFiles.Length)
+                {
+                    return false;
+                }
+
+                foreach (var keyValuePair in a.FilesMap)
+                {
+                    var key = keyValuePair.Key;
+                    if (!b.FilesMap.ContainsKey(key))
+                    {
+                        return false;
+                    }
+
+                    if (keyValuePair.Value.Id != b.FilesMap[key].Id)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogFormat("EqualsAsset: {0}, {1}", e.Message, e.StackTrace);
+                return false;
+            }
+
+        }
+
         private static string[] LoadTypes(FeedbackFile[] feedbackFiles)
         {
             var types = new Dictionary<string, string>();
@@ -111,7 +171,7 @@ namespace Bhaptics.Tact.Unity
         private static FeedbackFile[] LoadFeedbackFile()
         {
             List<FeedbackFile> files = new List<FeedbackFile>();
-            
+
             try
             {
                 string[] extensions = { "*.tactosy", "*.tact" };
@@ -137,7 +197,7 @@ namespace Bhaptics.Tact.Unity
                             feedbackFile.Value = json;
                             feedbackFile.Key = fileName;
                             feedbackFile.Type = file.Project.Layout.Type;
-                            
+
                             // File Path is unique
                             feedbackFile.Id = GetHash(filePath);
                             files.Add(feedbackFile);
@@ -188,4 +248,3 @@ namespace Bhaptics.Tact.Unity
         public string Type;
     }
 }
-

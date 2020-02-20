@@ -171,6 +171,19 @@ namespace Bhaptics.Tact.Unity
             player.SubmitRegistered(currentFeedbackFileKey, mediaMillis);
         }
 
+        public void Play(RotationOption rotation)
+        {
+            if (currentFeedbackFileKey != FeedbackFile.Id)
+            {
+                currentFeedbackFileKey = FeedbackFile.Id;
+                player.RegisterTactFileStr(currentFeedbackFileKey, FeedbackFile.Value);
+            }
+
+            player.SubmitRegisteredVestRotation(currentFeedbackFileKey, _key,
+                rotation,
+                new ScaleOption(Intensity, Duration));
+        }
+
         public void Stop()
         {
             player.TurnOff(_key);

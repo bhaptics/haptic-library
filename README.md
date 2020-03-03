@@ -1,5 +1,5 @@
 ## bHaptics Haptic Library (C++ STL)
-* Current version is 1.4.12
+* Current version is 1.4.13
 
 ## Prerequisite
 * bHaptics Player has to be installed (Windows)

@@ -9,12 +9,17 @@ namespace Bhaptics.Tact.Unity
     {
         private string[] _feedbackDescOptions;
         private int _selectedFeedbackIndex;
+        public bool _dataChanged = false;
+
+
 
         public override void OnInspectorGUI()
         {
             //            DrawDefaultInspector();
             serializedObject.Update();
-            
+
+            EditorGUI.BeginChangeCheck();
+
             FeedbackTypeUi();
 
             var feedbackTypeProperty = serializedObject.FindProperty("FeedbackType");
@@ -25,12 +30,12 @@ namespace Bhaptics.Tact.Unity
                     PositionUi();
                     PathPointUi();
                     TimeMillisUi();
-                break;
+                    break;
                 case "DotMode":
                     PositionUi();
                     DotPointUi();
                     TimeMillisUi();
-                break;
+                    break;
                 case "TactFile":
                     TactFileUi();
                     break;
@@ -38,12 +43,22 @@ namespace Bhaptics.Tact.Unity
 
             PlayUi();
             serializedObject.ApplyModifiedProperties();
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                var tactSourceEditors = Resources.FindObjectsOfTypeAll<TactSourceEditor>();
+                for (int i = 0; i < tactSourceEditors.Length; ++i)
+                {
+                    tactSourceEditors[i]._dataChanged = true;
+                }
+            }
         }
 
         private void TactFileUi()
         {
-            if (_feedbackDescOptions == null)
+            if (_feedbackDescOptions == null || _dataChanged)
             {
+                _dataChanged = false;
                 var key = serializedObject.FindProperty("FeedbackFile.Id").stringValue;
 
                 var length = TactFileAsset.Instance.FeedbackFiles.Length;
@@ -100,15 +115,15 @@ namespace Bhaptics.Tact.Unity
 
             GUILayout.EndHorizontal();
 
-            if (_selectedFeedbackIndex >= 0 && 
-                (serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeVest || 
+            if (_selectedFeedbackIndex >= 0 &&
+                (serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeVest ||
                  serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeTactot))
             {
                 GUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 120f;
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("TactFileOffsetX"), 
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("TactFileOffsetX"),
                     new GUIContent("Tact File Angle (X)"));
-                EditorGUILayout.PropertyField(serializedObject.FindProperty("TactFileOffsetY"), 
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("TactFileOffsetY"),
                     new GUIContent("Tact File Offset (Y)"));
                 GUILayout.EndHorizontal();
             }
@@ -146,7 +161,7 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
             GUILayout.BeginHorizontal();
-            var source = (TactSource) serializedObject.targetObject;
+            var source = (TactSource)serializedObject.targetObject;
             if (GUILayout.Button("Play"))
             {
                 source.Play();
@@ -176,10 +191,10 @@ namespace Bhaptics.Tact.Unity
                     GUILayout.EndHorizontal();
                     GUILayout.BeginHorizontal();
                 }
-                
+
                 EditorGUIUtility.labelWidth = 20f;
                 SerializedProperty property = dotPoints.GetArrayElementAtIndex(index);
-                
+
                 property.intValue = Mathf.Min(100, Mathf.Max(0, property.intValue));
                 EditorGUILayout.PropertyField(property, new GUIContent("" + (index + 1)));
             }
@@ -200,7 +215,7 @@ namespace Bhaptics.Tact.Unity
                 points.GetArrayElementAtIndex(inserted).FindPropertyRelative("Intensity").intValue = 100;
             }
             GUILayout.EndHorizontal();
-            
+
 
             for (var index = 0; index < points.arraySize; index++)
             {

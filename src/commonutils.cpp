@@ -78,7 +78,7 @@ namespace bhaptics
         {
             pos = PositionType::Right;
         }
-        if (deviceName == "ForearmL")
+        else if (deviceName == "ForearmL")
         {
             pos = PositionType::ForearmL;
         }

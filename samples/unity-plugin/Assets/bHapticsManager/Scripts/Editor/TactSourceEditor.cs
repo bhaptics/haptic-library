@@ -27,9 +27,7 @@ namespace Bhaptics.Tact.Unity
             serializedObject.Update();
             EditorGUI.BeginChangeCheck();
             FeedbackTypeUi();
-
             var feedbackTypeProperty = serializedObject.FindProperty("FeedbackType");
-
             switch (feedbackTypeProperty.enumNames[feedbackTypeProperty.enumValueIndex])
             {
                 case "PathMode":
@@ -46,10 +44,8 @@ namespace Bhaptics.Tact.Unity
                     TactFileUi();
                     break;
             }
-
             PlayUi();
             serializedObject.ApplyModifiedProperties();
-
             if (EditorGUI.EndChangeCheck())
             {
                 var tactSourceEditors = Resources.FindObjectsOfTypeAll<TactSourceEditor>();
@@ -80,44 +76,32 @@ namespace Bhaptics.Tact.Unity
                     }
                 }
             }
-
-
+            var originWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 120f;
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Tact File");
+            GUILayout.Label("Tact File", GUILayout.Width(116f));
             _selectedFeedbackIndex = EditorGUILayout.Popup(_selectedFeedbackIndex, _feedbackDescOptions);
-
-
             GUILayout.EndHorizontal();
+
             if (_selectedFeedbackIndex >= 0)
             {
-                serializedObject.FindProperty("FeedbackFile.Id").stringValue =
-                    TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Id;
-
-                serializedObject.FindProperty("FeedbackFile.Value").stringValue =
-                    TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Value;
-                serializedObject.FindProperty("FeedbackFile.Key").stringValue =
-                    TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Key;
-
-                serializedObject.FindProperty("FeedbackFile.Type").stringValue =
-                    TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Type;
+                serializedObject.FindProperty("FeedbackFile.Id").stringValue = TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Id;
+                serializedObject.FindProperty("FeedbackFile.Value").stringValue = TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Value;
+                serializedObject.FindProperty("FeedbackFile.Key").stringValue = TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Key;
+                serializedObject.FindProperty("FeedbackFile.Type").stringValue = TactFileAsset.Instance.FeedbackFiles[_selectedFeedbackIndex].Type;
             }
 
             if (_selectedFeedbackIndex >= 0 && (serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeTactosy ||
-                                                serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeTactosy2))
+                                                serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeTactosy2 ||
+                                                serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeHand ||
+                                                serializedObject.FindProperty("FeedbackFile.Type").stringValue == BhapticsUtils.TypeFoot))
             {
-                GUILayout.BeginHorizontal();
-                EditorGUIUtility.labelWidth = 120f;
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("IsReflectTactosy"), new GUIContent("Reflect Left-Right"));
-                GUILayout.EndHorizontal();
             }
-
-            GUILayout.BeginHorizontal();
-            EditorGUIUtility.labelWidth = 120f;
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Duration"), new GUIContent("Duration Multiplier"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Intensity"), new GUIContent("Intensity Multiplier"));
-
 
             GUILayout.EndHorizontal();
 
@@ -133,30 +117,36 @@ namespace Bhaptics.Tact.Unity
                     new GUIContent("Tact File Offset (Y)"));
                 GUILayout.EndHorizontal();
             }
+            EditorGUIUtility.labelWidth = originWidth;
         }
 
         private void FeedbackTypeUi()
         {
             GUILayout.BeginHorizontal();
+            var originWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 120f;
             EditorGUILayout.PropertyField(serializedObject.FindProperty("FeedbackType"));
-
+            EditorGUIUtility.labelWidth = originWidth;
             GUILayout.EndHorizontal();
         }
 
         private void PositionUi()
         {
             GUILayout.BeginHorizontal();
+            var originWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 120f;
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Position"));
-
+            EditorGUIUtility.labelWidth = originWidth;
             GUILayout.EndHorizontal();
         }
 
         private void TimeMillisUi()
         {
             GUILayout.BeginHorizontal();
-            EditorGUIUtility.labelWidth = 100f;
+            var originWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 120f;
             EditorGUILayout.PropertyField(serializedObject.FindProperty("TimeMillis"), new GUIContent("Time (ms)"));
-
+            EditorGUIUtility.labelWidth = originWidth;
             GUILayout.EndHorizontal();
         }
 
@@ -166,13 +156,13 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
+
             GUILayout.BeginHorizontal();
             var source = (TactSource) serializedObject.targetObject;
             if (GUILayout.Button("Play"))
             {
                 source.Play();
             }
-
             if (GUILayout.Button("Stop"))
             {
                 source.Stop();
@@ -188,19 +178,15 @@ namespace Bhaptics.Tact.Unity
 
             GUILayout.BeginHorizontal();
             var dotPoints = serializedObject.FindProperty("DotPoints");
-
             for (var index = 0; index < dotPoints.arraySize; index++)
             {
-
                 if (index % 5 == 0)
                 {
                     GUILayout.EndHorizontal();
                     GUILayout.BeginHorizontal();
                 }
-                
                 EditorGUIUtility.labelWidth = 20f;
                 SerializedProperty property = dotPoints.GetArrayElementAtIndex(index);
-                
                 property.intValue = Mathf.Min(100, Mathf.Max(0, property.intValue));
                 EditorGUILayout.PropertyField(property, new GUIContent("" + (index + 1)));
             }
@@ -221,33 +207,26 @@ namespace Bhaptics.Tact.Unity
                 points.GetArrayElementAtIndex(inserted).FindPropertyRelative("Intensity").intValue = 100;
             }
             GUILayout.EndHorizontal();
-            
 
             for (var index = 0; index < points.arraySize; index++)
             {
                 GUILayout.BeginHorizontal();
                 EditorGUIUtility.labelWidth = 15f;
-
                 SerializedProperty property = points.GetArrayElementAtIndex(index);
-
                 SerializedProperty x = property.FindPropertyRelative("X");
                 SerializedProperty y = property.FindPropertyRelative("Y");
                 SerializedProperty intensity = property.FindPropertyRelative("Intensity");
-
                 x.floatValue = Mathf.Min(1, Mathf.Max(0, x.floatValue));
                 y.floatValue = Mathf.Min(1, Mathf.Max(0, y.floatValue));
                 intensity.intValue = Mathf.Min(100, Mathf.Max(0, intensity.intValue));
-
                 EditorGUILayout.PropertyField(x, new GUIContent(x.name));
                 EditorGUILayout.PropertyField(y, new GUIContent(y.name));
                 GUILayout.Label(intensity.name, GUILayout.Width(55));
                 EditorGUILayout.PropertyField(intensity, GUIContent.none);
-
                 if (GUILayout.Button(new GUIContent("-", "delete"), GUILayout.Width(50)))
                 {
                     points.DeleteArrayElementAtIndex(index);
                 }
-
                 GUILayout.EndHorizontal();
             }
         }

@@ -9,29 +9,26 @@ namespace Bhaptics.Tact.Unity
     {
         public static bool triggerRecompileForTactSource = false;
         private static bool triggerRecompile = false;
-        private static FileSystemWatcher sWatcher;
-
+        private static bool triggerCheck = false;
+        private static FileSystemWatcher tactFileWatcher;
+        private static FileSystemWatcher tactClipWatcher;
 
 
         [InitializeOnLoadMethod]
         static void UpdateWatchers()
         {
             RegisterWatcher(".tact");
+            RegisterTactClipDeleteWatcher();
             EditorApplication.update += OnEditorApplicationUpdate;
+
+            triggerRecompile = CheckChanged();
         }
 
         private static void RegisterWatcher(string extenstion)
         {
 #if UNITY_2017_1_OR_NEWER
-            //if (PlayerSettings.scriptingRuntimeVersion != ScriptingRuntimeVersion.Latest)
-            //{
-            //    Debug.LogError("FileSystemWatcher required .Net 4.6 or higher.");
-            //    return;
-            //}
-
-            sWatcher = new FileSystemWatcher(Application.dataPath, "*" + extenstion);
-
-            sWatcher.NotifyFilter = NotifyFilters.CreationTime |
+            tactFileWatcher = new FileSystemWatcher(Application.dataPath, "*" + extenstion);
+            tactFileWatcher.NotifyFilter = NotifyFilters.CreationTime |
                 NotifyFilters.Attributes |
                 NotifyFilters.DirectoryName |
                 NotifyFilters.FileName |
@@ -40,14 +37,37 @@ namespace Bhaptics.Tact.Unity
                 NotifyFilters.Security |
                 NotifyFilters.Size;
 
-            sWatcher.IncludeSubdirectories = true;
+            tactFileWatcher.IncludeSubdirectories = true;
 
-            sWatcher.Changed += OnChanged;
-            sWatcher.Created += OnCreated;
-            sWatcher.Deleted += OnDeleted;
-            sWatcher.Renamed += OnRenamed;
+            //sWatcher.Changed += OnChanged;
+            tactFileWatcher.Created += OnCreated;
+            //sWatcher.Deleted += OnDeleted;
+            //sWatcher.Renamed += OnRenamed;
 
-            sWatcher.EnableRaisingEvents = true;
+            tactFileWatcher.EnableRaisingEvents = true;
+#else
+        Debug.LogError("FileSystemWatcher required .Net 4.6 or higher");
+#endif
+        }
+
+        private static void RegisterTactClipDeleteWatcher()
+        {
+#if UNITY_2017_1_OR_NEWER
+            tactClipWatcher = new FileSystemWatcher(Application.dataPath, "*.asset");
+            tactClipWatcher.NotifyFilter = NotifyFilters.CreationTime |
+                NotifyFilters.Attributes |
+                NotifyFilters.DirectoryName |
+                NotifyFilters.FileName |
+                NotifyFilters.LastAccess |
+                NotifyFilters.LastWrite |
+                NotifyFilters.Security |
+                NotifyFilters.Size;
+
+            tactClipWatcher.IncludeSubdirectories = true;
+
+            tactClipWatcher.Deleted += OnTactClipDeleted;
+
+            tactClipWatcher.EnableRaisingEvents = true;
 #else
         Debug.LogError("FileSystemWatcher required .Net 4.6 or higher");
 #endif
@@ -73,18 +93,34 @@ namespace Bhaptics.Tact.Unity
             triggerRecompile = true;
         }
 
+        private static void OnTactClipDeleted(object source, FileSystemEventArgs e)
+        {
+            triggerCheck = true;
+        }
+
+
+
+        private static bool CheckChanged()
+        {
+            return Directory.GetFiles("Assets/", "*.tact", SearchOption.AllDirectories).Length != 0
+                    || BhapticsUtils.FindAssetsByType<TactClip>().Count != TactFileAsset.Instance.FeedbackFiles.Length;
+        }
+
         private static void OnEditorApplicationUpdate()
         {
+            if (triggerCheck)
+            {
+                triggerRecompile = CheckChanged();
+                triggerCheck = false;
+            }
             if (triggerRecompile)
             {
-                TactFileAsset.Initialized = false;
-                var temp = TactFileAsset.Instance.FeedbackFiles;
-                triggerRecompileForTactSource = true;
-
-                //TactClipManager.Changed = true;
-                //TactClipManager.Refresh();
-
+                TactClipManager.RefreshTactFiles();
                 triggerRecompile = false;
+
+                TactFileAsset.Initialized = false;
+                var temp = TactFileAsset.Instance;
+                triggerRecompileForTactSource = true;
             }
         }
     }

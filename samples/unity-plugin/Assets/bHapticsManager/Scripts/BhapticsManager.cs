@@ -37,7 +37,6 @@ namespace Bhaptics.Tact.Unity
         }
 
         public static BhapticsManager Instance { get; private set; }
-
         public static IHapticPlayer HapticPlayer
         {
             get
@@ -60,7 +59,7 @@ namespace Bhaptics.Tact.Unity
                         }
                     }
                 }
-                
+
                 return _hapticPlayer;
             }
         }
@@ -196,7 +195,6 @@ namespace Bhaptics.Tact.Unity
                 }
             }
         }
-
 
         #endregion
 

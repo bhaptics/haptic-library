@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 namespace Bhaptics.Tact.Unity
 {
@@ -223,10 +227,32 @@ namespace Bhaptics.Tact.Unity
             return project;
         }
 
-        public static string TypeVest = "Vest";
-        public static string TypeTactot = "Tactot";
-        public static string TypeTactosy = "Tactosy";
-        public static string TypeTactosy2 = "Tactosy2";
+        public const string TypeHead = "Head";
+        public const string TypeTactal = "Tactal";
+        public const string TypeVest = "Vest";
+        public const string TypeTactot = "Tactot";
+        public const string TypeTactosy = "Tactosy";
+        public const string TypeTactosy2 = "Tactosy2";
+        public const string TypeHand = "Hand";
+        public const string TypeFoot = "Foot";
+
+#if UNITY_EDITOR
+        public static List<T> FindAssetsByType<T>() where T : UnityEngine.Object
+        {
+            List<T> assets = new List<T>();
+            string[] guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+                T asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+                if (asset != null)
+                {
+                    assets.Add(asset);
+                }
+            }
+            return assets;
+        }
+#endif
     }
 }
 

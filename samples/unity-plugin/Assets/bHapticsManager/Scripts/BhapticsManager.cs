@@ -7,36 +7,7 @@ namespace Bhaptics.Tact.Unity
 {
     public class BhapticsManager : MonoBehaviour
     {
-        [SerializeField] private bool dontDestroyOnLoad;
-
-        private VisualFeedback[] visualFeedback;
-
-        [Tooltip("Show visual feedback or not")]
-        [SerializeField]
-        public bool visualizeFeedback;
-
-        public bool launchPlayerIfNotRunning = true;
-        
-        private readonly List<HapticFeedback> _changedFeedback = new List<HapticFeedback>();
-
-        private static IHapticPlayer _hapticPlayer;
-        private static bool _isTryLaunchApp;
-
-        public static string GetFeedbackId(string key)
-        {
-            foreach (var file in TactFileAsset.Instance.FeedbackFiles)
-            {
-                if (file.Key == key)
-                {
-                    return file.Id;
-                }
-            }
-            Debug.LogError("Cannot find feedback file with key : " + key);
-            return "";
-        }
-
         public static BhapticsManager Instance { get; private set; }
-
         public static IHapticPlayer HapticPlayer
         {
             get
@@ -59,10 +30,47 @@ namespace Bhaptics.Tact.Unity
                         }
                     }
                 }
-                
+
                 return _hapticPlayer;
             }
         }
+        private readonly List<HapticFeedback> _changedFeedback = new List<HapticFeedback>();
+        private static IHapticPlayer _hapticPlayer;
+        private static bool _isTryLaunchApp;
+
+
+
+
+        [Tooltip("Show visual feedback or not")]
+        public bool visualizeFeedback;
+        public bool launchPlayerIfNotRunning = true;
+        
+        
+        
+
+
+        [SerializeField] private bool dontDestroyOnLoad;
+        private VisualFeedback[] visualFeedback;
+
+
+
+
+        public static string GetFeedbackId(string key)
+        {
+            foreach (var file in TactFileAsset.Instance.FeedbackFiles)
+            {
+                if (file.Key == key)
+                {
+                    return file.Id;
+                }
+            }
+            Debug.LogError("Cannot find feedback file with key : " + key);
+            return "";
+        }
+
+        
+
+        
 
 #region Unity Method
         void Awake()
@@ -188,7 +196,6 @@ namespace Bhaptics.Tact.Unity
                 }
             }
         }
-
 
         #endregion
 

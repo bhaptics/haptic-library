@@ -28,18 +28,6 @@ namespace Bhaptics.Tact.Unity
         [SerializeField] private GameObject lightSimpleWidgetObject;
 
         private GameObject widget;
-
-
-        [Header("DeviceImages")]
-        [SerializeField] private DeviceIcon Tactosy;
-        [SerializeField] private DeviceIcon Tactot;
-        [SerializeField] private DeviceIcon TactosyH;
-        [SerializeField] private DeviceIcon TactosyF;
-        [SerializeField] private DeviceIcon Tactal;
-
-        private IEnumerator ScanAnimationCor;
-        private AndroidWidget_ObjectPool settingObjectPool;
-
         private void Awake()
         {
 #if !UNITY_ANDROID
@@ -86,7 +74,6 @@ namespace Bhaptics.Tact.Unity
             if (widget != null)
             {
                 widget.SetActive(true);
-                settingObjectPool = widget.GetComponent<AndroidWidget_ObjectPool>();
             }
         }
         private void OnDisable()
@@ -101,112 +88,6 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        public void Refresh(List<BhapticsDevice> devices, bool isScanning)
-        {
-            settingObjectPool.AllDeviceUIDisable();
-            PairedUiRefresh(devices);
-            if (isScanning)
-            {
-                ScannedUiRefresh(devices);
-            }  
-        }
         
-        private void PairedUiRefresh(List<BhapticsDevice> devices)
-        {
-            foreach (var device in devices)
-            {
-                if (device.IsPaired)
-                {
-                    bool isConnect = (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0);
-
-                    AndroidWidget_PairedDeviceUI deviceUI = settingObjectPool.GetPairedDeviceUI();
-                    if (deviceUI != null)
-                    {
-                        deviceUI.Setup(device, isConnect, GetPairedDeviceSprite(device.DeviceName, isConnect));
-                        deviceUI.gameObject.SetActive(true);
-                    }
-                }
-            }
-        }
-
-        private void ScannedUiRefresh(List<BhapticsDevice> devices)
-        {
-            foreach (var device in devices)
-            {
-                if (!device.IsPaired)
-                {
-                    AndroidWidget_ScannedDeviceUI deviceUI = settingObjectPool.GetScannedDeviceUI();
-                    if (deviceUI != null)
-                    {
-                        deviceUI.Setup(device, GetScannedDeviceSprite(device.DeviceName));
-                        deviceUI.gameObject.SetActive(true);
-                    }
-                }
-            }
-        } 
-
-#region GetSprites
-
-        public Sprite GetPairedDeviceSprite(string deviceType, bool isConnect)
-        {
-            if (deviceType.StartsWith("TactosyH"))
-            {
-                return isConnect ? TactosyH.pairImage : TactosyH.unpairImage; 
-            }
-
-            if (deviceType.StartsWith("TactosyF"))
-            {
-                return isConnect ? TactosyF.pairImage : TactosyF.unpairImage; 
-            }
-
-            if (deviceType.StartsWith("Tactosy"))
-            {
-                return isConnect ? Tactosy.pairImage : Tactosy.unpairImage;  
-            }
-
-            if (deviceType.StartsWith("Tactal"))
-            {
-                return isConnect ? Tactal.pairImage : Tactal.unpairImage; 
-            }
-
-            if (deviceType.StartsWith("Tactot"))
-            {
-                return isConnect ? Tactot.pairImage : Tactot.unpairImage; 
-            }
-
-            return null;
-        }
-
-        public Sprite GetScannedDeviceSprite(string deviceType)
-        {
-            if (deviceType.StartsWith("TactosyH"))
-            {
-                return TactosyH.scanImage;
-            }
-
-            if (deviceType.StartsWith("TactosyF"))
-            {
-                return TactosyF.scanImage;
-            }
-
-            if (deviceType.StartsWith("Tactosy"))
-            {
-                return Tactosy.scanImage;
-            }
-
-            if (deviceType.StartsWith("Tactal"))
-            {
-                return Tactal.scanImage;
-            }
-
-            if (deviceType.StartsWith("Tactot"))
-            {
-                return Tactot.scanImage;
-            }
-
-            return null;
-        }
-
-#endregion
     }
 }

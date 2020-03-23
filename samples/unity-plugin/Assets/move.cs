@@ -5,13 +5,7 @@ using UnityEngine;
 
 public class move : MonoBehaviour {
 	// Use this for initialization
-	void Start ()
-	{
-		if (AndroidWidget_DeviceManager.Instance != null)
-		{
-			AndroidWidget_DeviceManager.Instance.AddListener(AAA);
-		}
-	}
+	
 	bool toggle;
 	// Update is called once per frame
 	void Update () {

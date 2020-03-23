@@ -79,7 +79,7 @@ namespace Bhaptics.Tact.Unity
             RefreshDeviceListUi();
         }
         List<UnityAction<List<BhapticsDevice>, bool>> refreshDeviceAction = new List<UnityAction<List<BhapticsDevice>, bool>>();
-        public void RefreshActionAddListener(UnityAction<List<BhapticsDevice>> call)
+        public void RefreshActionAddListener(UnityAction<List<BhapticsDevice>, bool> call)
         {
             int index = GetListenerIndex(call);
             if (index == -1)
@@ -87,7 +87,7 @@ namespace Bhaptics.Tact.Unity
                 refreshDeviceAction.Add(call);
             }
         }
-        public void RefreshActionRemoveListener(UnityAction<List<BhapticsDevice>> call)
+        public void RefreshActionRemoveListener(UnityAction<List<BhapticsDevice>, bool> call)
         {
             int index = GetListenerIndex(call);
             if(index != -1)
@@ -95,7 +95,7 @@ namespace Bhaptics.Tact.Unity
                 refreshDeviceAction.RemoveAt(index);
             }
         }
-        private int GetListenerIndex(UnityAction<List<BhapticsDevice>> call)
+        private int GetListenerIndex(UnityAction<List<BhapticsDevice>, bool> call)
         {
             for (int i = 0; i < refreshDeviceAction.Count; i++)
             {
@@ -116,7 +116,7 @@ namespace Bhaptics.Tact.Unity
             var deviceList = androidHapticPlayer.GetDeviceList();
             for (int i = 0; i < refreshDeviceAction.Count; i++)
             {
-                refreshDeviceAction[i].Invoke(deviceList, IsScann);
+                refreshDeviceAction[i].Invoke(deviceList, IsScanning);
             }
         }
 

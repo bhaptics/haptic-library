@@ -9,7 +9,7 @@ public class move : MonoBehaviour {
 	bool toggle;
 	// Update is called once per frame
 	void Update () {
-			if (toggle)
+		if (toggle)
 		{
 			transform.Translate(Vector3.right * Time.deltaTime * 2);
 		}

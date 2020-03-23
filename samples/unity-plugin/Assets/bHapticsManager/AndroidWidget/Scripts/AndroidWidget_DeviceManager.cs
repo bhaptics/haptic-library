@@ -9,6 +9,7 @@ namespace Bhaptics.Tact.Unity
     public class AndroidWidget_DeviceManager : MonoBehaviour
     {
         public static AndroidWidget_DeviceManager Instance;
+
         [SerializeField] private bool alwaysScanDisconnectedDevice;
         private AndroidWidget_UIManager uiManager; 
 
@@ -185,7 +186,7 @@ namespace Bhaptics.Tact.Unity
         public void Scan()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
-            if (androidHapticPlayer == null)
+            if (androidHapticPlayer == null || !AndroidPermissionsManager.CheckBluetoothPermissions())
             {
                 return;
             } 
@@ -218,7 +219,7 @@ namespace Bhaptics.Tact.Unity
         public void Ping(string address)
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
-            if (androidHapticPlayer == null)
+            if (androidHapticPlayer == null || !AndroidPermissionsManager.CheckBluetoothPermissions())
             {
                 return;
             }
@@ -229,7 +230,7 @@ namespace Bhaptics.Tact.Unity
         public void PingAll()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
-            if (androidHapticPlayer == null)
+            if (androidHapticPlayer == null || !AndroidPermissionsManager.CheckBluetoothPermissions())
             {
                 return;
             }

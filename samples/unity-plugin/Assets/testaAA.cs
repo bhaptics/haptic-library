@@ -4,22 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class testaAA : MonoBehaviour {
-	public TactSource tactSource;
 
 
 
 	// Use this for initialization
 	void Start () {
-		
+		InvokeRepeating("CheckScan", 0.1f, 0.2f);
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetMouseButton(0))
-		{
-			tactSource.Play();
-			if(!AndroidWidget_DeviceManager.Instance.IsScanning)
-				AndroidWidget_DeviceManager.Instance.Scan();
-		}
+	private void CheckScan()
+	{
+		Debug.Log("SCAN : " + bHapticsAndroidManager.Instance.IsScanning);
 	}
 }

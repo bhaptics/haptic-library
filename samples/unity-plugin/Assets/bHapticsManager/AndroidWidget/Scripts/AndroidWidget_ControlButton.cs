@@ -144,15 +144,15 @@ namespace Bhaptics.Tact.Unity
                 
                 if(DeviceType == TactDeviceType.TactosyLeft)
                 {
-                    AndroidWidget_DeviceManager.Instance.Pair(devices[index].Address, "ForearmL");
+                    bHapticsAndroidManager.Instance.Pair(devices[index].Address, "ForearmL");
                 }
                 else if(DeviceType == TactDeviceType.TactosyRight)
                 {
-                    AndroidWidget_DeviceManager.Instance.Pair(devices[index].Address, "ForearmR");
+                    bHapticsAndroidManager.Instance.Pair(devices[index].Address, "ForearmR");
                 }
                 else
                 {
-                    AndroidWidget_DeviceManager.Instance.Pair(devices[index].Address);
+                    bHapticsAndroidManager.Instance.Pair(devices[index].Address);
                 }
 
 
@@ -168,7 +168,7 @@ namespace Bhaptics.Tact.Unity
                 if (AndroidWidget_CompareDeviceString.convertConnectionStatus(pairedDevice.ConnectionStatus) == 0 ||
                     (AndroidWidget_CompareDeviceString.convertConnectionStatus(pairedDevice.ConnectionStatus) == 2 &&
                      pairedDevice.IsPaired))
-                    AndroidWidget_DeviceManager.Instance.Unpair(pairedDevice.Address);
+                    bHapticsAndroidManager.Instance.Unpair(pairedDevice.Address);
             }
         }
 
@@ -177,7 +177,7 @@ namespace Bhaptics.Tact.Unity
             var pairedDevices = GetPariedDevice();
             foreach (var pairedDevice in pairedDevices)
             {
-                AndroidWidget_DeviceManager.Instance.Ping(pairedDevice.Address);
+                bHapticsAndroidManager.Instance.Ping(pairedDevice.Address);
             }
         }
 

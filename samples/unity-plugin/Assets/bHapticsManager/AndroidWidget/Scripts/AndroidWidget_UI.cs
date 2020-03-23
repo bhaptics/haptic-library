@@ -34,9 +34,9 @@ namespace Bhaptics.Tact.Unity
             animator = GetComponent<Animator>();
             GetComponent<Canvas>().worldCamera = Camera.main;
             animator.Play("HideWidget", -1, 1);
-            if (AndroidWidget_DeviceManager.Instance != null)
+            if (bHapticsAndroidManager.Instance != null)
             {
-                AndroidWidget_DeviceManager.Instance.RefreshActionAddListener(Refresh);
+                bHapticsAndroidManager.Instance.RefreshUIAddListener(Refresh);
             }
             ButtonInitialize();
         }
@@ -47,18 +47,19 @@ namespace Bhaptics.Tact.Unity
             {
                 animator.Play("HideWidget", -1, 1);
             }
-            if (AndroidWidget_DeviceManager.Instance != null)
+            if (bHapticsAndroidManager.Instance != null)
             {
-                AndroidWidget_DeviceManager.Instance.RefreshActionAddListener(Refresh);
+                bHapticsAndroidManager.Instance.RefreshUIAddListener(Refresh);
             }
         }
         private void OnDisable()
         {
-            if (AndroidWidget_DeviceManager.Instance != null)
+            if (bHapticsAndroidManager.Instance != null)
             {
-                AndroidWidget_DeviceManager.Instance.RefreshActionRemoveListener(Refresh);
+                bHapticsAndroidManager.Instance.RefreshUIRemoveListener(Refresh);
             }
         }
+        
 
         private void ButtonInitialize()
         {
@@ -74,8 +75,8 @@ namespace Bhaptics.Tact.Unity
                 btn.onClick.AddListener(ButtonClickSound);
                 btn.onClick.AddListener(ResetHideTimer);
             }  
-            pingAllButton.onClick.AddListener(AndroidWidget_DeviceManager.Instance.PingAll);
-            unpairAllButton.onClick.AddListener(AndroidWidget_DeviceManager.Instance.UnpairAll);
+            pingAllButton.onClick.AddListener(bHapticsAndroidManager.Instance.PingAll);
+            unpairAllButton.onClick.AddListener(bHapticsAndroidManager.Instance.UnpairAll);
         }
 
         public void ToggleWidgetButton()
@@ -96,7 +97,7 @@ namespace Bhaptics.Tact.Unity
                     AndroidPermissionsManager.RequestPermission();
                     return;
                 }
-                AndroidWidget_DeviceManager.Instance.ForceUpdateDeviceList();
+                bHapticsAndroidManager.Instance.ForceUpdateDeviceList();
             }
             else
             {
@@ -117,7 +118,7 @@ namespace Bhaptics.Tact.Unity
             uiContainer.SetActive(false);
             if(scanCoroutine != null)
             {
-                AndroidWidget_DeviceManager.Instance.ScanStop();
+                bHapticsAndroidManager.Instance.ScanStop();
                 StopCoroutine(scanCoroutine);
                 scanCoroutine = null;
             }
@@ -131,9 +132,9 @@ namespace Bhaptics.Tact.Unity
         {
             while (true)
             {
-                if (!AndroidWidget_DeviceManager.Instance.IsScanning)
+                if (!bHapticsAndroidManager.Instance.IsScanning)
                 {
-                    AndroidWidget_DeviceManager.Instance.Scan();
+                    bHapticsAndroidManager.Instance.Scan();
                 }
 
                 if(hideTimer < 0f)

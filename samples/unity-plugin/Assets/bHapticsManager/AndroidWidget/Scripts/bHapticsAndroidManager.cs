@@ -6,14 +6,14 @@ using UnityEngine.Events;
 
 namespace Bhaptics.Tact.Unity
 { 
-    public class AndroidWidget_DeviceManager : MonoBehaviour
+    public class bHapticsAndroidManager : MonoBehaviour
     {
-        public static AndroidWidget_DeviceManager Instance;
+        public static bHapticsAndroidManager Instance;
 
         [SerializeField] private bool alwaysScanDisconnectedDevice;
-        private AndroidWidget_UIManager uiManager; 
+        private List<UnityAction<List<BhapticsDevice>, bool>> refreshDeviceUIAction = new List<UnityAction<List<BhapticsDevice>, bool>>();
 
-        [HideInInspector] public bool IsScanning; 
+        [HideInInspector] public bool IsScanning;
 
         private void Awake()
         {
@@ -23,7 +23,6 @@ namespace Bhaptics.Tact.Unity
 
             if (Instance == null)
             {
-                uiManager = GetComponent<AndroidWidget_UIManager>();
                 Instance = this; 
             } 
         }
@@ -79,48 +78,6 @@ namespace Bhaptics.Tact.Unity
             IsScanning = androidHapticPlayer.IsScanning();
             RefreshDeviceListUi();
         }
-        List<UnityAction<List<BhapticsDevice>, bool>> refreshDeviceAction = new List<UnityAction<List<BhapticsDevice>, bool>>();
-        public void RefreshActionAddListener(UnityAction<List<BhapticsDevice>, bool> call)
-        {
-            int index = GetListenerIndex(call);
-            if (index == -1)
-            {
-                refreshDeviceAction.Add(call);
-            }
-        }
-        public void RefreshActionRemoveListener(UnityAction<List<BhapticsDevice>, bool> call)
-        {
-            int index = GetListenerIndex(call);
-            if(index != -1)
-            {
-                refreshDeviceAction.RemoveAt(index);
-            }
-        }
-        private int GetListenerIndex(UnityAction<List<BhapticsDevice>, bool> call)
-        {
-            for (int i = 0; i < refreshDeviceAction.Count; i++)
-            {
-                if (refreshDeviceAction[i] == call)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-        private void RefreshActionCall()
-        {
-            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
-            if (androidHapticPlayer == null)
-            {
-                return;
-            }
-            var deviceList = androidHapticPlayer.GetDeviceList();
-            for (int i = 0; i < refreshDeviceAction.Count; i++)
-            {
-                refreshDeviceAction[i].Invoke(deviceList, IsScanning);
-            }
-        }
-
 
 
 
@@ -134,7 +91,6 @@ namespace Bhaptics.Tact.Unity
             androidHapticPlayer.UpdateDeviceList(devices);
             RefreshDeviceListUi();
         }
-
         private void RefreshDeviceListUi()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
@@ -142,7 +98,7 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-            RefreshActionCall();
+            RefreshUICall();
             //uiManager.Refresh(androidHapticPlayer.GetDeviceList(), IsScanning);
         }
 
@@ -261,7 +217,7 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-#region Callback Functions from native code
+        #region Callback Functions from native code
 
         public void OnChangeResponse(string message)
         {
@@ -340,12 +296,55 @@ namespace Bhaptics.Tact.Unity
             }
             androidHapticPlayer.Disconnected(address);
         }
-#endregion
+        #endregion
+
+        #region Callback Functions from UI update 
+        public void RefreshUIAddListener(UnityAction<List<BhapticsDevice>, bool> call)
+        {
+            int index = GetListenerIndex(call);
+            if (index == -1)
+            {
+                refreshDeviceUIAction.Add(call);
+            }
+        }
+        public void RefreshUIRemoveListener(UnityAction<List<BhapticsDevice>, bool> call)
+        {
+            int index = GetListenerIndex(call);
+            if (index != -1)
+            {
+                refreshDeviceUIAction.RemoveAt(index);
+            }
+        }
+        private int GetListenerIndex(UnityAction<List<BhapticsDevice>, bool> call)
+        {
+            for (int i = 0; i < refreshDeviceUIAction.Count; i++)
+            {
+                if (refreshDeviceUIAction[i] == call)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        private void RefreshUICall()
+        {
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            var deviceList = androidHapticPlayer.GetDeviceList();
+            for (int i = 0; i < refreshDeviceUIAction.Count; i++)
+            {
+                refreshDeviceUIAction[i].Invoke(deviceList, IsScanning);
+            }
+        }
+        #endregion
 
 
 
-#region Check for disconnected devices
-            public void CheckDisconnectedDevice()
+        #region Check for Disconnected devices
+        public void CheckDisconnectedDevice()
         {
             var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
             if (androidHapticPlayer == null)

@@ -9,7 +9,6 @@ namespace Bhaptics.Tact.Unity
     {
         private const float autoHideTime = 60f;
 
-
         [SerializeField] private GameObject uiContainer;
         [SerializeField] private Button pingAllButton;
         [SerializeField] private Button unpairAllButton;

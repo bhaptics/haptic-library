@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Bhaptics.Tact.Unity
 { 
@@ -77,6 +78,50 @@ namespace Bhaptics.Tact.Unity
             IsScanning = androidHapticPlayer.IsScanning();
             RefreshDeviceListUi();
         }
+        List<UnityAction<List<BhapticsDevice>, bool>> refreshDeviceAction = new List<UnityAction<List<BhapticsDevice>, bool>>();
+        public void RefreshActionAddListener(UnityAction<List<BhapticsDevice>> call)
+        {
+            int index = GetListenerIndex(call);
+            if (index == -1)
+            {
+                refreshDeviceAction.Add(call);
+            }
+        }
+        public void RefreshActionRemoveListener(UnityAction<List<BhapticsDevice>> call)
+        {
+            int index = GetListenerIndex(call);
+            if(index != -1)
+            {
+                refreshDeviceAction.RemoveAt(index);
+            }
+        }
+        private int GetListenerIndex(UnityAction<List<BhapticsDevice>> call)
+        {
+            for (int i = 0; i < refreshDeviceAction.Count; i++)
+            {
+                if (refreshDeviceAction[i] == call)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        private void RefreshActionCall()
+        {
+            var androidHapticPlayer = BhapticsManager.HapticPlayer as AndroidHapticPlayer;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+            var deviceList = androidHapticPlayer.GetDeviceList();
+            for (int i = 0; i < refreshDeviceAction.Count; i++)
+            {
+                refreshDeviceAction[i].Invoke(deviceList, IsScann);
+            }
+        }
+
+
+
 
         public void UpdateDeviceUI(List<BhapticsDevice> devices)
         {
@@ -96,7 +141,8 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-            uiManager.Refresh(androidHapticPlayer.GetDeviceList(), IsScanning);
+            RefreshActionCall();
+            //uiManager.Refresh(androidHapticPlayer.GetDeviceList(), IsScanning);
         }
 
         public void UpdateScanning(bool isScanning)
@@ -112,7 +158,6 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-
             androidHapticPlayer.Pair(address, position);
         }
 

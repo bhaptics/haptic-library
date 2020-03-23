@@ -16,12 +16,11 @@ namespace Bhaptics.Tact.Unity
     }
     public enum WidgetType
     {
-        Dark, Light, Dark_Simple, Light_Simple
+        Dark, Light, Dark_Simple, Light_Simple, None
     }
     public class AndroidWidget_UIManager : MonoBehaviour
     {
         [SerializeField] private WidgetType WidgetType;
-        [SerializeField] private bool isActivateWidget = true;
 
         [SerializeField] private GameObject darkWidgetObject;
         [SerializeField] private GameObject lightWidgetObject;
@@ -30,10 +29,6 @@ namespace Bhaptics.Tact.Unity
 
         private GameObject widget;
 
-
-        private Transform scanButton; 
-        private ScrollRect pairedDeviceScrollrect; 
-        private ScrollRect ScannedDeviceScrollrect;
 
         [Header("DeviceImages")]
         [SerializeField] private DeviceIcon Tactosy;
@@ -56,10 +51,6 @@ namespace Bhaptics.Tact.Unity
             enabled = false;
             return;
 #endif
-            if (!isActivateWidget)
-            {
-                return;
-            }
         }
 
         private void OnEnable()
@@ -86,6 +77,7 @@ namespace Bhaptics.Tact.Unity
                 case WidgetType.Light_Simple:
                     widget = lightSimpleWidgetObject;
                     break;
+                case WidgetType.None:
                 default:
                     widget = null;
                     break;
@@ -94,12 +86,7 @@ namespace Bhaptics.Tact.Unity
             if (widget != null)
             {
                 widget.SetActive(true);
-                scanButton = widget.GetComponent<AndroidWidget_UI>().scanButton.transform;
                 settingObjectPool = widget.GetComponent<AndroidWidget_ObjectPool>();
-            }
-            else
-            {
-                Debug.LogError("Widget Object is null");
             }
         }
         private void OnDisable()
@@ -107,20 +94,17 @@ namespace Bhaptics.Tact.Unity
 #if !UNITY_ANDROID
             return;
 #endif
-            widget.SetActive(false);
-            widget = null;
+            if (widget != null)
+            {
+                widget.SetActive(false);
+                widget = null;
+            }
         }
 
         public void Refresh(List<BhapticsDevice> devices, bool isScanning)
         {
-            if (!isActivateWidget)
-            {
-                return;
-            }
-
             settingObjectPool.AllDeviceUIDisable();
             PairedUiRefresh(devices);
-            RefreshScanButtonUi(isScanning);
             if (isScanning)
             {
                 ScannedUiRefresh(devices);
@@ -129,10 +113,6 @@ namespace Bhaptics.Tact.Unity
         
         private void PairedUiRefresh(List<BhapticsDevice> devices)
         {
-            if (!isActivateWidget)
-            {
-                return;
-            }
             foreach (var device in devices)
             {
                 if (device.IsPaired)
@@ -151,10 +131,6 @@ namespace Bhaptics.Tact.Unity
 
         private void ScannedUiRefresh(List<BhapticsDevice> devices)
         {
-            if (!isActivateWidget)
-            {
-                return;
-            }
             foreach (var device in devices)
             {
                 if (!device.IsPaired)
@@ -168,34 +144,6 @@ namespace Bhaptics.Tact.Unity
                 }
             }
         } 
-
-        private void RefreshScanButtonUi(bool isScanning)
-        {
-            if (!isActivateWidget)
-            {
-                return;
-            }
-            if (isScanning && ScanAnimationCor == null)
-            {
-                ScanAnimationCor = ScanAnimation(isScanning);
-                StartCoroutine(ScanAnimationCor);
-            }
-            else if (!isScanning && ScanAnimationCor != null)
-            {
-                StopCoroutine(ScanAnimationCor);
-                ScanAnimationCor = null;
-            }
-        }
-        private IEnumerator ScanAnimation(bool isScanning)
-        { 
-            while (isScanning)
-            {
-                scanButton.Rotate(0f, 0f, -5f);
-                yield return null;
-            }
-
-            ScanAnimationCor = null;
-        }
 
 #region GetSprites
 

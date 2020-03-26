@@ -1,6 +1,6 @@
 # Unity plugin
 * This project will help integrate bHaptics' haptic devices into Unity environments. 
-* Current version is 1.4.13
+* Current version is 1.4.14
 
 ## 1. Prerequisite (Only for Windows)
 ### The bHaptics Player needs to be installed
@@ -69,7 +69,7 @@ GetComponent<TactSource>().Play();
 * https://unity3d.com/kr/learn/tutorials/topics/mobile-touch/building-your-unity-game-android-device-testing
 * The version of the Android device must be higher or equal to 4.3(API level 18) 
    - https://developer.android.com/guide/topics/connectivity/bluetooth-le
-* For Oculus Quest, check this [documentation]( https://github.com/bhaptics/haptic-library/wiki/Getting-Started-(Unity---Oculus-Quest))
+* For Oculus Quest, check this [documentation](https://github.com/bhaptics/haptic-library/wiki/Getting-Started-(Unity-Oculus-Quest)_after-1.4.14)
 
 ### (2) AndroidManifest.xml for permission
 * Add the following permissions into the AndroidManifest.xml.
@@ -83,8 +83,6 @@ GetComponent<TactSource>().Play();
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     
      <!--File related permissions share paring device information with other apps. This is not necessary -->
-     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 </manifest>
 ```
 

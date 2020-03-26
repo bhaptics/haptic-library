@@ -60,7 +60,7 @@ namespace Bhaptics.Tact.Unity
         {
             if (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
             {
-                AndroidWidget_DeviceManager.Instance.Ping(device.Address);
+                BhapticsAndroidManager.Instance.Ping(device.Address);
             }
         }
 
@@ -69,7 +69,7 @@ namespace Bhaptics.Tact.Unity
             if (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0 ||
                 (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 2 && device.IsPaired))
             { 
-                AndroidWidget_DeviceManager.Instance.Unpair(device.Address);
+                BhapticsAndroidManager.Instance.Unpair(device.Address);
             }
         }
 
@@ -77,7 +77,7 @@ namespace Bhaptics.Tact.Unity
         {
             if (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 0)
             {
-                AndroidWidget_DeviceManager.Instance.TogglePosition(device.Address);
+                BhapticsAndroidManager.Instance.TogglePosition(device.Address);
                 if (device.IsLeft())
                 {
                     toggleButton.image.sprite = leftSide;

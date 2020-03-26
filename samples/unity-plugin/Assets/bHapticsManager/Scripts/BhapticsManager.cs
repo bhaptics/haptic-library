@@ -8,6 +8,7 @@ namespace Bhaptics.Tact.Unity
     public class BhapticsManager : MonoBehaviour
     {
         [SerializeField] private bool dontDestroyOnLoad;
+        [SerializeField] private GameObject bHapticsAndroidManagerPrefab;
 
         private VisualFeedback[] visualFeedback;
 
@@ -93,6 +94,13 @@ namespace Bhaptics.Tact.Unity
             {
                 Debug.Log("bHaptics Player is not running, try launching bHaptics Player.");
                 BhapticsUtils.LaunchPlayer(launchPlayerIfNotRunning);
+            }
+
+            if(Application.platform == RuntimePlatform.Android && BhapticsAndroidManager.Instance == null)
+            {
+                var bhapticsAndroidManager = Instantiate(bHapticsAndroidManagerPrefab, Vector3.zero, Quaternion.identity);
+                bhapticsAndroidManager.name = "[bHapticsAndroidManager]";
+                bhapticsAndroidManager.transform.parent = transform;
             }
         }
 

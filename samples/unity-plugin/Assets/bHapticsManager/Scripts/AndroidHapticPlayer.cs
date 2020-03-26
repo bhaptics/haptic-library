@@ -107,7 +107,6 @@ public class AndroidHapticPlayer :IHapticPlayer
         if (hapticPlayer != null)
         {
             return hapticPlayer.Call<bool>("isScanning");
-           
         }
         return false;
     }
@@ -470,7 +469,6 @@ public class AndroidHapticPlayer :IHapticPlayer
                 }
             }
         }
-
         return deviceList;
     }
 }

@@ -14,6 +14,7 @@ namespace Bhaptics.Tact.Unity
     public class TactFileAsset : ScriptableObject
     {
         public static bool Initialized = false;
+        private static int FeedbackFileCount;
         private static TactFileAsset _instance;
 
         public FeedbackFile[] FeedbackFiles;
@@ -74,9 +75,10 @@ namespace Bhaptics.Tact.Unity
             string scriptPath = AssetDatabase.GetAssetPath(ms);
             scriptPath = scriptPath.Replace(Path.GetFileName(scriptPath), "");
             scriptPath = scriptPath.Replace("/Scripts/", "/Resources/");
-
+            
             var item = CreateInstance<TactFileAsset>();
             item.FeedbackFiles = LoadFeedbackFile();
+            FeedbackFileCount = item.FeedbackFiles.Length;
             item.FilesMap = new Dictionary<string, FeedbackFile>();
             foreach (var itemFeedbackFile in item.FeedbackFiles)
             {
@@ -87,11 +89,12 @@ namespace Bhaptics.Tact.Unity
             string assetPath = scriptPath + "TactFileAsset" + ".asset";
             var existingAsset = AssetDatabase.LoadAssetAtPath<TactFileAsset>(assetPath);
 
-
-            if (!AssetDatabase.IsValidFolder(scriptPath))
+            //if (!AssetDatabase.IsValidFolder(scriptPath))
+            if(!Directory.Exists(scriptPath))
             {
                 Directory.CreateDirectory(scriptPath);
             }
+            
 
             if (existingAsset == null)
             {
@@ -117,6 +120,12 @@ namespace Bhaptics.Tact.Unity
                 }
             }
 #endif
+        }
+
+        public static bool IsChangedFeedbackFileCount()
+        {
+            var current = GetFeedbackFileCount();
+            return current != FeedbackFileCount;
         }
 
         private static bool EqualsAsset(TactFileAsset a, TactFileAsset b)
@@ -215,6 +224,27 @@ namespace Bhaptics.Tact.Unity
             }
             return files.ToArray();
 
+        }
+
+        private static int GetFeedbackFileCount()
+        {
+            try
+            {
+                int res = 0;
+                string[] extensions = { "*.tactosy", "*.tact" };
+
+                foreach (var extension in extensions)
+                {
+                    string[] allPaths = Directory.GetFiles("Assets/", extension, SearchOption.AllDirectories);
+                    res += allPaths.Length;
+                }
+                return res;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("FeedbackFile Counting failed : " + e.Message);
+                return -1;
+            }
         }
 
         private static string secretKey = "seed";

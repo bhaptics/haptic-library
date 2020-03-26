@@ -8,6 +8,7 @@ namespace Bhaptics.Tact.Unity
     public class AndroidWidget_UI : MonoBehaviour
     {
         private const float autoHideTime = 60f;
+        [SerializeField] private bool alwaysActive;
         [SerializeField] private GameObject uiContainer;
         [SerializeField] private Button pingAllButton;
         [SerializeField] private Button unpairAllButton;
@@ -29,34 +30,64 @@ namespace Bhaptics.Tact.Unity
 
         void Start()
         {
+            ButtonInitialize();
             buttonClickAudio = GetComponent<AudioSource>();
             settingObjectPool = GetComponent<AndroidWidget_ObjectPool>();
             animator = GetComponent<Animator>();
             GetComponent<Canvas>().worldCamera = Camera.main;
-            animator.Play("HideWidget", -1, 1);
-            if (bHapticsAndroidManager.Instance != null)
+
+            if (!alwaysActive)
             {
-                bHapticsAndroidManager.Instance.RefreshUIAddListener(Refresh);
+                animator.Play("HideWidget", -1, 1);
             }
-            ButtonInitialize();
+
+            if (BhapticsAndroidManager.Instance != null)
+            {
+                BhapticsAndroidManager.Instance.RefreshUIAddListener(Refresh);
+            }
         }
 
         private void OnEnable()
         {
-            if(animator != null)
+            if (alwaysActive)
             {
-                animator.Play("HideWidget", -1, 1);
+                if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+                {
+                    AndroidPermissionsManager.RequestPermission();
+                }
+
+                scanCoroutine = StartCoroutine(LoopScan());
             }
-            if (bHapticsAndroidManager.Instance != null)
+            else
             {
-                bHapticsAndroidManager.Instance.RefreshUIAddListener(Refresh);
+                if (animator != null)
+                {
+                    animator.Play("HideWidget", -1, 1);
+                }
+
+            }
+
+            if (BhapticsAndroidManager.Instance != null)
+            {
+                BhapticsAndroidManager.Instance.RefreshUIAddListener(Refresh);
             }
         }
         private void OnDisable()
         {
-            if (bHapticsAndroidManager.Instance != null)
+
+            if (alwaysActive)
+            { 
+                if(scanCoroutine != null)
+                {
+                    StopCoroutine(scanCoroutine);
+                    scanCoroutine = null;
+                }
+            }
+
+
+                if (BhapticsAndroidManager.Instance != null)
             {
-                bHapticsAndroidManager.Instance.RefreshUIRemoveListener(Refresh);
+                BhapticsAndroidManager.Instance.RefreshUIRemoveListener(Refresh);
             }
         }
         
@@ -74,14 +105,22 @@ namespace Bhaptics.Tact.Unity
                 }
                 btn.onClick.AddListener(ButtonClickSound);
                 btn.onClick.AddListener(ResetHideTimer);
-            }  
-            pingAllButton.onClick.AddListener(bHapticsAndroidManager.Instance.PingAll);
-            unpairAllButton.onClick.AddListener(bHapticsAndroidManager.Instance.UnpairAll);
+            }
+            if (BhapticsAndroidManager.Instance != null)
+            {
+                pingAllButton.onClick.AddListener(BhapticsAndroidManager.Instance.PingAll);
+                unpairAllButton.onClick.AddListener(BhapticsAndroidManager.Instance.UnpairAll);
+            }
         }
 
         public void ToggleWidgetButton()
         {
-            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+            {
+                AndroidPermissionsManager.RequestPermission();
+            }
+
+            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || alwaysActive)
             {
                 return;
             }
@@ -97,7 +136,10 @@ namespace Bhaptics.Tact.Unity
                     AndroidPermissionsManager.RequestPermission();
                     return;
                 }
-                bHapticsAndroidManager.Instance.ForceUpdateDeviceList();
+                if (BhapticsAndroidManager.Instance != null)
+                {
+                    BhapticsAndroidManager.Instance.ForceUpdateDeviceList();
+                }
             }
             else
             {
@@ -118,7 +160,10 @@ namespace Bhaptics.Tact.Unity
             uiContainer.SetActive(false);
             if(scanCoroutine != null)
             {
-                bHapticsAndroidManager.Instance.ScanStop();
+                if (BhapticsAndroidManager.Instance != null)
+                {
+                    BhapticsAndroidManager.Instance.ScanStop();
+                }
                 StopCoroutine(scanCoroutine);
                 scanCoroutine = null;
             }
@@ -132,21 +177,24 @@ namespace Bhaptics.Tact.Unity
         {
             while (true)
             {
-                if (!bHapticsAndroidManager.Instance.IsScanning)
+                if (BhapticsAndroidManager.Instance != null && !BhapticsAndroidManager.Instance.IsScanning)
                 {
-                    bHapticsAndroidManager.Instance.Scan();
+                    BhapticsAndroidManager.Instance.Scan();
                 }
 
-                if(hideTimer < 0f)
+                if (!alwaysActive)
                 {
-                    scanCoroutine = null;
-                    animator.Play("HideWidget");
-                    widgetActive = !widgetActive;
-                    break;
-                }
-                else
-                {
-                    hideTimer -= 0.5f;
+                    if (hideTimer < 0f)
+                    {
+                        scanCoroutine = null;
+                        animator.Play("HideWidget");
+                        widgetActive = !widgetActive;
+                        break;
+                    }
+                    else
+                    {
+                        hideTimer -= 0.5f;
+                    }
                 }
                 yield return new WaitForSeconds(0.5f);
             }

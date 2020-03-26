@@ -144,15 +144,31 @@ namespace Bhaptics.Tact.Unity
                 
                 if(DeviceType == TactDeviceType.TactosyLeft)
                 {
-                    bHapticsAndroidManager.Instance.Pair(devices[index].Address, "ForearmL");
+                    BhapticsAndroidManager.Instance.Pair(devices[index].Address, "ForearmL");
                 }
                 else if(DeviceType == TactDeviceType.TactosyRight)
                 {
-                    bHapticsAndroidManager.Instance.Pair(devices[index].Address, "ForearmR");
+                    BhapticsAndroidManager.Instance.Pair(devices[index].Address, "ForearmR");
+                }
+                else if(DeviceType == TactDeviceType.TactosyLeftFoot)
+                {
+                    BhapticsAndroidManager.Instance.Pair(devices[index].Address, "FootL");
+                }
+                else if (DeviceType == TactDeviceType.TactosyRightFoot)
+                {
+                    BhapticsAndroidManager.Instance.Pair(devices[index].Address, "FootR");
+                }
+                else if (DeviceType == TactDeviceType.TactosyLeftHand)
+                {
+                    BhapticsAndroidManager.Instance.Pair(devices[index].Address, "HandL");
+                }
+                else if (DeviceType == TactDeviceType.TactosyRightHand)
+                {
+                    BhapticsAndroidManager.Instance.Pair(devices[index].Address, "HandR");
                 }
                 else
                 {
-                    bHapticsAndroidManager.Instance.Pair(devices[index].Address);
+                    BhapticsAndroidManager.Instance.Pair(devices[index].Address);
                 }
 
 
@@ -168,7 +184,7 @@ namespace Bhaptics.Tact.Unity
                 if (AndroidWidget_CompareDeviceString.convertConnectionStatus(pairedDevice.ConnectionStatus) == 0 ||
                     (AndroidWidget_CompareDeviceString.convertConnectionStatus(pairedDevice.ConnectionStatus) == 2 &&
                      pairedDevice.IsPaired))
-                    bHapticsAndroidManager.Instance.Unpair(pairedDevice.Address);
+                    BhapticsAndroidManager.Instance.Unpair(pairedDevice.Address);
             }
         }
 
@@ -177,7 +193,7 @@ namespace Bhaptics.Tact.Unity
             var pairedDevices = GetPariedDevice();
             foreach (var pairedDevice in pairedDevices)
             {
-                bHapticsAndroidManager.Instance.Ping(pairedDevice.Address);
+                BhapticsAndroidManager.Instance.Ping(pairedDevice.Address);
             }
         }
 

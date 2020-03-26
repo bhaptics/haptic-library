@@ -6,13 +6,14 @@ using UnityEngine.Events;
 
 namespace Bhaptics.Tact.Unity
 { 
-    public class bHapticsAndroidManager : MonoBehaviour
+    public class BhapticsAndroidManager : MonoBehaviour
     {
-        public static bHapticsAndroidManager Instance;
+        public static BhapticsAndroidManager Instance;
 
         [SerializeField] private bool alwaysScanDisconnectedDevice;
-        private List<UnityAction<List<BhapticsDevice>, bool>> refreshDeviceUIAction = new List<UnityAction<List<BhapticsDevice>, bool>>();
 
+        
+        private List<UnityAction<List<BhapticsDevice>, bool>> refreshDeviceUIAction = new List<UnityAction<List<BhapticsDevice>, bool>>();
         [HideInInspector] public bool IsScanning;
 
         private void Awake()
@@ -40,7 +41,6 @@ namespace Bhaptics.Tact.Unity
 #if !UNITY_ANDROID
             return;
 #endif
-
             if (alwaysScanDisconnectedDevice)
             {
                 InvokeRepeating("CheckDisconnectedDevice", 0.5f, 0.5f);
@@ -99,7 +99,6 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
             RefreshUICall();
-            //uiManager.Refresh(androidHapticPlayer.GetDeviceList(), IsScanning);
         }
 
         public void UpdateScanning(bool isScanning)

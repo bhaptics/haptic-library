@@ -34,7 +34,7 @@ namespace Bhaptics.Tact.Unity
         {
             if (AndroidWidget_CompareDeviceString.convertConnectionStatus(device.ConnectionStatus) == 2)
             {
-                bHapticsAndroidManager.Instance.Pair(device.Address);
+                BhapticsAndroidManager.Instance.Pair(device.Address);
             }
         }
     }

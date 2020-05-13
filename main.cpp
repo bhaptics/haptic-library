@@ -28,7 +28,14 @@ void test() {
 #endif
     const char* appId = "com.bhaptics.yourAppId";
     cout << "2. Initialise() with com.bhaptics.yourAppId" << endl;
+    auto start = std::chrono::system_clock::now();
+
     Initialise(appId, "SampleApp");
+
+    auto end = std::chrono::system_clock::now();
+
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    std::cout<< "2. Initialise() elapsed time: " << elapsed_seconds.count() << "s\n";
 
     cout << "3. Read File" << endl;
 

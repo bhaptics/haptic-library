@@ -126,10 +126,14 @@ void ChangeUrl(const char* url)
     bhaptics::HapticPlayer::instance()->changeUrl(url);
 }
 
-
-void Initialise(const char* appId, const char* appName)
+void InitialiseSync(const char* appId, const char* appName)
 {
     bhaptics::HapticPlayer::instance()->registerConnection(appId, appName);
+}
+
+void Initialise(const char* appId, const char* appName) {
+    std::thread thread (InitialiseSync, appId, appName);
+    thread.detach();
 }
 
 void Destroy()

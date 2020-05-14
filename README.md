@@ -1,5 +1,5 @@
 ## bHaptics Haptic Library 
-* Written in c++ 11
+* Written in C++ 11
 * Tested in windows 
 * Current version is 1.4.14
 

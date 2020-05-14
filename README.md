@@ -1,4 +1,6 @@
-## bHaptics Haptic Library (C++ STL)
+## bHaptics Haptic Library 
+* Written in c++ 11
+* Tested in windows 
 * Current version is 1.4.14
 
 ## Prerequisite

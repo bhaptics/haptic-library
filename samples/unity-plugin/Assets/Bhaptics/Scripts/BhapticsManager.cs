@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Bhaptics.Tact.Unity;
+using UnityEngine;
 
 public class BhapticsManager
 {

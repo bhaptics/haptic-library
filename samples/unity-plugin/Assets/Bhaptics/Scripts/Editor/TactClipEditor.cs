@@ -6,7 +6,7 @@ using UnityEditor.Callbacks;
 
 namespace Bhaptics.Tact.Unity
 {
-    [CustomEditor(typeof(TactClip), true)]
+    // [CustomEditor(typeof(TactClip), true)]
     public class TactClipEditor : Editor
     {
         private bool detailView = false;

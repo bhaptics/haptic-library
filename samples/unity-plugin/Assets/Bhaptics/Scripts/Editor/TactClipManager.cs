@@ -3,10 +3,7 @@ using UnityEngine;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Collections.Generic;
-
 using UnityEditor;
-using UnityEditor.Callbacks;
 
 
 namespace Bhaptics.Tact.Unity
@@ -73,8 +70,8 @@ namespace Bhaptics.Tact.Unity
                     return;
                 }
                 string json = LoadJsonStringFromFile(tactFilePath);
-                var file = Bhaptics.Tact.CommonUtils.ConvertJsonStringToTactosyFile(json);
-                var fileHash = GetHash(tactFilePath);
+                var file = CommonUtils.ConvertJsonStringToTactosyFile(json);
+                // var fileHash = GetHash(tactFilePath);
                 var clipPath = tactFilePath.Replace(".tact", ".asset");
 
                 if (File.Exists(clipPath))
@@ -90,7 +87,7 @@ namespace Bhaptics.Tact.Unity
 
                 TactClipType type = GetMappedDeviceType(file.Project.Layout.Type);
 
-                TactClip tactClip; //  = CreateInstance<TactClip>();
+                TactClip tactClip;
                 if (type == TactClipType.Tactot)
                 {
                     tactClip = CreateInstance<TactotTactClip>();
@@ -112,8 +109,6 @@ namespace Bhaptics.Tact.Unity
 
 
                 tactClip.ClipType = type;
-                tactClip.Identifier = fileHash;
-                tactClip.Path = clipPath;
 
                 File.Delete(tactFilePath);
                 AssetDatabase.CreateAsset(tactClip, clipPath);
@@ -198,10 +193,36 @@ namespace Bhaptics.Tact.Unity
         }
 
 
-        [MenuItem("Assets/Refresh Tact Files")]
+        [MenuItem("Bhapitcs/Refresh TactClip Asset Files")]
+        private static void OnClickRefreshAssetFiles()
+        {
+            var allInstances = GetAllInstances<TactClip>();
+            foreach (var allInstance in allInstances)
+            {
+                BhapticsLogger.LogInfo(allInstance.Name);
+
+            }
+        }
+
+        // [MenuItem("Bhapitcs/Refresh Tact Files")]
         private static void OnClickRefreshTactFiles()
         {
             RefreshTactFiles();
+        }
+
+
+        public static T[] GetAllInstances<T>() where T : ScriptableObject
+        {
+            string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name);  //FindAssets uses tags check documentation for more info
+            T[] a = new T[guids.Length];
+            for (int i = 0; i < guids.Length; i++)         //probably could get optimized 
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                a[i] = AssetDatabase.LoadAssetAtPath<T>(path);
+            }
+
+            return a;
+
         }
     }
 }

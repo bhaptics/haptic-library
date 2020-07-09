@@ -8,11 +8,9 @@ namespace Bhaptics.Tact.Unity
     public class BhapticsProfiler : MonoBehaviour
     {
 
-        [SerializeField] private int numOfTactSource = 1;
+        [SerializeField] private int numOfTactClips = 1;
 
         public TactClip[] tactClips;
-
-        private GameObject instantiate;
 
         public bool hapticEnable;
         public int targetFrameRate = 60;
@@ -30,12 +28,12 @@ namespace Bhaptics.Tact.Unity
             if (hapticEnable)
             {
                 BhapticsLogger.LogInfo("TriggerPlay");
-                for (int i = 0; i < numOfTactSource; i++)
+                for (int i = 0; i < numOfTactClips; i++)
                 {
-                    foreach (var tactSource in tactClips)
+                    foreach (var clip in tactClips)
                     {
-                        tactSource.Identifier = tactSource + ("TEST " + i);
-                        tactSource.Play();
+                        clip.keyId = System.Guid.NewGuid().ToString() +  i;
+                        clip.Play();
                     }
                 }
             }

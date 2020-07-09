@@ -12,16 +12,10 @@ public class BhapticsShootingCharacter : MonoBehaviour
     [SerializeField] private Transform[] lookingTransforms;
 
 
-
-
     private Animator animator;
     private int shootCount = 4;
     private float shootDelay = 3f;
     private float bulletSpeed = 2.5f;
-
-
-
-
 
 
     void Awake()
@@ -43,11 +37,6 @@ public class BhapticsShootingCharacter : MonoBehaviour
     {
         StopAllCoroutines();
     }
-
-
-
-
-
 
 
     private IEnumerator RepeatShoot()

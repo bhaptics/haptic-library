@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using Bhaptics.Tact;
 
 
@@ -10,10 +9,6 @@ public class BhapticsVisualFeedbackOnMotors : MonoBehaviour
     [SerializeField] private Gradient hapticColor;
 
     private GameObject[] visualMotors;
-
-
-
-
 
     void Start()
     {

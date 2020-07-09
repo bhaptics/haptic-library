@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.Assertions;
+﻿using System;
+using UnityEngine;
 
 
 namespace Bhaptics.Tact.Unity
@@ -22,19 +22,16 @@ namespace Bhaptics.Tact.Unity
 
         public TactClipType ClipType;
         
-
-        // [HideInInspector] 
-        public string Identifier;
         // [HideInInspector] 
         public string Name;
         // [HideInInspector] 
         public string JsonValue;
-        // [HideInInspector] 
-        public string Path;
 
-        public string currentIdentifier = "";
+        [NonSerialized]
+        private string assetId = System.Guid.NewGuid().ToString();
 
-        public string instanceId = "";
+        [NonSerialized]
+        public string keyId = System.Guid.NewGuid().ToString();
 
 
 
@@ -42,6 +39,7 @@ namespace Bhaptics.Tact.Unity
         public void Play()
         {
             Play(Intensity, Duration, VestRotationAngleX, VestRotationOffsetY);
+            
         }
 
         public void Play(float intensity)
@@ -82,31 +80,30 @@ namespace Bhaptics.Tact.Unity
             }
 
             var haptic = BhapticsManager.GetHaptic();
-            if (!haptic.IsFeedbackRegistered(currentIdentifier))
+            if (!haptic.IsFeedbackRegistered(assetId))
             {
-                currentIdentifier = Identifier;
-                haptic.RegisterTactFileStr(currentIdentifier, JsonValue);
+                haptic.RegisterTactFileStr(assetId, JsonValue);
             }
             
             if (ClipType == TactClipType.Tactot)
             {
-                haptic.SubmitRegistered(currentIdentifier, instanceId,
+                haptic.SubmitRegistered(assetId, keyId,
                     new RotationOption(vestRotationAngleX + TactFileAngleX, vestRotationOffsetY + TactFileOffsetY), new ScaleOption(intensity, duration));
             }
             else if (IsReflectTactosy && (ClipType == TactClipType.Tactosy_arms || ClipType == TactClipType.Tactosy_hands || ClipType == TactClipType.Tactosy_feet))
             {
-                var reflectIdentifier = Identifier + "Reflect";
+                var reflectIdentifier = assetId + "Reflect";
 
                 if (!haptic.IsFeedbackRegistered(reflectIdentifier))
                 {
                     haptic.RegisterTactFileStrReflected(reflectIdentifier, JsonValue);
                 }
 
-                haptic.SubmitRegistered(reflectIdentifier, instanceId, new ScaleOption(intensity, duration));
+                haptic.SubmitRegistered(reflectIdentifier, keyId, new ScaleOption(intensity, duration));
             }
             else
             {
-                haptic.SubmitRegistered(currentIdentifier, instanceId, new ScaleOption(intensity, duration));
+                haptic.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
             }
         }
 
@@ -119,7 +116,7 @@ namespace Bhaptics.Tact.Unity
         public bool IsPlaying()
         {
             var haptic = BhapticsManager.GetHaptic();
-            return haptic.IsPlaying(instanceId);
+            return haptic.IsPlaying(keyId);
         }
 
         public void ResetValues()

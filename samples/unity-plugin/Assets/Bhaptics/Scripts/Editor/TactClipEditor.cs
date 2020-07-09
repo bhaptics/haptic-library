@@ -127,7 +127,7 @@ namespace Bhaptics.Tact.Unity
             var tactClip = serializedObject.targetObject as TactClip;
             if (tactClip == null)
             {
-                Debug.Log("tactClip null");
+                BhapticsLogger.LogInfo("tactClip null");
                 GUILayout.EndHorizontal();
                 return;
             }

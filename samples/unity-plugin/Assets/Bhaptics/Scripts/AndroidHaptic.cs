@@ -289,7 +289,7 @@ public class AndroidHaptic : IHaptic
         }
         catch (Exception e)
         {
-            Debug.LogFormat("Receive: {0}", e.Message);
+            BhapticsLogger.LogInfo("Receive: {0}", e.Message);
         }
     }
 
@@ -329,7 +329,7 @@ public class AndroidHaptic : IHaptic
     {
         if (hapticPlayer != null)
         {
-            Debug.LogFormat("StartScan()");
+            BhapticsLogger.LogDebug("StartScan()");
             hapticPlayer.Call("scan");
         }
     }

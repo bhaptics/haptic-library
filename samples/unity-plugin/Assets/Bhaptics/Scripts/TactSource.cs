@@ -30,7 +30,7 @@ public class TactSource : MonoBehaviour
     {
         if (tactClip == null)
         {
-            Debug.LogFormat("[bhaptics] tactClip is null.");
+            BhapticsLogger.LogInfo("[bhaptics] tactClip is null.");
             return;
         }
 
@@ -74,7 +74,7 @@ public class TactSource : MonoBehaviour
     {
         if (tactClip == null)
         {
-            Debug.LogFormat("tactClip is null");
+            BhapticsLogger.LogInfo("tactClip is null");
             return;
         }
 

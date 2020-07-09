@@ -47,7 +47,7 @@ namespace Bhaptics.Tact.Unity
 
             tactFileWatcher.EnableRaisingEvents = true;
 #else
-        Debug.LogError("FileSystemWatcher required .Net 4.6 or higher");
+            BhapticsLogger.LogError("FileSystemWatcher required .Net 4.6 or higher");
 #endif
         }
 
@@ -70,7 +70,7 @@ namespace Bhaptics.Tact.Unity
 
             tactClipWatcher.EnableRaisingEvents = true;
 #else
-        Debug.LogError("FileSystemWatcher required .Net 4.6 or higher");
+            BhapticsLogger.LogError("FileSystemWatcher required .Net 4.6 or higher");
 #endif
         }
 

@@ -19,7 +19,7 @@ public class BhapticsVisualFeedbackOnMotors : MonoBehaviour
     {
         if (visualMotorsObject == null)
         {
-            Debug.LogError("BhapticsVisualFeedbackOnMotors.cs / visualMotorsObject is null");
+            BhapticsLogger.LogError("BhapticsVisualFeedbackOnMotors.cs / visualMotorsObject is null");
             return;
         }
         visualMotors = new GameObject[visualMotorsObject.transform.childCount];

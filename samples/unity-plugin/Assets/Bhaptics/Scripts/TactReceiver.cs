@@ -13,7 +13,7 @@ namespace Bhaptics.Tact.Unity
 
             if (col == null)
             {
-                Debug.Log("collider is not detected");
+                BhapticsLogger.LogInfo("collider is not detected");
             }
         }
 
@@ -39,7 +39,6 @@ namespace Bhaptics.Tact.Unity
             if (tactSender != null)
             {
                 var targetCollider = GetComponent<Collider>();
-                Debug.LogFormat("here handle");
                 tactSender.Play(PositionTag, contactPoint, targetCollider);
             }
         }

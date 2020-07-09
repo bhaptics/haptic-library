@@ -97,7 +97,7 @@ namespace Bhaptics.Tact.Unity
             var clip = GetClip(posTag);
             if (clip == null)
             {
-                Debug.LogFormat("Cannot find TactClip {0} {1} {2}", posTag, angleX, offsetY);
+                BhapticsLogger.LogInfo("Cannot find TactClip {0} {1} {2}", posTag, angleX, offsetY);
                 return;
             }
             clip.VestRotationAngleX = angleX;

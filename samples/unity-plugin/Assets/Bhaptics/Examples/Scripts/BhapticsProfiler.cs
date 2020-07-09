@@ -21,21 +21,22 @@ namespace Bhaptics.Tact.Unity
         {
             Application.targetFrameRate = targetFrameRate;
 
-            if (hapticEnable)
-            {
-                InvokeRepeating("TriggerPlay", 1f, 4f);
-            }
+            InvokeRepeating("TriggerPlay", 1f, 4f);
         }
 
 
         private void TriggerPlay()
         {
-            for (int i = 0; i < numOfTactSource; i++)
+            if (hapticEnable)
             {
-                foreach (var tactSource in tactClips)
+                BhapticsLogger.LogInfo("TriggerPlay");
+                for (int i = 0; i < numOfTactSource; i++)
                 {
-                    tactSource.Identifier = ("TEST "+ i);
-                    tactSource.Play();
+                    foreach (var tactSource in tactClips)
+                    {
+                        tactSource.Identifier = tactSource + ("TEST " + i);
+                        tactSource.Play();
+                    }
                 }
             }
         }

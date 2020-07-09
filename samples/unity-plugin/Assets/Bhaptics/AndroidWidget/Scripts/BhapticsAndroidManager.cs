@@ -249,8 +249,9 @@ namespace Bhaptics.Tact.Unity
                     Candidates = new PositionType[] {PositionType.ForearmR, PositionType.ForearmL},
                 };
                 var list = new List<HapticDevice>();
-                list.Add(device);
-                list.Add(device2);
+                // list.Add(device);
+                // list.Add(device2);
+                // TODO DEBUGGING USAGE.
                 return list;
             }
 

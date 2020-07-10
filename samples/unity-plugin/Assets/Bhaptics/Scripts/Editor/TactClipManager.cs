@@ -87,7 +87,7 @@ namespace Bhaptics.Tact.Unity
 
                 TactClipType type = GetMappedDeviceType(file.Project.Layout.Type);
 
-                TactClip tactClip;
+                TactFileClip tactClip;
                 if (type == TactClipType.Tactot)
                 {
                     tactClip = CreateInstance<TactotTactClip>();
@@ -96,11 +96,17 @@ namespace Bhaptics.Tact.Unity
                     tactClip = CreateInstance<TactalTactClip>();
                 } else if (type == TactClipType.Tactosy_arms)
                 {
-                    tactClip = CreateInstance<ArmTactClip>();
+                    tactClip = CreateInstance<TactosyTactClip>();
+                } else if (type == TactClipType.Tactosy_hands)
+                {
+                    tactClip = CreateInstance<HandTactClip>();
+                }else if (type == TactClipType.Tactosy_feet)
+                {
+                    tactClip = CreateInstance<FootTactClip>();
                 }
                 else
                 {
-                    tactClip = CreateInstance<TactClip>();
+                    tactClip = CreateInstance<TactFileClip>();
                 }
 
 
@@ -196,10 +202,9 @@ namespace Bhaptics.Tact.Unity
         [MenuItem("Bhapitcs/Refresh TactClip Asset Files")]
         private static void OnClickRefreshAssetFiles()
         {
-            var allInstances = GetAllInstances<TactClip>();
+            var allInstances = GetAllInstances<TactFileClip>();
             foreach (var allInstance in allInstances)
             {
-                BhapticsLogger.LogInfo(allInstance.Name);
 
             }
         }

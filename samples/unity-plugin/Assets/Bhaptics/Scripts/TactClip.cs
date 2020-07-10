@@ -1,133 +1,68 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using Bhaptics.Tact.Unity;
 using UnityEngine;
 
-
-namespace Bhaptics.Tact.Unity
+public class TactClip : ScriptableObject
 {
-    public enum TactClipType
+    [NonSerialized] protected string assetId = System.Guid.NewGuid().ToString();
+
+    [NonSerialized] public string keyId = System.Guid.NewGuid().ToString();
+
+
+    public virtual void Play()
     {
-        None,
-        Tactal, Tactot, Tactosy_arms, Tactosy_hands, Tactosy_feet
+        Play(1f, 1f, 0f, 0f);
     }
 
-    public class TactClip : ScriptableObject
+    public virtual void Play(float intensity)
     {
-        [Range(0.2f, 5f)] public float Intensity = 1f;
-        [Range(0.2f, 5f)] public float Duration = 1f;
-        public bool IsReflectTactosy;
-        [Range(0f, 360f)] public float VestRotationAngleX;
-        [Range(-0.5f, 0.5f)] public float VestRotationOffsetY;
-        [Range(0f, 360f)] public float TactFileAngleX;
-        [Range(-0.5f, 0.5f)] public float TactFileOffsetY;
+        Play(intensity, 1f, 0f, 0f);
+    }
 
-        public TactClipType ClipType;
-        
-        // [HideInInspector] 
-        public string Name;
-        // [HideInInspector] 
-        public string JsonValue;
+    public virtual void Play(float intensity, float duration)
+    {
+        Play(intensity, duration, 0f, 0f);
+    }
 
-        [NonSerialized]
-        private string assetId = System.Guid.NewGuid().ToString();
+    public virtual void Play(float intensity, float duration, float vestRotationAngleX)
+    {
+        Play(intensity, duration, vestRotationAngleX, 0f);
+    }
 
-        [NonSerialized]
-        public string keyId = System.Guid.NewGuid().ToString();
+    public virtual void Play(Vector3 contactPos, Collider targetCollider)
+    {
+        Play(contactPos, targetCollider.bounds.center, targetCollider.transform.forward, targetCollider.bounds.size.y);
+    }
 
+    public virtual void Play(Vector3 contactPos, Vector3 targetPos, Vector3 targetForward, float targetHeight)
+    {
+        Vector3 targetDir = contactPos - targetPos;
+        var angle = BhapticsUtils.Angle(targetDir, targetForward);
+        var offsetY = (contactPos.y - targetPos.y) / targetHeight;
 
+        Play(1f,1f, angle, offsetY);
+    }
 
+    public virtual void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY)
+    {
+    }
 
-        public void Play()
-        {
-            Play(Intensity, Duration, VestRotationAngleX, VestRotationOffsetY);
-            
-        }
+    public virtual void Stop()
+    {
+        var haptic = BhapticsManager.GetHaptic();
+        haptic.TurnOff();
+    }
 
-        public void Play(float intensity)
-        {
-            Play(intensity, Duration, VestRotationAngleX, VestRotationOffsetY);
-        }
+    public virtual bool IsPlaying()
+    {
+        var haptic = BhapticsManager.GetHaptic();
+        return haptic.IsPlaying(keyId);
+    }
 
-        public void Play(float intensity, float duration)
-        {
-            Play(intensity, duration, this.VestRotationAngleX, this.VestRotationOffsetY);
-        }
+    public virtual void ResetValues()
+    {
 
-        public void Play(float intensity, float duration, float vestRotationAngleX)
-        {
-            Play(intensity, duration, vestRotationAngleX, this.VestRotationOffsetY);
-        }
-
-        public void Play(Vector3 contactPos, Collider targetCollider)
-        {
-            Play(contactPos, targetCollider.bounds.center, targetCollider.transform.forward, targetCollider.bounds.size.y);
-        }
-
-        public void Play(Vector3 contactPos, Vector3 targetPos, Vector3 targetForward, float targetHeight)
-        {
-            Vector3 targetDir = contactPos - targetPos;
-            var angle = BhapticsUtils.Angle(targetDir, targetForward);
-            var offsetY = (contactPos.y - targetPos.y) / targetHeight;
-
-            Play(this.Intensity, this.Duration, angle, offsetY);
-        }
-
-        public void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY)
-        {
-            if (!BhapticsManager.Init)
-            {
-                BhapticsManager.Initialize();
-                return;
-            }
-
-            var haptic = BhapticsManager.GetHaptic();
-            if (!haptic.IsFeedbackRegistered(assetId))
-            {
-                haptic.RegisterTactFileStr(assetId, JsonValue);
-            }
-            
-            if (ClipType == TactClipType.Tactot)
-            {
-                haptic.SubmitRegistered(assetId, keyId,
-                    new RotationOption(vestRotationAngleX + TactFileAngleX, vestRotationOffsetY + TactFileOffsetY), new ScaleOption(intensity, duration));
-            }
-            else if (IsReflectTactosy && (ClipType == TactClipType.Tactosy_arms || ClipType == TactClipType.Tactosy_hands || ClipType == TactClipType.Tactosy_feet))
-            {
-                var reflectIdentifier = assetId + "Reflect";
-
-                if (!haptic.IsFeedbackRegistered(reflectIdentifier))
-                {
-                    haptic.RegisterTactFileStrReflected(reflectIdentifier, JsonValue);
-                }
-
-                haptic.SubmitRegistered(reflectIdentifier, keyId, new ScaleOption(intensity, duration));
-            }
-            else
-            {
-                haptic.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
-            }
-        }
-
-        public void Stop()
-        {
-            var haptic = BhapticsManager.GetHaptic();
-            haptic.TurnOff();
-        }
-
-        public bool IsPlaying()
-        {
-            var haptic = BhapticsManager.GetHaptic();
-            return haptic.IsPlaying(keyId);
-        }
-
-        public void ResetValues()
-        {
-            Intensity = 1f;
-            Duration = 1f;
-            IsReflectTactosy = false;
-            VestRotationAngleX = 0f;
-            VestRotationOffsetY = 0f;
-            TactFileAngleX = 0f;
-            TactFileOffsetY = 0f;
-        }
     }
 }

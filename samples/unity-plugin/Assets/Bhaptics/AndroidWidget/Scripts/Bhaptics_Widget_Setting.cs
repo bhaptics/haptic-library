@@ -17,7 +17,7 @@ namespace Bhaptics.Tact.Unity
     }
 
 
-    [CreateAssetMenu(fileName = "WidgetSetting", menuName = "Bhaptics/Create Widget Image Setting")]
+    [CreateAssetMenu(fileName = "WidgetSetting", menuName = "Bhaptics/Create Android Widget Setting")]
     public class Bhaptics_Widget_Setting : ScriptableObject
     {
 

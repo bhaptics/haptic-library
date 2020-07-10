@@ -100,10 +100,8 @@ namespace Bhaptics.Tact.Unity
                 BhapticsLogger.LogInfo("Cannot find TactClip {0} {1} {2}", posTag, angleX, offsetY);
                 return;
             }
-            clip.VestRotationAngleX = angleX;
-            clip.VestRotationOffsetY = offsetY * yOffsetMultiplier;
             
-            clip.Play();
+            clip.Play(1f, 1f, angleX, offsetY * yOffsetMultiplier);
         }
     }
 

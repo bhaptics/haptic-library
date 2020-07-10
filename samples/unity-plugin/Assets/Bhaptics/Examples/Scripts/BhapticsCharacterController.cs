@@ -14,7 +14,7 @@ public class BhapticsCharacterController : MonoBehaviour {
 
     private Vector3 moveDirection = Vector3.zero;
 
-    public TactSender hapticSender;
+    private TactSender tactSender;
     
     [Header("Shooting with raycasting or with Physical bullet")]
     public bool IsRaycastingShooting = true;
@@ -42,7 +42,7 @@ public class BhapticsCharacterController : MonoBehaviour {
         lineRenderer.startWidth = 0;
         lineRenderer.endWidth = 0;
 
-        hapticSender = GetComponent<TactSender>();
+        tactSender = GetComponent<TactSender>();
     }
 
 
@@ -83,10 +83,10 @@ public class BhapticsCharacterController : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (hapticSender != null)
+            if (tactSender != null)
             {
-                hapticSender.Play(PositionTag.LeftArm);
-                hapticSender.Play(PositionTag.RightArm);
+                tactSender.Play(PositionTag.LeftArm);
+                tactSender.Play(PositionTag.RightArm);
             }
 
             if (IsRaycastingShooting)
@@ -112,7 +112,7 @@ public class BhapticsCharacterController : MonoBehaviour {
                         var custom = raycastHit.collider.gameObject.GetComponent<BhapticsCustomTactReceiver>();
                         if (custom != null)
                         {
-                            custom.ReflectHandle(raycastHit.point, hapticSender);
+                            custom.ReflectHandle(raycastHit.point, tactSender);
                             return;
                         }
                     }
@@ -122,9 +122,9 @@ public class BhapticsCharacterController : MonoBehaviour {
                     }
  
 
-                    if (hapticSender != null)
+                    if (tactSender != null)
                     {
-                        hapticSender.Play(pos, raycastHit);
+                        tactSender.Play(pos, raycastHit);
                     }
                 }
             }

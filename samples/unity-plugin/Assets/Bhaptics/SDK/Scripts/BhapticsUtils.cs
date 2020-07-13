@@ -126,7 +126,7 @@ namespace Bhaptics.Tact.Unity
             }
             catch (Exception e)
             {
-                BhapticsLogger.LogError("LaunchPlayer() " + e.Message);
+                BhapticsLogger.LogInfo("LaunchPlayer() " + e.Message);
             }
 #endif
         }

@@ -7,7 +7,7 @@ using UnityEditor.Callbacks;
 namespace Bhaptics.Tact.Unity
 {
     [CustomEditor(typeof(FileHapticClip), true)]
-    public class TactFileClipEditor : Editor
+    public class FileHapticClipEditor : Editor
     {
         public override void OnInspectorGUI()
         {
@@ -112,7 +112,7 @@ namespace Bhaptics.Tact.Unity
             var tactClip = target as FileHapticClip;
             if (tactClip != null)
             {
-                var saveAsPath = EditorUtility.SaveFilePanel("Save as *.tact File", @"\download\", tactClip.Name, "tact");
+                var saveAsPath = EditorUtility.SaveFilePanel("Save as *.tact File", @"\download\", tactClip.name, "tact");
                 if (saveAsPath != "")
                 {
                     File.WriteAllText(saveAsPath, tactClip.JsonValue);

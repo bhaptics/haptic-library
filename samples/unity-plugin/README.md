@@ -14,11 +14,11 @@
 
 
 ## Documentation
-* [Getting Started Guide](https://github.com/bhaptics/haptic-library/wiki/Getting-Started%28Unity%29)
-* [How to set up in the Quest](https://github.com/bhaptics/haptic-library/wiki/Getting-Started-Quest)
+* [Getting Started Guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Getting-Started)
+* [How to set up in the Quest](https://github.com/bhaptics/haptic-library/wiki/Unity-Oculus-Quest)
 * [Advanced Guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Advanced-Guide)
 * [Change log](./CHANGELOG.md)
-* [Migration guide](https://github.com/bhaptics/haptic-library/wiki/Migration-Guide)
+* [Migration guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide)
 
 
 ##### Last update of README.md: Jul 14th, 2020.

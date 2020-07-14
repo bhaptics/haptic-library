@@ -1,17 +1,14 @@
 ﻿using System;
 using UnityEngine;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using UnityEditor;
-using UnityEngine.WSA;
 using Application = UnityEngine.Application;
 
 
 namespace Bhaptics.Tact.Unity
 {
     [ExecuteInEditMode]
-    public class TactClipManager : ScriptableObject
+    public class HapticClipManager : ScriptableObject
     {
 
         private static HapticClipType GetMappedDeviceType(string clipType)
@@ -113,7 +110,7 @@ namespace Bhaptics.Tact.Unity
 
 
                 tactClip.JsonValue = json;
-                tactClip.Name = fileName;
+                // tactClip.name = fileName;
 
 
                 tactClip.ClipType = type;

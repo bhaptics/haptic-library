@@ -18,7 +18,7 @@ namespace Bhaptics.Tact.Unity
         public HapticClipType ClipType;
         
         // [HideInInspector] 
-        public string Name;
+        // public string Name;
         // [HideInInspector] 
         public string JsonValue;
 

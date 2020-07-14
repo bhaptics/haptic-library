@@ -1,3 +1,7 @@
+## Unity plugin 1.5.0(Jul 14th, 2020.)
+* Update: use tact files as asset files. 
+* Clean up: Clean up the codes. 
+
 ## Unity plugin 1.4.10(Dec 17th, 2019.)
 * Fix : Fixes pc platform issue(isActive, isPlaying)
 * Fix : Fixes Androidwidget platform init issue

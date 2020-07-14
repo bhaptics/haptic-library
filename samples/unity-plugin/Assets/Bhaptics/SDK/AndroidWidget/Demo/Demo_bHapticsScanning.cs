@@ -1,26 +1,35 @@
 ﻿using Bhaptics.Tact.Unity;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Demo_bHapticsScanning : MonoBehaviour {
-
-	// Use this for initialization
 	void Start() {
-	}
+        InvokeRepeating("CheckScanning", 1f, 5f);
+    }
 
-	// Update is called once per frame
 	void Update() {
 
 		if (Input.anyKeyDown)
 		{
-			if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-			{
-				AndroidPermissionsManager.RequestPermission();
-			}
+			CheckPermission();
 		}
+    }
+
+    private void CheckScanning()
+    {
+        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+        {
+            return;
+        }
 
         BhapticsAndroidManager.Scan();
+    }
+
+    public void CheckPermission()
+    {
+        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+        {
+            AndroidPermissionsManager.RequestPermission();
+        }
 	}
 
 }

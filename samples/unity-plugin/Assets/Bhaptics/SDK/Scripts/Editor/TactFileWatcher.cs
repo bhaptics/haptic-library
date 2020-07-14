@@ -117,7 +117,7 @@ namespace Bhaptics.Tact.Unity
             }
             if (triggerRecompile)
             {
-                TactClipManager.RefreshTactFiles();
+                HapticClipManager.RefreshTactFiles();
                 triggerRecompile = false;
 
                 triggerRecompileForTactSource = true;

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(VestHapticClip), true)]
-public class TactotTactClipEditor : TactFileClipEditor
+public class VestHapticClipEditor : FileHapticClipEditor
 {
     public override void OnInspectorGUI()
     {

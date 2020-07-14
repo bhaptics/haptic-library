@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(SimpleHapticClip), true)]
-public class DefaultTactClipEditor : TactFileClipEditor
+public class SimpleHapticClipEditor : FileHapticClipEditor
 {
     public override void OnInspectorGUI()
     {

@@ -120,19 +120,8 @@ namespace Bhaptics.Tact.Unity
                 clip.keyId = Guid.NewGuid().ToString();
             }
 
-            if (playOnAwake)
-            {
-                BhapticsManager.GetHaptic();
+            BhapticsManager.GetHaptic();
 
-                if (loop)
-                {
-                    PlayLoop();
-                }
-                else
-                {
-                    PlayTactClip();
-                }
-            }
 
 
             var findObjectOfType = FindObjectOfType<Bhaptics_Setup>();
@@ -153,6 +142,19 @@ namespace Bhaptics.Tact.Unity
                 setup.Config = config;
 
                 go.SetActive(true);
+            }
+
+            if (playOnAwake)
+            {
+
+                if (loop)
+                {
+                    PlayLoop();
+                }
+                else
+                {
+                    PlayTactClip();
+                }
             }
         }
     }

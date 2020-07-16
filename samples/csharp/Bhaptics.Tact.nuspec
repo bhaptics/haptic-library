@@ -2,11 +2,10 @@
 <package >
   <metadata>
     <id>Bhaptics.Tac</id>
-    <version>1.4.5</version>
+    <version>1.4.14</version>
     <title>Bhaptics.Tact</title>
     <authors>bhaptics</authors>
     <owners>bHaptics Inc.</owners>
-    <license>https://github.com/bhaptics/haptic-library/tree/master/samples/csharp</license>
     <projectUrl>https://github.com/bhaptics/haptic-library/tree/master/samples/csharp</projectUrl>
     <iconUrl>https://designer.bhaptics.com/favicon.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

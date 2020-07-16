@@ -20,7 +20,7 @@ namespace TestApp
         public MainWindow()
         {
             InitializeComponent();
-            _player = new HapticPlayer();
+            _player = new HapticPlayer("sampeAppId", "sampleAppName");
 
 
             string sssss = "[\"Head\"]";

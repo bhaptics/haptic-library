@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 using CustomWebSocketSharp;
 using System.Timers;
+using CustomWebSocketSharp.Net;
 
 namespace Bhaptics.Tact
 {
@@ -47,6 +48,8 @@ namespace Bhaptics.Tact
 
         private bool _websocketConnected = false;
         private readonly string WebsocketUrl = "ws://127.0.0.1:15881/v2/feedbacks";
+        private string appId;
+        private string appName;
 
         public event Action<PlayerResponse> StatusReceived;
         public event Action<bool> ConnectionChanged;
@@ -63,8 +66,10 @@ namespace Bhaptics.Tact
         
         private PlayerRequest _activeRequest;
 
-        public WebSocketSender()
+        public WebSocketSender(string appId, string appName)
         {
+            this.appId = HttpUtility.UrlEncode(appId);
+            this.appName = HttpUtility.UrlEncode(appName);
             _registered = new List<RegisterRequest>();
         }
 
@@ -83,7 +88,7 @@ namespace Bhaptics.Tact
                 _timer.Start();
             }
 
-            _webSocket = new WebSocket(WebsocketUrl);
+            _webSocket = new WebSocket(WebsocketUrl + "?app_id=" + appId + "&app_name=" + appName);
 
             _webSocket.OnMessage += MessageReceived;
             _webSocket.OnOpen += OnConnected;

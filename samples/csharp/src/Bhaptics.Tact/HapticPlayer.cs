@@ -11,10 +11,10 @@ namespace Bhaptics.Tact
         private readonly List<string> _activeKeys = new List<string>();
         private readonly List<PositionType> _activePosition = new List<PositionType>();
         public event Action<PlayerResponse> StatusReceived;
-
-        public HapticPlayer(Action<bool> connectionChanged, bool tryReconnect = true)
+        
+        public HapticPlayer(string appId, string appName,  Action<bool> connectionChanged, bool tryReconnect = true)
         {
-            _sender = new WebSocketSender();
+            _sender = new WebSocketSender(appId, appName);
             _sender.StatusReceived += feedback =>
             {
                 StatusReceived?.Invoke(feedback);
@@ -38,7 +38,7 @@ namespace Bhaptics.Tact
             _sender.Initialize(tryReconnect);
         }
 
-        public HapticPlayer(bool tryReconnect = true) : this(null, tryReconnect)
+        public HapticPlayer(string appId, string appName, bool tryReconnect = true) : this(appId, appName, null, tryReconnect)
         {
         }
 

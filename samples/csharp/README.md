@@ -1,5 +1,8 @@
 # bHaptics haptic devices C# plugin
 
+[![Version](https://img.shields.io/nuget/v/Bhaptics.Tac.svg)](https://nuget.org/packages/Bhaptics.Tac)
+[![Downloads](https://img.shields.io/nuget/dt/Bhaptics.Tac.svg)](https://nuget.org/packages/Bhaptics.Tac)
+
 ## Prerequisite
 * bHaptics Player has to be installed (Windows)
    * The app can be found in [bHaptics homepage](http://bhaptics.com/)

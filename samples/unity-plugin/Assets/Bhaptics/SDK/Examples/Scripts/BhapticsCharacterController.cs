@@ -39,8 +39,19 @@ public class BhapticsCharacterController : MonoBehaviour {
         characterController.detectCollisions = false;
 
         lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.startWidth = 0;
-        lineRenderer.endWidth = 0;
+        if (lineRenderer != null)
+        {
+            if (IsRaycastingShooting)
+            {
+                lineRenderer.startWidth = 0.02f;
+                lineRenderer.endWidth = 0.1f;
+            }
+            else
+            {
+                lineRenderer.startWidth = 0;
+                lineRenderer.endWidth = 0;
+            }
+        }
 
         tactSender = GetComponent<HapticSender>();
     }
@@ -69,8 +80,6 @@ public class BhapticsCharacterController : MonoBehaviour {
                 lineRenderer.startWidth = 0;
                 lineRenderer.endWidth = 0;
             }
-
-            
         }
 
         if (IsRaycastingShooting)

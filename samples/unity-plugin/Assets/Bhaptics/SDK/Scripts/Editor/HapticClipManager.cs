@@ -200,7 +200,7 @@ namespace Bhaptics.Tact.Unity
                     }
 
 
-                    File.WriteAllText(path + @"\" + allInstance.name + ".tact", allInstance.JsonValue);
+                    File.WriteAllText(path + "\\" + allInstance.name + ".tact", allInstance.JsonValue);
                 }
 
                 BhapticsLogger.LogInfo("tact files saved to {0}", saveAsPath);

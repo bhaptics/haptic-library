@@ -61,7 +61,7 @@ namespace Bhaptics.Tact.Unity
             if (!BhapticsManager.Init)
             {
                 BhapticsManager.Initialize();
-                return;
+                //return;
             }
 
             var hapticPlayer = BhapticsManager.GetHaptic();

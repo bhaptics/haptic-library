@@ -31,7 +31,6 @@ public class Bhaptics_Setup : MonoBehaviour
 
     private void Initialize()
     {
-
         BhapticsManager.Initialize();
 
         if (Config == null)

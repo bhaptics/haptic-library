@@ -11,7 +11,7 @@ public class ArmsHapticClip : FileHapticClip
         if (!BhapticsManager.Init)
         {
             BhapticsManager.Initialize();
-            return;
+            //return;
         }
 
         var hapticPlayer = BhapticsManager.GetHaptic();

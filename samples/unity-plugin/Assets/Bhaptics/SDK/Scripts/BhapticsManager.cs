@@ -28,7 +28,6 @@ public class BhapticsManager
             }
             catch (System.Exception e)
             {
-                BhapticsLogger.LogError("GetHaptic() error -> " + e.Message);
             }
         }
 

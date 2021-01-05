@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Bhaptics.Tact;
-using Bhaptics.Tact.Unity;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Bhaptics.Tact.Unity
 {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Bhaptics.Tact;
-using Bhaptics.Tact.Unity;
+﻿using Bhaptics.Tact.Unity;
 using UnityEngine;
 
 public class BhapticsVisualizer : MonoBehaviour {

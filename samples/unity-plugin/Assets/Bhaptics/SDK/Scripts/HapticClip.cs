@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Bhaptics.Tact.Unity;
 using UnityEngine;
 
 namespace Bhaptics.Tact.Unity
@@ -42,7 +39,9 @@ namespace Bhaptics.Tact.Unity
         public virtual void Play(Vector3 contactPos, Vector3 targetPos, Vector3 targetForward, float targetHeight)
         {
             Vector3 targetDir = contactPos - targetPos;
+
             var angle = BhapticsUtils.Angle(targetDir, targetForward);
+            
             var offsetY = (contactPos.y - targetPos.y) / targetHeight;
 
             Play(1f, 1f, angle, offsetY);

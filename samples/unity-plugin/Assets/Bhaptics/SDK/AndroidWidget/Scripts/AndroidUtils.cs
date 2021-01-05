@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Bhaptics.Tact;
 using UnityEngine;
 
 namespace Bhaptics.Tact.Unity

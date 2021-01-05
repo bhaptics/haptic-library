@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Bhaptics.Tact.Unity;
+﻿using Bhaptics.Tact.Unity;
 using UnityEditor;
 using UnityEngine;
 

@@ -17,9 +17,16 @@ public class BhapticsVisualizer : MonoBehaviour {
 
     void Update()
     {
+        var hapticPlayer = BhapticsManager.GetHaptic();
+
+        if (hapticPlayer == null)
+        {
+            return;
+        }
+
         foreach (var vis in visualFeedback)
         {
-            var feedback = BhapticsManager.GetHaptic().GetCurrentFeedback(vis.Position);
+            var feedback = hapticPlayer.GetCurrentFeedback(vis.Position);
             vis.UpdateFeedback(feedback);
         }
     }

@@ -122,8 +122,6 @@ namespace Bhaptics.Tact.Unity
 
             BhapticsManager.GetHaptic();
 
-
-
             var findObjectOfType = FindObjectOfType<Bhaptics_Setup>();
 
             if (findObjectOfType == null)

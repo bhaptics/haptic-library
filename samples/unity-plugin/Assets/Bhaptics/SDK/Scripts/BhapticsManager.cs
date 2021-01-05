@@ -12,16 +12,23 @@ public class BhapticsManager
     {
         if (Haptic == null)
         {
-            Init = true;
-            if (Application.platform == RuntimePlatform.Android)
+            try
             {
-                BhapticsLogger.LogInfo("Android initialized.");
-                Haptic = new AndroidHaptic();
+                Init = true;
+                if (Application.platform == RuntimePlatform.Android)
+                {
+                    Haptic = new AndroidHaptic();
+                    BhapticsLogger.LogInfo("Android initialized.");
+                }
+                else
+                {
+                    Haptic = new BhapticsHaptic();
+                    BhapticsLogger.LogInfo("Initialized.");
+                }
             }
-            else
+            catch (System.Exception e)
             {
-                BhapticsLogger.LogInfo("Initialized.");
-                Haptic = new BhapticsHaptic();
+                BhapticsLogger.LogError("GetHaptic() error -> " + e.Message);
             }
         }
 

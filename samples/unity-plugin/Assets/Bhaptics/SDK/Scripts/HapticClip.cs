@@ -54,14 +54,24 @@ namespace Bhaptics.Tact.Unity
 
         public virtual void Stop()
         {
-            var haptic = BhapticsManager.GetHaptic();
-            haptic.TurnOff();
+            var hapticPlayer = BhapticsManager.GetHaptic();
+
+            if (hapticPlayer != null)
+            {
+                hapticPlayer.TurnOff();
+            }
         }
 
         public virtual bool IsPlaying()
         {
-            var haptic = BhapticsManager.GetHaptic();
-            return haptic.IsPlaying(keyId);
+            var hapticPlayer = BhapticsManager.GetHaptic();
+
+            if (hapticPlayer == null)
+            {
+                return false;
+            }
+
+            return hapticPlayer.IsPlaying(keyId);
         }
 
         public virtual void ResetValues()

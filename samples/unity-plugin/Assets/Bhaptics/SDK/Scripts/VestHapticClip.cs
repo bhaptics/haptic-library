@@ -41,17 +41,22 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            var haptic = BhapticsManager.GetHaptic();
-            if (!haptic.IsFeedbackRegistered(assetId))
+            var hapticPlayer = BhapticsManager.GetHaptic();
+
+            if (hapticPlayer == null)
             {
-                haptic.RegisterTactFileStr(assetId, JsonValue);
+                return;
             }
 
-            haptic.SubmitRegistered(assetId, keyId,
+            if (!hapticPlayer.IsFeedbackRegistered(assetId))
+            {
+                hapticPlayer.RegisterTactFileStr(assetId, JsonValue);
+            }
+
+            hapticPlayer.SubmitRegistered(assetId, keyId,
                 new RotationOption(
                     vestRotationAngleX + TactFileAngleX,
                     vestRotationOffsetY + TactFileOffsetY), new ScaleOption(intensity, duration));
-
         }
 
         public override void ResetValues()
@@ -62,6 +67,5 @@ namespace Bhaptics.Tact.Unity
             TactFileAngleX = 0f;
             TactFileOffsetY = 0f;
         }
-
     }
 }

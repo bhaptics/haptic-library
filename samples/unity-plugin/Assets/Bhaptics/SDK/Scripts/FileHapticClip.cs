@@ -65,25 +65,41 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            var haptic = BhapticsManager.GetHaptic();
-            if (!haptic.IsFeedbackRegistered(assetId))
+            var hapticPlayer = BhapticsManager.GetHaptic();
+
+            if (hapticPlayer == null)
             {
-                haptic.RegisterTactFileStr(assetId, JsonValue);
+                return;
             }
 
-            haptic.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
+            if (!hapticPlayer.IsFeedbackRegistered(assetId))
+            {
+                hapticPlayer.RegisterTactFileStr(assetId, JsonValue);
+            }
+
+            hapticPlayer.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
         }
 
         public override void Stop()
         {
-            var haptic = BhapticsManager.GetHaptic();
-            haptic.TurnOff();
+            var hapticPlayer = BhapticsManager.GetHaptic();
+
+            if (hapticPlayer != null)
+            {
+                hapticPlayer.TurnOff();
+            }
         }
 
         public override bool IsPlaying()
         {
-            var haptic = BhapticsManager.GetHaptic();
-            return haptic.IsPlaying(keyId);
+            var hapticPlayer = BhapticsManager.GetHaptic();
+
+            if (hapticPlayer == null)
+            {
+                return false;
+            }
+
+            return hapticPlayer.IsPlaying(keyId);
         }
 
         public override void ResetValues()

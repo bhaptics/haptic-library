@@ -14,27 +14,32 @@ public class ArmsHapticClip : FileHapticClip
             return;
         }
 
-        var haptic = BhapticsManager.GetHaptic();
+        var hapticPlayer = BhapticsManager.GetHaptic();
+
+        if (hapticPlayer == null)
+        {
+            return;
+        }
 
         if (IsReflect)
         {
             var reflectIdentifier = assetId + "Reflect";
 
-            if (!haptic.IsFeedbackRegistered(reflectIdentifier))
+            if (!hapticPlayer.IsFeedbackRegistered(reflectIdentifier))
             {
-                haptic.RegisterTactFileStrReflected(reflectIdentifier, JsonValue);
+                hapticPlayer.RegisterTactFileStrReflected(reflectIdentifier, JsonValue);
             }
 
-            haptic.SubmitRegistered(reflectIdentifier, keyId, new ScaleOption(intensity, duration));
+            hapticPlayer.SubmitRegistered(reflectIdentifier, keyId, new ScaleOption(intensity, duration));
         }
         else
         {
-            if (!haptic.IsFeedbackRegistered(assetId))
+            if (!hapticPlayer.IsFeedbackRegistered(assetId))
             {
-                haptic.RegisterTactFileStr(assetId, JsonValue);
+                hapticPlayer.RegisterTactFileStr(assetId, JsonValue);
             }
 
-            haptic.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
+            hapticPlayer.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
         }
     }
 

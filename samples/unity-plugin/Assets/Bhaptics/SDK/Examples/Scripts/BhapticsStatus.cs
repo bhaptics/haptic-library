@@ -19,10 +19,14 @@ public class BhapticsStatus : MonoBehaviour
         if (text != null)
         {
             var hapticPlayer = BhapticsManager.GetHaptic();
-            text.text = "Tactal isActive: " + hapticPlayer.IsActive(PositionType.Head) + "\n" +
-                        "Tactot isActive: " + hapticPlayer.IsActive(PositionType.Vest) + "\n" +
-                        "Tactosy(L) isActive: " + hapticPlayer.IsActive(PositionType.ForearmL) + "\n" +
-                        "Tactosy(R) isActive: " + hapticPlayer.IsActive(PositionType.ForearmR) + "\n" ;
+
+            if (hapticPlayer != null)
+            {
+                text.text = "Tactal isActive: " + hapticPlayer.IsActive(PositionType.Head) + "\n" +
+                            "Tactot isActive: " + hapticPlayer.IsActive(PositionType.Vest) + "\n" +
+                            "Tactosy(L) isActive: " + hapticPlayer.IsActive(PositionType.ForearmL) + "\n" +
+                            "Tactosy(R) isActive: " + hapticPlayer.IsActive(PositionType.ForearmR) + "\n";
+            }
         }
 
     }
@@ -30,6 +34,12 @@ public class BhapticsStatus : MonoBehaviour
     private void SendPing()
     {
         var hapticPlayer = BhapticsManager.GetHaptic();
+
+        if (hapticPlayer == null)
+        {
+            return;
+        }
+
         hapticPlayer.Submit("___ping____", PositionType.FootL, new List<DotPoint>(), 40);
     }
 }

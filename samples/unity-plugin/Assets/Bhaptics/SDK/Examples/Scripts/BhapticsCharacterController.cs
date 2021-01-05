@@ -118,7 +118,7 @@ public class BhapticsCharacterController : MonoBehaviour {
                     if (detect == null)
                     {
                         ///// THIS IS ONLY FOR DEMO CASE.
-                        var custom = raycastHit.collider.gameObject.GetComponent<BhapticsCustomTactReceiver>();
+                        var custom = raycastHit.collider.gameObject.GetComponent<BhapticsCustomHapticReceiver>();
                         if (custom != null)
                         {
                             custom.ReflectHandle(raycastHit.point, tactSender);

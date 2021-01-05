@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 
-public class BhapticsCustomTactReceiver : MonoBehaviour
+public class BhapticsCustomHapticReceiver : MonoBehaviour
 {
     public bool IsActive = true;
     public PositionTag PositionTag = PositionTag.Body;

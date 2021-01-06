@@ -49,11 +49,11 @@ namespace Bhaptics.Tact.Unity
 
             if (Mode == FeedbackType.DotMode)
             {
-                hapticPlayer.Submit(keyId, ToPositionType(Position), Convert(DotPoints), TimeMillis);
+                hapticPlayer.Submit(keyId, BhapticsUtils.ToPositionType(Position), Convert(DotPoints), TimeMillis);
             }
             else
             {
-                hapticPlayer.Submit(keyId, ToPositionType(Position), Convert(Points), TimeMillis);
+                hapticPlayer.Submit(keyId, BhapticsUtils.ToPositionType(Position), Convert(Points), TimeMillis);
             }
         }
 
@@ -83,33 +83,6 @@ namespace Bhaptics.Tact.Unity
             }
 
             return result;
-        }
-
-        static PositionType ToPositionType(Pos pos)
-        {
-            switch (pos)
-            {
-                case Pos.Head:
-                    return PositionType.Head;
-                case Pos.VestFront:
-                    return PositionType.VestFront;
-                case Pos.VestBack:
-                    return PositionType.VestBack;
-                case Pos.LeftHand:
-                    return PositionType.HandL;
-                case Pos.RightHand:
-                    return PositionType.HandR;
-                case Pos.LeftFoot:
-                    return PositionType.FootL;
-                case Pos.RightFoot:
-                    return PositionType.FootR;
-                case Pos.RightForearm:
-                    return PositionType.ForearmR;
-                case Pos.LeftForearm:
-                    return PositionType.ForearmL;
-            }
-
-            return PositionType.ForearmR;
         }
     }
 

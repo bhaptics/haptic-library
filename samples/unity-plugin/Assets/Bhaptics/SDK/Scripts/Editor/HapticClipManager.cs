@@ -108,11 +108,7 @@ namespace Bhaptics.Tact.Unity
                     tactClip = CreateInstance<FileHapticClip>();
                 }
 
-
                 tactClip.JsonValue = json;
-                // tactClip.name = fileName;
-
-
                 tactClip.ClipType = type;
 
                 File.Delete(tactFilePath);

@@ -1,9 +1,12 @@
 ﻿using Bhaptics.Tact.Unity;
 using UnityEngine;
 
-public class BhapticsVisualizer : MonoBehaviour {
-
+public class BhapticsVisualizer : MonoBehaviour
+{
     private VisualFeedback[] visualFeedback;
+
+
+
 
     void Awake()
     {
@@ -21,7 +24,8 @@ public class BhapticsVisualizer : MonoBehaviour {
 
         foreach (var vis in visualFeedback)
         {
-            var feedback = hapticPlayer.GetCurrentFeedback(vis.Position);
+            var feedback = hapticPlayer.GetCurrentFeedback(BhapticsUtils.ToPositionType(vis.devicePos));
+    
             vis.UpdateFeedback(feedback);
         }
     }

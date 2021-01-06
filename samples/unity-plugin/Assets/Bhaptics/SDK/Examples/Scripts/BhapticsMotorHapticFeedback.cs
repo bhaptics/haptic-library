@@ -117,7 +117,7 @@ public class BhapticsMotorHapticFeedback : MonoBehaviour
         // byte[] charPtr; motor intensity(0~100)
         // int length; motor count
         // int durationMillis; haptic feedback time(ms)
-        HapticApi.SubmitByteArray(motorPosType.ToString() + "_motor" + motorIndex + "_" + name, ToPositionType(motorPosType), motorIntensity, motorIntensity.Length, durationMillis);
+        HapticApi.SubmitByteArray(motorPosType.ToString() + "_motor" + motorIndex + "_" + name, BhapticsUtils.ToPositionType(motorPosType), motorIntensity, motorIntensity.Length, durationMillis);
     }
 
     private float GetIntensity()
@@ -132,32 +132,5 @@ public class BhapticsMotorHapticFeedback : MonoBehaviour
             return Mathf.Clamp(res, 10f, 100f);
         }
         return 100f;
-    }
-
-    private PositionType ToPositionType(Pos pos)
-    {
-        switch (pos)
-        {
-            case Pos.Head:
-                return PositionType.Head;
-            case Pos.VestFront:
-                return PositionType.VestFront;
-            case Pos.VestBack:
-                return PositionType.VestBack;
-            case Pos.LeftHand:
-                return PositionType.HandL;
-            case Pos.RightHand:
-                return PositionType.HandR;
-            case Pos.LeftFoot:
-                return PositionType.FootL;
-            case Pos.RightFoot:
-                return PositionType.FootR;
-            case Pos.RightForearm:
-                return PositionType.ForearmR;
-            case Pos.LeftForearm:
-                return PositionType.ForearmL;
-        }
-
-        return PositionType.ForearmR;
     }
 }

@@ -15,11 +15,25 @@ namespace Bhaptics.Tact.Unity
         [Range(0.2f, 5f)] public float Duration = 1f;
 
         public HapticClipType ClipType;
-        
-        // [HideInInspector] 
-        // public string Name;
-        // [HideInInspector] 
         public string JsonValue;
+
+        private float _clipDutationTime = -1f;
+
+        public float ClipDurationTime
+        {
+            get
+            {
+                if (_clipDutationTime <= -1f)
+                {
+                    _clipDutationTime = CalculateClipDutationTime(HapticFeedbackFile.ToHapticFeedbackFile(JsonValue));
+                    return _clipDutationTime;
+                }
+                return _clipDutationTime;
+            }
+        }
+
+
+
 
 
         public override void Play()
@@ -106,6 +120,30 @@ namespace Bhaptics.Tact.Unity
             base.ResetValues();
             Intensity = 1f;
             Duration = 1f;
+        }
+
+
+
+
+
+        private float CalculateClipDutationTime(HapticFeedbackFile hapticFeedbackFile)
+        {
+            float res = 0f;
+            if (hapticFeedbackFile != null)
+            {
+                foreach (var track in hapticFeedbackFile.Project.Tracks)
+                {
+                    foreach (var effect in track.Effects)
+                    {
+                        var effectTime = effect.StartTime + effect.OffsetTime;
+                        if (res < effectTime)
+                        {
+                            res = effectTime;
+                        }
+                    }
+                }
+            }
+            return res * 0.001f;
         }
     }
 }

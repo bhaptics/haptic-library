@@ -7,14 +7,13 @@ namespace Bhaptics.Tact.Unity
 {
     public class VisualFeedback : MonoBehaviour
     {
-        public Pos devicePos = Pos.Head;
+        public HapticClipPositionType devicePos = HapticClipPositionType.Head;
         public Transform motorContainer;
         public Gradient motorFeedbackGradient;
 
 
         private Transform[] motors;
-        private float motorScaleMultiplier = 1.5f;
-
+        private float motorScaleOffset = 0.5f;
 
 
 
@@ -50,30 +49,7 @@ namespace Bhaptics.Tact.Unity
 
         public void UpdateFeedback(HapticFeedback feedback)
         {
-            if (motors == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < motors.Length; i++)
-            {
-                var motor = motors[i];
-
-                if (motor == null)
-                {
-                    return;
-                }
-                var scale = feedback.Values[i] / 100f;
-
-                motor.transform.localScale = Vector3.one * scale * motorScaleMultiplier;
-
-                var motorImage = motor.GetComponent<Image>();
-
-                if (motorImage != null)
-                {
-                    motorImage.color = motorFeedbackGradient.Evaluate(scale);
-                }
-            }
+            UpdateFeedback(System.Array.ConvertAll(feedback.Values, System.Convert.ToInt32));
         }
 
         public void UpdateFeedback(int[] feedbackValues)
@@ -91,15 +67,20 @@ namespace Bhaptics.Tact.Unity
                     return;
                 }
 
-                var scale = feedbackValues[i] / 100f;
+                var intensity = feedbackValues[i] * 0.01f;
 
-                motor.transform.localScale = Vector3.one * scale * motorScaleMultiplier;
+                if (intensity > 0f)
+                {
+                    intensity = intensity + motorScaleOffset;
+                }
+
+                motor.transform.localScale = Vector3.one * intensity;
 
                 var motorImage = motor.GetComponent<Image>();
 
                 if (motorImage != null)
                 {
-                    motorImage.color = motorFeedbackGradient.Evaluate(scale);
+                    motorImage.color = motorFeedbackGradient.Evaluate(intensity);
                 }
             }
         }

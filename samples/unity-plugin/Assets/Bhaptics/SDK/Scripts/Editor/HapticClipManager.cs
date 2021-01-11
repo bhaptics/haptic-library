@@ -11,34 +11,34 @@ namespace Bhaptics.Tact.Unity
     public class HapticClipManager : ScriptableObject
     {
 
-        private static HapticClipType GetMappedDeviceType(string clipType)
+        private static HapticDeviceType GetMappedDeviceType(string clipType)
         {
             if (clipType == "")
             {
-                return HapticClipType.None;
+                return HapticDeviceType.None;
             }
             switch (clipType)
             {
                 case BhapticsUtils.TypeHead:
                 case BhapticsUtils.TypeTactal:
-                    return HapticClipType.Tactal;
+                    return HapticDeviceType.Tactal;
 
                 case BhapticsUtils.TypeVest:
                 case BhapticsUtils.TypeTactot:
-                    return HapticClipType.Tactot;
+                    return HapticDeviceType.TactSuit;
 
                 case BhapticsUtils.TypeTactosy:
                 case BhapticsUtils.TypeTactosy2:
-                    return HapticClipType.Tactosy_arms;
+                    return HapticDeviceType.Tactosy_arms;
 
                 case BhapticsUtils.TypeHand:
-                    return HapticClipType.Tactosy_hands;
+                    return HapticDeviceType.Tactosy_hands;
 
                 case BhapticsUtils.TypeFoot:
-                    return HapticClipType.Tactosy_feet;
+                    return HapticDeviceType.Tactosy_feet;
 
                 default:
-                    return HapticClipType.None;
+                    return HapticDeviceType.None;
             }
         }
 
@@ -84,22 +84,22 @@ namespace Bhaptics.Tact.Unity
                 }
                 clipPath = ConvertToAssetPathFromAbsolutePath(clipPath);
 
-                HapticClipType type = GetMappedDeviceType(file.Project.Layout.Type);
+                HapticDeviceType type = GetMappedDeviceType(file.Project.Layout.Type);
 
                 FileHapticClip tactClip;
-                if (type == HapticClipType.Tactot)
+                if (type == HapticDeviceType.TactSuit)
                 {
                     tactClip = CreateInstance<VestHapticClip>();
-                } else if (type == HapticClipType.Tactal)
+                } else if (type == HapticDeviceType.Tactal)
                 {
                     tactClip = CreateInstance<HeadHapticClip>();
-                } else if (type == HapticClipType.Tactosy_arms)
+                } else if (type == HapticDeviceType.Tactosy_arms)
                 {
                     tactClip = CreateInstance<ArmsHapticClip>();
-                } else if (type == HapticClipType.Tactosy_hands)
+                } else if (type == HapticDeviceType.Tactosy_hands)
                 {
                     tactClip = CreateInstance<HandsHapticClip>();
-                }else if (type == HapticClipType.Tactosy_feet)
+                }else if (type == HapticDeviceType.Tactosy_feet)
                 {
                     tactClip = CreateInstance<FeetHapticClip>();
                 }

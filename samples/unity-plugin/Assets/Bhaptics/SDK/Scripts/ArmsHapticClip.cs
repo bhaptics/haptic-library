@@ -1,4 +1,5 @@
-﻿using Bhaptics.Tact;
+﻿using UnityEngine;
+using Bhaptics.Tact;
 using Bhaptics.Tact.Unity;
 
 public class ArmsHapticClip : FileHapticClip
@@ -6,7 +7,8 @@ public class ArmsHapticClip : FileHapticClip
     public bool IsReflect;
 
 
-    public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY)
+
+    public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY, string identifier = "")
     {
         if (!BhapticsManager.Init)
         {
@@ -30,7 +32,7 @@ public class ArmsHapticClip : FileHapticClip
                 hapticPlayer.RegisterTactFileStrReflected(reflectIdentifier, JsonValue);
             }
 
-            hapticPlayer.SubmitRegistered(reflectIdentifier, keyId, new ScaleOption(intensity, duration));
+            hapticPlayer.SubmitRegistered(reflectIdentifier, keyId + identifier, new ScaleOption(intensity, duration));
         }
         else
         {
@@ -39,7 +41,7 @@ public class ArmsHapticClip : FileHapticClip
                 hapticPlayer.RegisterTactFileStr(assetId, JsonValue);
             }
 
-            hapticPlayer.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
+            hapticPlayer.SubmitRegistered(assetId, keyId + identifier, new ScaleOption(intensity, duration));
         }
     }
 

@@ -6,11 +6,10 @@ namespace Bhaptics.Tact.Unity
 {
     public class HapticSource : MonoBehaviour
     {
+        public HapticClip clip;
         public bool playOnAwake = false;
         public bool loop = false;
         public float loopDelaySeconds = 0f;
-        public HapticClip clip;
-
 
 
         private Coroutine currentCoroutine, loopCoroutine;
@@ -23,11 +22,6 @@ namespace Bhaptics.Tact.Unity
 
         void Awake()
         {
-            if (clip != null)
-            {
-                clip.keyId = Guid.NewGuid().ToString();
-            }
-
             BhapticsManager.GetHaptic();
 
             var findObjectOfType = FindObjectOfType<Bhaptics_Setup>();
@@ -165,7 +159,7 @@ namespace Bhaptics.Tact.Unity
                 clipDuration = (clip as SimpleHapticClip).TimeMillis;
             }
 
-            WaitForSeconds duration = new WaitForSeconds(clipDuration * 0.95f);
+            WaitForSeconds duration = new WaitForSeconds(clipDuration * 0.001f * 0.95f);
             while (isLooping)
             {
                 yield return new WaitForSeconds(loopDelaySeconds);
@@ -174,5 +168,4 @@ namespace Bhaptics.Tact.Unity
             }
         }
     }
-
 }

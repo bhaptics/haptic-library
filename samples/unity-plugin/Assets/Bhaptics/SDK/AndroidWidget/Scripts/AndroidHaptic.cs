@@ -27,12 +27,24 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        public bool IsActive(PositionType type)
+        public bool IsConnect(PositionType type)
         {
             foreach (var device in deviceList)
             {
-                if (device.Position == type
-                    && device.IsConnected)
+                if (device.Position == type && device.IsConnected)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsConnect(HapticDeviceType type, bool isLeft = true)
+        {
+            foreach (var device in deviceList)
+            {
+                if (device.Position == BhapticsUtils.ToPositionType(type, isLeft) && device.IsConnected)
                 {
                     return true;
                 }

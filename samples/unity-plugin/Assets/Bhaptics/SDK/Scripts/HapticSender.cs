@@ -54,7 +54,6 @@ namespace Bhaptics.Tact.Unity
                 case PositionTag.Body:
                     if (BodyClips != null && BodyClips.Length > 0)
                     {
-                    
                         int randIndex = Random.Range(0, BodyClips.Length);
                         return BodyClips[randIndex];
                     }
@@ -88,9 +87,7 @@ namespace Bhaptics.Tact.Unity
                 return DefaultClips[randIndex];
             }
 
-
             return null;
-
         }
 
         public bool IsPlaying()

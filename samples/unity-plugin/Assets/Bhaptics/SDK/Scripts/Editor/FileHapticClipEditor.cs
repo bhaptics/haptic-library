@@ -9,6 +9,14 @@ namespace Bhaptics.Tact.Unity
     [CustomEditor(typeof(FileHapticClip), true)]
     public class FileHapticClipEditor : Editor
     {
+        FileHapticClip targetScript;
+
+
+        void OnEnable()
+        {
+            targetScript = target as FileHapticClip;
+        }
+
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -29,8 +37,8 @@ namespace Bhaptics.Tact.Unity
 
         protected void ReflectUi()
         {
-            var clipType = (target as FileHapticClip).ClipType;
-            if (clipType == HapticClipType.Tactosy_arms || clipType == HapticClipType.Tactosy_feet || clipType == HapticClipType.Tactosy_hands)
+            var clipType = targetScript.ClipType;
+            if (clipType == HapticDeviceType.Tactosy_arms || clipType == HapticDeviceType.Tactosy_feet || clipType == HapticDeviceType.Tactosy_hands)
             {
                 GUILayout.BeginHorizontal();
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("IsReflect"), new GUIContent("IsReflect"), GUILayout.Width(350f));
@@ -41,17 +49,26 @@ namespace Bhaptics.Tact.Unity
         protected void DefaultPropertyUi()
         {
             GUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("ClipType", GUILayout.Width(100f));
+            EditorGUILayout.LabelField("Clip Type", GUILayout.Width(100f));
 
             var clipTypeSerializedObject = serializedObject.FindProperty("ClipType");
             EditorGUILayout.LabelField(clipTypeSerializedObject.enumNames[clipTypeSerializedObject.enumValueIndex]);
             GUILayout.EndHorizontal();
 
             var originLabelWidth = EditorGUIUtility.labelWidth;
+
+            EditorGUIUtility.labelWidth = 130f;
+            GUI.enabled = false;
+            GUILayout.BeginHorizontal();
+            var temp = targetScript.ClipDurationTime;
+            GUIContent customLabel = new GUIContent("└ Duration Time(ms)");
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("_clipDurationTime"), customLabel, GUILayout.Width(350f));
+            GUILayout.EndHorizontal();
+            GUI.enabled = true;
+
             EditorGUIUtility.labelWidth = 105f;
 
             ReflectUi();
-
 
             GUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Intensity"), GUILayout.Width(350f));
@@ -67,21 +84,20 @@ namespace Bhaptics.Tact.Unity
         protected void PlayUi()
         {
             GUILayout.BeginHorizontal();
-            var tactClip = serializedObject.targetObject as HapticClip;
-            if (tactClip == null)
+            if (targetScript == null)
             {
-                BhapticsLogger.LogInfo("tactClip null");
+                BhapticsLogger.LogInfo("hapticClip null");
                 GUILayout.EndHorizontal();
                 return;
             }
 
             if (GUILayout.Button("Play"))
             {
-                tactClip.Play();
+                targetScript.Play();
             }
             if (GUILayout.Button("Stop"))
             {
-                tactClip.Stop();
+                targetScript.Stop();
             }
             GUILayout.EndHorizontal();
         }
@@ -89,10 +105,9 @@ namespace Bhaptics.Tact.Unity
         protected void ResetUi()
         {
             GUILayout.BeginHorizontal();
-            var tactClip = serializedObject.targetObject as HapticClip;
             if (GUILayout.Button("Reset Values"))
             {
-                tactClip.ResetValues();
+                targetScript.ResetValues();
             }
             GUILayout.EndHorizontal();
         }
@@ -109,13 +124,12 @@ namespace Bhaptics.Tact.Unity
 
         private void SaveAsTactFileFromClip(Object target)
         {
-            var tactClip = target as FileHapticClip;
-            if (tactClip != null)
+            if (targetScript != null)
             {
-                var saveAsPath = EditorUtility.SaveFilePanel("Save as *.tact File", @"\download\", tactClip.name, "tact");
+                var saveAsPath = EditorUtility.SaveFilePanel("Save as *.tact File", @"\download\", targetScript.name, "tact");
                 if (saveAsPath != "")
                 {
-                    File.WriteAllText(saveAsPath, tactClip.JsonValue);
+                    File.WriteAllText(saveAsPath, targetScript.JsonValue);
                 }
             }
         }
@@ -124,9 +138,9 @@ namespace Bhaptics.Tact.Unity
         public static bool OnOpenTactClip(int instanceID, int line)
         {
             var obj = EditorUtility.InstanceIDToObject(instanceID);
-            if (obj is HapticClip)
+            if (obj is FileHapticClip)
             {
-                (obj as HapticClip).Play();
+                (obj as FileHapticClip).Play();
                 return true;
             }
             return false;

@@ -1,76 +1,74 @@
 ﻿using UnityEngine;
 
-
 namespace Bhaptics.Tact.Unity
 {
-    public enum HapticClipType
-    {
-        None,
-        Tactal, Tactot, Tactosy_arms, Tactosy_hands, Tactosy_feet
-    }
-
     public class FileHapticClip : HapticClip
     {
         [Range(0.2f, 5f)] public float Intensity = 1f;
         [Range(0.2f, 5f)] public float Duration = 1f;
 
-        public HapticClipType ClipType;
+        public HapticDeviceType ClipType;
         public string JsonValue;
 
-        private float _clipDutationTime = -1f;
+        [SerializeField] protected int _clipDurationTime = -1;
 
-        public float ClipDurationTime
+        public int ClipDurationTime
         {
             get
             {
-                if (_clipDutationTime <= -1f)
+                if (_clipDurationTime <= -1)
                 {
-                    _clipDutationTime = CalculateClipDutationTime(HapticFeedbackFile.ToHapticFeedbackFile(JsonValue));
-                    return _clipDutationTime;
+                    _clipDurationTime = CalculateClipDutationTime(HapticFeedbackFile.ToHapticFeedbackFile(JsonValue));
+                    return _clipDurationTime;
                 }
-                return _clipDutationTime;
+                return _clipDurationTime;
             }
         }
 
 
 
 
-
+        #region Play method
         public override void Play()
         {
-            Play(Intensity, Duration, 0f, 0f);
+            Play(Intensity, Duration, 0f, 0f, "");
         }
 
-        public override void Play(float intensity)
+        public override void Play(string identifier)
         {
-            Play(intensity, Duration, 0f, 0f);
+            Play(Intensity, Duration, 0f, 0f, identifier);
         }
 
-        public override void Play(float intensity, float duration)
+        public override void Play(float intensity, string identifier = "")
         {
-            Play(intensity, duration, 0f, 0f);
+            Play(intensity, Duration, 0f, 0f, identifier);
         }
 
-        public override void Play(float intensity, float duration, float vestRotationAngleX)
+        public override void Play(float intensity, float duration, string identifier = "")
         {
-            Play(intensity, duration, vestRotationAngleX, 0f);
+            Play(intensity, duration, 0f, 0f, identifier);
         }
 
-        public override void Play(Vector3 contactPos, Collider targetCollider)
+        public override void Play(float intensity, float duration, float vestRotationAngleX, string identifier = "")
         {
-            Play(contactPos, targetCollider.bounds.center, targetCollider.transform.forward, targetCollider.bounds.size.y);
+            Play(intensity, duration, vestRotationAngleX, 0f, identifier);
         }
 
-        public override void Play(Vector3 contactPos, Vector3 targetPos, Vector3 targetForward, float targetHeight)
+        public override void Play(Vector3 contactPos, Collider targetCollider, string identifier = "")
+        {
+            Play(contactPos, targetCollider.bounds.center, targetCollider.transform.forward, targetCollider.bounds.size.y, identifier);
+        }
+
+        public override void Play(Vector3 contactPos, Vector3 targetPos, Vector3 targetForward, float targetHeight, string identifier = "")
         {
             Vector3 targetDir = contactPos - targetPos;
             var angle = BhapticsUtils.Angle(targetDir, targetForward);
             var offsetY = (contactPos.y - targetPos.y) / targetHeight;
 
-            Play(this.Intensity, this.Duration, angle, offsetY);
+            Play(this.Intensity, this.Duration, angle, offsetY, identifier);
         }
 
-        public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY)
+        public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY, string identifier = "")
         {
             if (!BhapticsManager.Init)
             {
@@ -90,30 +88,9 @@ namespace Bhaptics.Tact.Unity
                 hapticPlayer.RegisterTactFileStr(assetId, JsonValue);
             }
 
-            hapticPlayer.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
+            hapticPlayer.SubmitRegistered(assetId, keyId + identifier, new ScaleOption(intensity, duration));
         }
-
-        public override void Stop()
-        {
-            var hapticPlayer = BhapticsManager.GetHaptic();
-
-            if (hapticPlayer != null)
-            {
-                hapticPlayer.TurnOff();
-            }
-        }
-
-        public override bool IsPlaying()
-        {
-            var hapticPlayer = BhapticsManager.GetHaptic();
-
-            if (hapticPlayer == null)
-            {
-                return false;
-            }
-
-            return hapticPlayer.IsPlaying(keyId);
-        }
+        #endregion
 
         public override void ResetValues()
         {
@@ -126,9 +103,9 @@ namespace Bhaptics.Tact.Unity
 
 
 
-        private float CalculateClipDutationTime(HapticFeedbackFile hapticFeedbackFile)
+        private int CalculateClipDutationTime(HapticFeedbackFile hapticFeedbackFile)
         {
-            float res = 0f;
+            int res = 0;
             if (hapticFeedbackFile != null)
             {
                 foreach (var track in hapticFeedbackFile.Project.Tracks)
@@ -143,7 +120,7 @@ namespace Bhaptics.Tact.Unity
                     }
                 }
             }
-            return res * 0.001f;
+            return res;
         }
     }
 }

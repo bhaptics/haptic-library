@@ -4,8 +4,7 @@ using UnityEngine;
 
 namespace Bhaptics.Tact.Unity
 {
-
-    [CreateAssetMenu(fileName = "HapticClip", menuName = "Bhaptics/Create Simple HapticClip")]
+    [CreateAssetMenu(fileName = "SimpleHapticClip", menuName = "Bhaptics/Create Simple HapticClip")]
     public class SimpleHapticClip : HapticClip
     {
         private static readonly Point[] DefaultPoints =
@@ -13,10 +12,9 @@ namespace Bhaptics.Tact.Unity
             new Point(0.5f, 0.5f, 100)
         };
 
+        [SerializeField] private HapticClipPositionType Position = HapticClipPositionType.VestFront;
 
-        [SerializeField] private Pos Position = Pos.VestFront;
-
-        [SerializeField] private FeedbackType Mode = FeedbackType.DotMode;
+        [SerializeField] private SimpleHapticType Mode = SimpleHapticType.DotMode;
 
         [SerializeField] private int[] DotPoints = new int[20];
 
@@ -24,15 +22,11 @@ namespace Bhaptics.Tact.Unity
 
         [Range(20, 10000)] public int TimeMillis = 1000;
 
-        public override void ResetValues()
-        {
-            base.ResetValues();
 
-            DotPoints = new int[20];
-            Points = DefaultPoints;
-        }
 
-        public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY)
+
+
+        public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY, string identifier = "")
         {
             if (!BhapticsManager.Init)
             {
@@ -47,15 +41,30 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            if (Mode == FeedbackType.DotMode)
+            if (Mode == SimpleHapticType.DotMode)
             {
-                hapticPlayer.Submit(keyId, BhapticsUtils.ToPositionType(Position), Convert(DotPoints), TimeMillis);
+                hapticPlayer.Submit(keyId + identifier, BhapticsUtils.ToPositionType(Position), Convert(DotPoints), TimeMillis);
             }
             else
             {
-                hapticPlayer.Submit(keyId, BhapticsUtils.ToPositionType(Position), Convert(Points), TimeMillis);
+                hapticPlayer.Submit(keyId + identifier, BhapticsUtils.ToPositionType(Position), Convert(Points), TimeMillis);
             }
         }
+
+        public override void ResetValues()
+        {
+            base.ResetValues();
+
+            DotPoints = new int[20];
+
+            Points = DefaultPoints;
+        }
+
+
+
+
+
+
 
         private static List<DotPoint> Convert(int[] points)
         {
@@ -64,6 +73,7 @@ namespace Bhaptics.Tact.Unity
             for (var i = 0; i < points.Length; i++)
             {
                 var p = points[i];
+
                 if (p > 0)
                 {
                     result.Add(new DotPoint(i, p));
@@ -103,23 +113,9 @@ namespace Bhaptics.Tact.Unity
     }
 
     [Serializable]
-    public enum FeedbackType
+    public enum SimpleHapticType
     {
         DotMode = 1,
         PathMode = 2
-    }
-
-    [Serializable]
-    public enum Pos
-    {
-        VestFront,
-        VestBack,
-        Head,
-        RightForearm,
-        LeftForearm,
-        LeftHand,
-        RightHand,
-        LeftFoot,
-        RightFoot
     }
 }

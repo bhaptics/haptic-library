@@ -227,31 +227,56 @@ namespace Bhaptics.Tact.Unity
             return project;
         }
 
-        public static PositionType ToPositionType(Pos pos)
+        public static PositionType ToPositionType(HapticClipPositionType pos)
         {
             switch (pos)
             {
-                case Pos.Head:
+                case HapticClipPositionType.Head:
                     return PositionType.Head;
-                case Pos.VestFront:
+                case HapticClipPositionType.VestFront:
                     return PositionType.VestFront;
-                case Pos.VestBack:
+                case HapticClipPositionType.VestBack:
                     return PositionType.VestBack;
-                case Pos.LeftHand:
+                case HapticClipPositionType.LeftHand:
                     return PositionType.HandL;
-                case Pos.RightHand:
+                case HapticClipPositionType.RightHand:
                     return PositionType.HandR;
-                case Pos.LeftFoot:
+                case HapticClipPositionType.LeftFoot:
                     return PositionType.FootL;
-                case Pos.RightFoot:
+                case HapticClipPositionType.RightFoot:
                     return PositionType.FootR;
-                case Pos.RightForearm:
+                case HapticClipPositionType.RightForearm:
                     return PositionType.ForearmR;
-                case Pos.LeftForearm:
+                case HapticClipPositionType.LeftForearm:
                     return PositionType.ForearmL;
             }
 
-            return PositionType.ForearmR;
+            return PositionType.Head;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="isLeft">Value used for devices with left and right sides.(Default: Left)</param>
+        /// <returns></returns>
+        public static PositionType ToPositionType(HapticDeviceType pos, bool isLeft = true)
+        {
+            switch (pos)
+            {
+                case HapticDeviceType.Tactal:
+                    return PositionType.Head;
+                case HapticDeviceType.TactSuit:
+                    return PositionType.Vest;
+                case HapticDeviceType.Tactosy_arms:
+                    return isLeft ? PositionType.ForearmL : PositionType.ForearmR;
+                case HapticDeviceType.Tactosy_feet:
+                    return isLeft ? PositionType.FootL : PositionType.FootR;
+                case HapticDeviceType.Tactosy_hands:
+                    return isLeft ? PositionType.HandL : PositionType.HandR;
+            }
+
+            return PositionType.Head;
         }
 
         public const string TypeHead = "Head";

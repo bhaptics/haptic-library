@@ -76,6 +76,7 @@ namespace Bhaptics.Tact.Unity
 
             BhapticsAndroidManager.AddRefresh(Refresh);
         }
+
         private void OnDisable()
         {
             if(scanCoroutine != null)
@@ -149,6 +150,7 @@ namespace Bhaptics.Tact.Unity
             hideTimer = autoHideTime;
             scanCoroutine = StartCoroutine(LoopScan());
         }
+
         public void HideWidget()
         {
             uiContainer.SetActive(false);
@@ -159,6 +161,7 @@ namespace Bhaptics.Tact.Unity
                 scanCoroutine = null;
             }
         } 
+
         public void ButtonClickSound()
         {
             buttonClickAudio.Play();

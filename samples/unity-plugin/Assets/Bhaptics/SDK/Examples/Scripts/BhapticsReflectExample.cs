@@ -6,7 +6,7 @@ using Bhaptics.Tact.Unity;
 
 public class BhapticsReflectExample : MonoBehaviour
 {
-	public ArmsHapticClip armsHapticClip;
+    public ArmsHapticClip armsHapticClip;
 
 
     private bool isReflect;

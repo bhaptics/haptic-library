@@ -9,11 +9,11 @@ public class BhapticsHapticClipExample : MonoBehaviour
     public HapticClip hapticClip;
 
 
-    
-    
-    
-    
-    
+
+
+
+
+
     public void Play()
     {
         if (hapticClip != null)

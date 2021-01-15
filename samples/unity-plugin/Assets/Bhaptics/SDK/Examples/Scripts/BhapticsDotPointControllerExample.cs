@@ -26,14 +26,14 @@ public class BhapticsDotPointControllerExample : MonoBehaviour
 
     void Update()
     {
-        var hapticPlayer = BhapticsManager.GetHaptic();
+        var haptic = BhapticsManager.GetHaptic();
 
-        if (hapticPlayer == null)
+        if (haptic == null)
         {
             return;
         }
 
-        hapticPlayer.Submit(key, BhapticsUtils.ToPositionType(clipPositionType), dotPointList, duration);
+        haptic.Submit(key, BhapticsUtils.ToPositionType(clipPositionType), dotPointList, duration);
     }
 
 

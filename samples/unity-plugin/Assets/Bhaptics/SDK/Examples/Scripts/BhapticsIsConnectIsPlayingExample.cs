@@ -32,20 +32,20 @@ public class BhapticsIsConnectIsPlayingExample : MonoBehaviour
 
     void Update()
     {
-        var hapticPlayer = BhapticsManager.GetHaptic();
+        var haptic = BhapticsManager.GetHaptic();
 
-        if (hapticPlayer == null)
+        if (haptic == null)
         {
             return;
         }
 
         if (isConnectText != null)
         {
-            isConnectText.text = hapticPlayer.IsConnect(HapticDeviceType.Tactal) + "\n" +
-                                hapticPlayer.IsConnect(HapticDeviceType.TactSuit) + "\n" +
-                                hapticPlayer.IsConnect(HapticDeviceType.Tactosy_arms, true) + "/" + hapticPlayer.IsConnect(HapticDeviceType.Tactosy_arms, false) + "\n" +
-                                hapticPlayer.IsConnect(HapticDeviceType.Tactosy_hands, true) + "/" + hapticPlayer.IsConnect(HapticDeviceType.Tactosy_hands, false) + "\n" +
-                                hapticPlayer.IsConnect(HapticDeviceType.Tactosy_feet, true) + "/" + hapticPlayer.IsConnect(HapticDeviceType.Tactosy_feet, false);
+            isConnectText.text = haptic.IsConnect(HapticDeviceType.Tactal) + "\n" +
+                                haptic.IsConnect(HapticDeviceType.TactSuit) + "\n" +
+                                haptic.IsConnect(HapticDeviceType.Tactosy_arms, true) + "/" + haptic.IsConnect(HapticDeviceType.Tactosy_arms, false) + "\n" +
+                                haptic.IsConnect(HapticDeviceType.Tactosy_hands, true) + "/" + haptic.IsConnect(HapticDeviceType.Tactosy_hands, false) + "\n" +
+                                haptic.IsConnect(HapticDeviceType.Tactosy_feet, true) + "/" + haptic.IsConnect(HapticDeviceType.Tactosy_feet, false);
         }
 
         if (isPlayingText != null)

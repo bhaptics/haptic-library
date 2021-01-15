@@ -76,19 +76,19 @@ namespace Bhaptics.Tact.Unity
                 //return;
             }
 
-            var hapticPlayer = BhapticsManager.GetHaptic();
+            var haptic = BhapticsManager.GetHaptic();
 
-            if (hapticPlayer == null)
+            if (haptic == null)
             {
                 return;
             }
 
-            if (!hapticPlayer.IsFeedbackRegistered(assetId))
+            if (!haptic.IsFeedbackRegistered(assetId))
             {
-                hapticPlayer.RegisterTactFileStr(assetId, JsonValue);
+                haptic.RegisterTactFileStr(assetId, JsonValue);
             }
 
-            hapticPlayer.SubmitRegistered(assetId, keyId + identifier, new ScaleOption(intensity, duration));
+            haptic.SubmitRegistered(assetId, keyId + identifier, new ScaleOption(intensity, duration));
         }
         #endregion
 

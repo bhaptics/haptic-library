@@ -66,7 +66,6 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
 
 
 
-
     public void RequestPermission()
     {
         if (!AndroidPermissionsManager.CheckBluetoothPermissions())

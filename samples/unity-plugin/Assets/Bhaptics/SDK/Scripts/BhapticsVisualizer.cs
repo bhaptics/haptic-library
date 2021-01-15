@@ -15,16 +15,16 @@ public class BhapticsVisualizer : MonoBehaviour
 
     void Update()
     {
-        var hapticPlayer = BhapticsManager.GetHaptic();
+        var haptic = BhapticsManager.GetHaptic();
 
-        if (hapticPlayer == null)
+        if (haptic == null)
         {
             return;
         }
 
         foreach (var vis in visualFeedback)
         {
-            var feedback = hapticPlayer.GetCurrentFeedback(BhapticsUtils.ToPositionType(vis.devicePos));
+            var feedback = haptic.GetCurrentFeedback(BhapticsUtils.ToPositionType(vis.devicePos));
     
             vis.UpdateFeedback(feedback);
         }

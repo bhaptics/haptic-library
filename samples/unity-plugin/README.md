@@ -18,7 +18,7 @@
 * [Getting Started Guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Getting-Started)
 * [How to set up in the Oculus Quest](https://github.com/bhaptics/haptic-library/wiki/Unity-Oculus-Quest)
 * [Advanced Guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Advanced-Guide)
-* [Change log](./CHANGELOG.md)
+* [FAQ](https://github.com/bhaptics/haptic-library/wiki/FAQ-(Unity))
 * [Migration guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide)
 
 

@@ -34,20 +34,20 @@ namespace Bhaptics.Tact.Unity
                 //return;
             }
 
-            var hapticPlayer = BhapticsManager.GetHaptic();
+            var haptic = BhapticsManager.GetHaptic();
 
-            if (hapticPlayer == null)
+            if (haptic == null)
             {
                 return;
             }
 
             if (Mode == SimpleHapticType.DotMode)
             {
-                hapticPlayer.Submit(keyId + identifier, BhapticsUtils.ToPositionType(Position), Convert(DotPoints), TimeMillis);
+                haptic.Submit(keyId + identifier, BhapticsUtils.ToPositionType(Position), Convert(DotPoints), TimeMillis);
             }
             else
             {
-                hapticPlayer.Submit(keyId + identifier, BhapticsUtils.ToPositionType(Position), Convert(Points), TimeMillis);
+                haptic.Submit(keyId + identifier, BhapticsUtils.ToPositionType(Position), Convert(Points), TimeMillis);
             }
         }
 

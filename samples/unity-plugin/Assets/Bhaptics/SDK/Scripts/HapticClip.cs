@@ -156,11 +156,11 @@ namespace Bhaptics.Tact.Unity
 
         public virtual void Stop()
         {
-            var hapticPlayer = BhapticsManager.GetHaptic();
+            var haptic = BhapticsManager.GetHaptic();
 
-            if (hapticPlayer != null)
+            if (haptic != null)
             {
-                hapticPlayer.TurnOff();
+                haptic.TurnOff();
             }
         }
 
@@ -170,24 +170,24 @@ namespace Bhaptics.Tact.Unity
         /// <param name="identifier">Use when stopping haptic feedback independently.</param>
         public virtual void Stop(string identifier)
         {
-            var hapticPlayer = BhapticsManager.GetHaptic();
+            var haptic = BhapticsManager.GetHaptic();
 
-            if (hapticPlayer != null)
+            if (haptic != null)
             {
-                hapticPlayer.TurnOff(keyId + identifier);
+                haptic.TurnOff(keyId + identifier);
             }
         }
 
         public virtual bool IsPlaying()
         {
-            var hapticPlayer = BhapticsManager.GetHaptic();
+            var haptic = BhapticsManager.GetHaptic();
 
-            if (hapticPlayer == null)
+            if (haptic == null)
             {
                 return false;
             }
 
-            return hapticPlayer.IsPlaying(keyId);
+            return haptic.IsPlaying(keyId);
         }
 
         /// <summary>
@@ -197,19 +197,26 @@ namespace Bhaptics.Tact.Unity
         /// <returns></returns>
         public virtual bool IsPlaying(string identifier)
         {
-            var hapticPlayer = BhapticsManager.GetHaptic();
+            var haptic = BhapticsManager.GetHaptic();
 
-            if (hapticPlayer == null)
+            if (haptic == null)
             {
                 return false;
             }
 
-            return hapticPlayer.IsPlaying(keyId + identifier);
+            return haptic.IsPlaying(keyId + identifier);
         }
 
         public virtual void ResetValues()
         {
 
+        }
+
+
+
+        public string GetAssetID()
+        {
+            return assetId;
         }
     }
 }

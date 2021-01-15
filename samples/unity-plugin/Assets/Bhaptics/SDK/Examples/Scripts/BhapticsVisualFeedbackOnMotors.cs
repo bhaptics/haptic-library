@@ -26,11 +26,11 @@ public class BhapticsVisualFeedbackOnMotors : MonoBehaviour
 
     void Update()
     {
-        var hapticPlayer = BhapticsManager.GetHaptic();
+        var haptic = BhapticsManager.GetHaptic();
 
-        if (hapticPlayer != null)
+        if (haptic != null)
         {
-            var feedback = hapticPlayer.GetCurrentFeedback(tactPositionType);
+            var feedback = haptic.GetCurrentFeedback(tactPositionType);
 
             ShowFeedbackEffect(feedback);
         }

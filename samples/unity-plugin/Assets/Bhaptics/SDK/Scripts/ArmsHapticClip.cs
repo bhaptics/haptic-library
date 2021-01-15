@@ -1,48 +1,56 @@
-﻿using Bhaptics.Tact;
-using Bhaptics.Tact.Unity;
+﻿using UnityEngine;
 
-public class ArmsHapticClip : FileHapticClip
+
+namespace Bhaptics.Tact.Unity
 {
-    public bool IsReflect;
-
-
-    public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY)
+    public class ArmsHapticClip : FileHapticClip
     {
-        if (!BhapticsManager.Init)
+        public bool IsReflect;
+
+
+
+        public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY, string identifier = "")
         {
-            BhapticsManager.Initialize();
-            return;
-        }
-
-        var haptic = BhapticsManager.GetHaptic();
-
-        if (IsReflect)
-        {
-            var reflectIdentifier = assetId + "Reflect";
-
-            if (!haptic.IsFeedbackRegistered(reflectIdentifier))
+            if (!BhapticsManager.Init)
             {
-                haptic.RegisterTactFileStrReflected(reflectIdentifier, JsonValue);
+                BhapticsManager.Initialize();
+                //return;
             }
 
-            haptic.SubmitRegistered(reflectIdentifier, keyId, new ScaleOption(intensity, duration));
-        }
-        else
-        {
-            if (!haptic.IsFeedbackRegistered(assetId))
+            var haptic = BhapticsManager.GetHaptic();
+
+            if (haptic == null)
             {
-                haptic.RegisterTactFileStr(assetId, JsonValue);
+                return;
             }
 
-            haptic.SubmitRegistered(assetId, keyId, new ScaleOption(intensity, duration));
+            if (IsReflect)
+            {
+                var reflectIdentifier = assetId + "Reflect";
+
+                if (!haptic.IsFeedbackRegistered(reflectIdentifier))
+                {
+                    haptic.RegisterTactFileStrReflected(reflectIdentifier, JsonValue);
+                }
+
+                haptic.SubmitRegistered(reflectIdentifier, keyId + identifier, new ScaleOption(intensity, duration));
+            }
+            else
+            {
+                if (!haptic.IsFeedbackRegistered(assetId))
+                {
+                    haptic.RegisterTactFileStr(assetId, JsonValue);
+                }
+
+                haptic.SubmitRegistered(assetId, keyId + identifier, new ScaleOption(intensity, duration));
+            }
         }
-    }
 
-    public override void ResetValues()
-    {
-        base.ResetValues();
-        IsReflect = false;
-    }
+        public override void ResetValues()
+        {
+            base.ResetValues();
+            IsReflect = false;
+        }
 
+    }
 }
-

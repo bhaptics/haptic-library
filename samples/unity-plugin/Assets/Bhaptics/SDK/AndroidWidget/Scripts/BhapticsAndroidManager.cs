@@ -10,13 +10,15 @@ namespace Bhaptics.Tact.Unity
     {
         private static BhapticsAndroidManager Instance;
 
-        [HideInInspector]
-        public bool alwaysScanDisconnectedDevice;
+        [HideInInspector] public bool alwaysScanDisconnectedDevice;
 
-        
         private List<UnityAction> refreshActions = new List<UnityAction>();
 
-        private void Awake()
+
+
+
+
+        void Awake()
         {
             if (Instance != null)
             {
@@ -28,7 +30,7 @@ namespace Bhaptics.Tact.Unity
             name = "[bHapticsAndroidManager]";
         }
 
-        private void Start()
+        void Start()
         {
 #if UNITY_ANDROID
             if (Application.platform != RuntimePlatform.Android)
@@ -41,20 +43,28 @@ namespace Bhaptics.Tact.Unity
 #endif
         }
 
-        private void OnEnable()
+        void OnEnable()
         {
             if (alwaysScanDisconnectedDevice)
             {
                 InvokeRepeating("CheckIfNeededToScan", 0.5f, 0.5f);
             }
         }
-        private void OnDisable()
+
+        void OnDisable()
         {
             if (alwaysScanDisconnectedDevice)
             {
                 CancelInvoke();
             }
         }
+
+
+
+
+
+
+
 
         public static void ForceUpdateDeviceList()
         {
@@ -71,7 +81,6 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-
         private static void OnUpdateDevicesChange(List<HapticDevice> devices)
         {
             var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
@@ -81,6 +90,7 @@ namespace Bhaptics.Tact.Unity
             }
             androidHapticPlayer.UpdateDeviceList(devices);
         }
+
         private static void RefreshDeviceListUi()
         {
             var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
@@ -103,6 +113,38 @@ namespace Bhaptics.Tact.Unity
 
         #region Connection Related Functions
 
+        public static void Pair(PositionType deviceType)
+        {
+            var devices = GetDevices();
+            int rssi = -9999;
+            int index = -1;
+
+            for (int i = 0; i < devices.Count; i++)
+            {
+                if (AndroidUtils.CanPair(devices[i], deviceType))
+                {
+                    if (rssi < devices[i].Rssi)
+                    {
+                        rssi = devices[i].Rssi;
+                        index = i;
+                    }
+                }
+            }
+
+            if (index != -1)
+            {
+
+                if (deviceType == PositionType.Vest)
+                {
+                    Pair(devices[index].Address);
+                }
+                else
+                {
+                    Pair(devices[index].Address, deviceType.ToString());
+                }
+            }
+        }
+
         public static void Pair(string address, string position = "")
         {
             var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
@@ -111,6 +153,18 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
             androidHapticPlayer.Pair(address, position);
+        }
+
+        public static void Unpair(PositionType deviceType)
+        {
+            var devices = GetPairedDevices(deviceType);
+            for (int i = 0; i < devices.Count; ++i)
+            {
+                if (devices[i].Position == deviceType)
+                {
+                    Unpair(devices[i].Address);
+                }
+            }
         }
 
         public static void Unpair(string address)
@@ -147,7 +201,6 @@ namespace Bhaptics.Tact.Unity
                 androidHapticPlayer.StartScan();
             }
         }
-
 
         public static void ScanStop()
         {
@@ -203,8 +256,6 @@ namespace Bhaptics.Tact.Unity
 
             return androidHapticPlayer.IsScanning();
         }
-
-
 
         public static bool CanPairDevice(PositionType position)
         {
@@ -355,6 +406,7 @@ namespace Bhaptics.Tact.Unity
         {
             // nothing to do
         }
+
         public void OnDisconnect(string address)
         {
             // nothing to do
@@ -375,6 +427,7 @@ namespace Bhaptics.Tact.Unity
                 Instance.refreshActions.Add(call);
             }
         }
+
         public static void RemoveRefresh(UnityAction call)
         {
             if (Instance == null)
@@ -388,6 +441,7 @@ namespace Bhaptics.Tact.Unity
                 Instance.refreshActions.RemoveAt(index);
             }
         }
+
         private int GetListenerIndex(UnityAction call)
         {
             for (int i = 0; i < Instance.refreshActions.Count; i++)
@@ -399,6 +453,7 @@ namespace Bhaptics.Tact.Unity
             }
             return -1;
         }
+
         private void InvokeRefresh()
         {
             for (int i = 0; i < refreshActions.Count; i++)
@@ -420,7 +475,4 @@ namespace Bhaptics.Tact.Unity
         }
 #endregion
     }
-
-
-
 }

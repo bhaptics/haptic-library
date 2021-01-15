@@ -1,3 +1,12 @@
+## Unity plugin 1.5.2(Jan 15th, 2021.)
+* Update: Change class & enum names
+* Update: Update ui and Add more example scenes
+* Fix: Fixes minor issues
+
+## Unity plugin 1.5.1(Sep 4th, 2020.)
+* Update: Update BhapticsOculusExample unitypackage.
+* Fix: Fixes minor issues
+
 ## Unity plugin 1.5.0(Jul 14th, 2020.)
 * Update: use tact files as asset files. 
 * Clean up: Clean up the codes. 

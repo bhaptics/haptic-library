@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Bhaptics.Tact.Unity;
+﻿using Bhaptics.Tact.Unity;
 using UnityEngine;
 
 public class Bhaptics_Setup : MonoBehaviour
@@ -33,7 +31,6 @@ public class Bhaptics_Setup : MonoBehaviour
 
     private void Initialize()
     {
-
         BhapticsManager.Initialize();
 
         if (Config == null)

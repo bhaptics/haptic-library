@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Bhaptics.Tact;
-using Bhaptics.Tact.Unity;
+﻿using Bhaptics.Tact.Unity;
 using UnityEngine;
 
-public class BhapticsVisualizer : MonoBehaviour {
-
+public class BhapticsVisualizer : MonoBehaviour
+{
     private VisualFeedback[] visualFeedback;
+
+
+
 
     void Awake()
     {
@@ -17,9 +15,17 @@ public class BhapticsVisualizer : MonoBehaviour {
 
     void Update()
     {
+        var haptic = BhapticsManager.GetHaptic();
+
+        if (haptic == null)
+        {
+            return;
+        }
+
         foreach (var vis in visualFeedback)
         {
-            var feedback = BhapticsManager.GetHaptic().GetCurrentFeedback(vis.Position);
+            var feedback = haptic.GetCurrentFeedback(BhapticsUtils.ToPositionType(vis.devicePos));
+    
             vis.UpdateFeedback(feedback);
         }
     }

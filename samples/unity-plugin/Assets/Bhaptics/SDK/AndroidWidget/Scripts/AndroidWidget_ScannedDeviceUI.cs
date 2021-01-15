@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 namespace Bhaptics.Tact.Unity
 {
-
     public class AndroidWidget_ScannedDeviceUI : MonoBehaviour
     { 
         [Header("[UI]")]

@@ -1,6 +1,7 @@
-﻿using Bhaptics.Tact;
-using Bhaptics.Tact.Unity;
-
-public class FeetHapticClip : ArmsHapticClip
-{ }
-
+﻿
+namespace Bhaptics.Tact.Unity
+{
+    public class FeetHapticClip : ArmsHapticClip
+    {
+    }
+}

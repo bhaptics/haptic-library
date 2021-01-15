@@ -6,7 +6,7 @@ namespace Bhaptics.Tact.Unity
 {
     public class AndroidHaptic : IHaptic
     {
-        private static AndroidJavaObject hapticPlayer;
+        private static AndroidJavaObject androidJavaObject;
 
         private List<HapticDevice> deviceList = new List<HapticDevice>();
 
@@ -18,7 +18,7 @@ namespace Bhaptics.Tact.Unity
         {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            hapticPlayer = new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity);
+            androidJavaObject = new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity);
             TurnOnVisualization();
             if (AndroidPermissionsManager.CheckBluetoothPermissions())
             {
@@ -27,12 +27,24 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        public bool IsActive(PositionType type)
+        public bool IsConnect(PositionType type)
         {
             foreach (var device in deviceList)
             {
-                if (device.Position == type
-                    && device.IsConnected)
+                if (device.Position == type && device.IsConnected)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsConnect(HapticDeviceType type, bool isLeft = true)
+        {
+            foreach (var device in deviceList)
+            {
+                if (device.Position == BhapticsUtils.ToPositionType(type, isLeft) && device.IsConnected)
                 {
                     return true;
                 }
@@ -174,10 +186,10 @@ namespace Bhaptics.Tact.Unity
 
         public void Dispose()
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                hapticPlayer.Call("quit");
-                hapticPlayer = null;
+                androidJavaObject.Call("quit");
+                androidJavaObject = null;
             }
         }
 
@@ -201,11 +213,11 @@ namespace Bhaptics.Tact.Unity
 
             var request = PlayerRequest.Create();
             request.Submit.Add(submitRequest);
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
                 try
                 {
-                    hapticPlayer.Call("submit", request.ToJsonObject().ToString());
+                    androidJavaObject.Call("submit", request.ToJsonObject().ToString());
                 }
                 catch (Exception e)
                 {
@@ -229,13 +241,13 @@ namespace Bhaptics.Tact.Unity
             var registerRequests = new List<RegisterRequest> {req};
             var request = PlayerRequest.Create();
             request.Register = registerRequests;
-            if (hapticPlayer == null)
+            if (androidJavaObject == null)
             {
                 return;
             }
 
 
-            hapticPlayer.Call("register", request.ToJsonObject().ToString());
+            androidJavaObject.Call("register", request.ToJsonObject().ToString());
         }
 
         public int[] GetCurrentFeedback(PositionType pos)
@@ -254,7 +266,7 @@ namespace Bhaptics.Tact.Unity
         {
             if (force)
             {
-                string result = hapticPlayer.Call<string>("getDeviceList");
+                string result = androidJavaObject.Call<string>("getDeviceList");
                 deviceList = AndroidUtils.ConvertToBhapticsDevices(result);
             }
 
@@ -295,58 +307,58 @@ namespace Bhaptics.Tact.Unity
 
         public void Pair(string address, string position)
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
                 if (position != "")
                 {
-                    hapticPlayer.Call("pair", address, position);
+                    androidJavaObject.Call("pair", address, position);
                 }
                 else
                 {
-                    hapticPlayer.Call("pair", address);
+                    androidJavaObject.Call("pair", address);
                 }
             }
         }
 
         public void Unpair(string address)
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                hapticPlayer.Call("unpair", address);
+                androidJavaObject.Call("unpair", address);
             }
         }
 
         public void UnpairAll()
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                hapticPlayer.Call("unpairAll");
+                androidJavaObject.Call("unpairAll");
             }
         }
 
 
         public void StartScan()
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
                 BhapticsLogger.LogDebug("StartScan()");
-                hapticPlayer.Call("scan");
+                androidJavaObject.Call("scan");
             }
         }
 
         public void StopScan()
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                hapticPlayer.Call("stopScan");
+                androidJavaObject.Call("stopScan");
             }
         }
 
         public bool IsScanning()
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                return hapticPlayer.Call<bool>("isScanning");
+                return androidJavaObject.Call<bool>("isScanning");
             }
 
             return false;
@@ -354,33 +366,33 @@ namespace Bhaptics.Tact.Unity
 
         public void TogglePosition(string address)
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                hapticPlayer.Call("togglePosition", address);
+                androidJavaObject.Call("togglePosition", address);
             }
         }
 
         public void TurnOnVisualization()
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                hapticPlayer.Call("turnOnVisualization");
+                androidJavaObject.Call("turnOnVisualization");
             }
         }
 
         public void PingAll()
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                hapticPlayer.Call("pingAll");
+                androidJavaObject.Call("pingAll");
             }
         }
 
         public void Ping(string address)
         {
-            if (hapticPlayer != null)
+            if (androidJavaObject != null)
             {
-                hapticPlayer.Call("ping", address);
+                androidJavaObject.Call("ping", address);
             }
         }
     }

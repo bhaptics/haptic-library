@@ -4,9 +4,10 @@ using CustomWebSocketSharp;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BhapticsFpsView : MonoBehaviour {
+public class BhapticsFpsView : MonoBehaviour
+{
 
-    private Text fpsText;  
+    private Text fpsText;
 
     void Awake()
     {

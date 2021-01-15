@@ -1,98 +1,64 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Bhaptics.Tact.Unity
 {
     public class VisualFeedback : MonoBehaviour
     {
-        public PositionType Position = PositionType.Left;
-        [SerializeField] private GameObject motorPrefab;
-        [SerializeField] private int column, row;
-        [SerializeField] private float intervalDistance = 0.4f;
+        public HapticClipPositionType devicePos = HapticClipPositionType.Head;
+        public Transform motorContainer;
+        public Gradient motorFeedbackGradient;
 
 
-
-        private GameObject[] motors;
-
-
-
-        [SerializeField] private float offsetX;
-        [SerializeField] private float offsetY;
-
+        private Transform[] motors;
+        private float motorScaleOffset = 0.5f;
 
 
 
         void Start()
         {
-            if (motorPrefab != null && column > 0 && row > 0)
+            if (motorContainer == null)
             {
-                float c_distance, r_distance;
-                c_distance = intervalDistance;
-                r_distance = intervalDistance;
-                if (gameObject.tag == "Racket")
-                {
-                    c_distance += 0.2f;
-                }
-                else if (gameObject.tag == "Shooes")
-                {
-                    c_distance -= 0.1f;
-                }
-                motors = new GameObject[column * row];
-                var motorsGameObject = new GameObject("Motors");
-                motorsGameObject.transform.parent = transform;
-                motorsGameObject.transform.localPosition = Vector3.zero;
-                motorsGameObject.transform.localRotation = Quaternion.identity;
-                motorsGameObject.transform.localScale = Vector3.one;
+                BhapticsLogger.LogError("VisualFeedback.cs - Start() / motorContainer is null");
 
-                for (var r = 0; r < row; r++)
-                {
-                    for (var c = 0; c < column; c++)
-                    {
-                        var dot = (GameObject)Instantiate(motorPrefab, motorsGameObject.transform);
-                        dot.transform.localPosition = new Vector3(offsetX + c * c_distance, offsetY + r * r_distance, 0f);
-                        motors[(row - r - 1) * column + c] = dot;
-                    }
-                }
-
-                UpdateFeedback(new HapticFeedback(Position, new byte[column * row]));
+                return;
             }
+
+            var tmpMotorContainer = Instantiate(motorContainer, motorContainer.parent);
+            tmpMotorContainer.localPosition = motorContainer.localPosition;
+            tmpMotorContainer.localRotation = motorContainer.localRotation;
+
+            var tmpList = new List<Transform>();
+
+            for (int i = 0; i < motorContainer.childCount; ++i)
+            {
+                tmpList.Add(motorContainer.GetChild(i));
+            }
+
+            motors = tmpList.ToArray();
+
+            UpdateFeedback(new HapticFeedback(BhapticsUtils.ToPositionType(devicePos), new byte[motors.Length]));
         }
+
+
+
+
+
 
         public void UpdateFeedback(HapticFeedback feedback)
         {
-            if (motors == null)
-            {
-                return;
-            }
-
-            for (int i = 0; i < row * column; i++)
-            {
-                var motor = motors[i];
-
-                if (motor == null)
-                {
-                    return;
-                }
-                var scale = feedback.Values[i] / 100f;
-
-                motor.transform.localScale = new Vector3(0.2f + (scale * (.25f)), 0.2f + (scale * (.25f)), 0.2f + (scale * (.25f)));
-
-                var im = motor.GetComponent<Image>();
-                if (im != null)
-                {
-                    im.color = new Color(0.8f + scale * 0.2f, 0.8f + scale * 0.01f, 0.8f - scale * 0.79f, 1f);
-                }
-            }
+            UpdateFeedback(System.Array.ConvertAll(feedback.Values, System.Convert.ToInt32));
         }
-        public void UpdateFeedback(int[] feedback)
+
+        public void UpdateFeedback(int[] feedbackValues)
         {
             if (motors == null)
             {
                 return;
             }
-
-            for (int i = 0; i < row * column; i++)
+            for (int i = 0; i < motors.Length; i++)
             {
                 var motor = motors[i];
 
@@ -100,14 +66,21 @@ namespace Bhaptics.Tact.Unity
                 {
                     return;
                 }
-                var scale = feedback[i] / 100f;
 
-                motor.transform.localScale = new Vector3(0.2f + (scale * (.25f)), 0.2f + (scale * (.25f)), 0.2f + (scale * (.25f)));
+                var intensity = feedbackValues[i] * 0.01f;
 
-                var im = motor.GetComponent<Image>();
-                if (im != null)
+                if (intensity > 0f)
                 {
-                    im.color = new Color(0.8f + scale * 0.2f, 0.8f + scale * 0.01f, 0.8f - scale * 0.79f, 1f);
+                    intensity = intensity + motorScaleOffset;
+                }
+
+                motor.transform.localScale = Vector3.one * intensity;
+
+                var motorImage = motor.GetComponent<Image>();
+
+                if (motorImage != null)
+                {
+                    motorImage.color = motorFeedbackGradient.Evaluate(intensity);
                 }
             }
         }

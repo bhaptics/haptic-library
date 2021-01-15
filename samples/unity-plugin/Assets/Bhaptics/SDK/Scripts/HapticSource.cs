@@ -6,14 +6,62 @@ namespace Bhaptics.Tact.Unity
 {
     public class HapticSource : MonoBehaviour
     {
-        private Coroutine currentCoroutine, loopCoroutine;
-
-        private bool isLooping = false;
-
+        public HapticClip clip;
         public bool playOnAwake = false;
         public bool loop = false;
         public float loopDelaySeconds = 0f;
-        public HapticClip clip;
+
+
+        private Coroutine currentCoroutine, loopCoroutine;
+        private bool isLooping = false;
+
+
+
+
+
+
+        void Awake()
+        {
+            BhapticsManager.GetHaptic();
+
+            var findObjectOfType = FindObjectOfType<Bhaptics_Setup>();
+            if (findObjectOfType == null)
+            {
+                var go = new GameObject("[bhaptics]");
+                go.SetActive(false);
+                var setup = go.AddComponent<Bhaptics_Setup>();
+                var config = Resources.Load<BhapticsConfig>("BhapticsConfig");
+                if (config == null)
+                {
+                    BhapticsLogger.LogError("Cannot find 'BhapticsConfig' in the Resources folder.");
+                }
+                setup.Config = config;
+                go.SetActive(true);
+            }
+
+            if (playOnAwake)
+            {
+                if (loop)
+                {
+                    PlayLoop();
+                }
+                else
+                {
+                    PlayHapticClip();
+                }
+            }
+        }
+
+
+
+
+
+
+
+        public void Play()
+        {
+            PlayHapticClip();
+        }
 
         public void PlayLoop()
         {
@@ -26,11 +74,6 @@ namespace Bhaptics.Tact.Unity
             isLooping = true;
 
             loopCoroutine = StartCoroutine(PlayLoopCoroutine());
-        }
-
-        public void Play()
-        {
-            PlayTactClip();
         }
 
         public void PlayDelayed(float delaySecond = 0)
@@ -67,7 +110,6 @@ namespace Bhaptics.Tact.Unity
             clip.Stop();
         }
 
-
         public bool IsPlaying()
         {
             if (clip == null)
@@ -79,15 +121,21 @@ namespace Bhaptics.Tact.Unity
         }
 
 
+
+
+
+
+
+
         private IEnumerator PlayCoroutine(float delaySecond)
         {
             yield return new WaitForSeconds(delaySecond);
 
-            PlayTactClip();
+            PlayHapticClip();
             yield return null;
         }
 
-        private void PlayTactClip()
+        private void PlayHapticClip()
         {
             if (clip == null)
             {
@@ -100,63 +148,24 @@ namespace Bhaptics.Tact.Unity
 
         private IEnumerator PlayLoopCoroutine()
         {
+            float clipDuration = Time.deltaTime;
+
+            if (clip is FileHapticClip)
+            {
+                clipDuration = (clip as FileHapticClip).ClipDurationTime;
+            }
+            else if (clip is SimpleHapticClip)
+            {
+                clipDuration = (clip as SimpleHapticClip).TimeMillis;
+            }
+
+            WaitForSeconds duration = new WaitForSeconds(clipDuration * 0.001f * 0.95f);
             while (isLooping)
             {
-                if (!clip.IsPlaying())
-                {
-                    yield return new WaitForSeconds(loopDelaySeconds);
-                    PlayTactClip();
-                }
-
-                yield return new WaitForSeconds(0.1f);
-            }
-            yield return null;
-        }
-
-        void Awake()
-        {
-            if (clip != null)
-            {
-                clip.keyId = Guid.NewGuid().ToString();
-            }
-
-            BhapticsManager.GetHaptic();
-
-
-
-            var findObjectOfType = FindObjectOfType<Bhaptics_Setup>();
-
-            if (findObjectOfType == null)
-            {
-                var go = new GameObject("[bhaptics]");
-                go.SetActive(false);
-                var setup = go.AddComponent<Bhaptics_Setup>();
-
-                var config = Resources.Load<BhapticsConfig>("BhapticsConfig");
-
-                if (config == null)
-                {
-                    BhapticsLogger.LogError("Cannot find 'BhapticsConfig' in the Resources folder.");
-                }
-
-                setup.Config = config;
-
-                go.SetActive(true);
-            }
-
-            if (playOnAwake)
-            {
-
-                if (loop)
-                {
-                    PlayLoop();
-                }
-                else
-                {
-                    PlayTactClip();
-                }
+                yield return new WaitForSeconds(loopDelaySeconds);
+                PlayHapticClip();
+                yield return duration;
             }
         }
     }
-
 }

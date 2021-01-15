@@ -23,7 +23,6 @@ namespace Bhaptics.Tact.Unity
             {
                 Handle(bullet.transform.position, bullet.GetComponent<HapticSender>());
             }
-            
         }
 
         void OnCollisionEnter(Collision bullet)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace Bhaptics.Tact.Unity
@@ -9,6 +10,9 @@ namespace Bhaptics.Tact.Unity
         private static AndroidJavaObject androidJavaObject;
 
         private List<HapticDevice> deviceList = new List<HapticDevice>();
+
+
+        private readonly object syncObject = new object();
 
         private readonly List<string> activeKeys = new List<string>();
         private readonly List<string> registered = new List<string>();
@@ -55,7 +59,7 @@ namespace Bhaptics.Tact.Unity
 
         public bool IsPlaying(string key)
         {
-            lock (activeKeys)
+            lock (syncObject)
             {
                 return activeKeys.Contains(key);
             }
@@ -63,7 +67,7 @@ namespace Bhaptics.Tact.Unity
 
         public bool IsFeedbackRegistered(string key)
         {
-            lock (registered)
+            lock (syncObject)
             {
                 return registered.Contains(key);
             }
@@ -71,7 +75,7 @@ namespace Bhaptics.Tact.Unity
 
         public bool IsPlaying()
         {
-            lock (activeKeys)
+            lock (syncObject)
             {
                 return activeKeys.Count > 0;
             }
@@ -280,28 +284,25 @@ namespace Bhaptics.Tact.Unity
 
         public void Receive(PlayerResponse response)
         {
-            try
+            if (Monitor.TryEnter(syncObject, 5))
             {
-                lock (activeKeys)
+                try
                 {
                     activeKeys.Clear();
                     activeKeys.AddRange(response.ActiveKeys);
-                }
-
-                lock (registered)
-                {
                     registered.Clear();
                     registered.AddRange(response.RegisteredKeys);
-                }
-
-                lock (status)
-                {
                     status = response.Status;
                 }
+                finally
+                {
+                    Monitor.Exit(syncObject);
+                }
             }
-            catch (Exception e)
+            else
             {
-                BhapticsLogger.LogInfo("Receive: {0}", e.Message);
+                // failed to get lock: throw exceptions, log messages, get angry etc.
+                BhapticsLogger.LogInfo("Receive update failed.");
             }
         }
 

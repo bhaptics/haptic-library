@@ -83,14 +83,12 @@ namespace Bhaptics.Tact.Unity
 
         public void RegisterTactFileStr(string key, string tactFileStr)
         {
-            var file = CommonUtils.ConvertJsonStringToTactosyFile(tactFileStr);
-            Register(key, file.Project);
+            Register(key, tactFileStr);
         }
 
         public void RegisterTactFileStrReflected(string key, string tactFileStr)
         {
-            var project = BhapticsUtils.ReflectLeftRight(tactFileStr);
-            Register(key, project);
+            RegisterReflected(key, tactFileStr);
         }
 
         public void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis)
@@ -115,77 +113,65 @@ namespace Bhaptics.Tact.Unity
 
         public void SubmitRegistered(string key, string altKey, ScaleOption option)
         {
-            var request = new SubmitRequest()
-            {
-                Key = key,
-                Type = "key",
-                Parameters = new Dictionary<string, object>
-                {
-                    {"scaleOption", option},
-                    {"altKey", altKey}
-                }
-            };
-            SubmitRequest(request);
+            SubmitRegistered(key, altKey, new RotationOption(0, 0), option);
         }
 
         public void SubmitRegistered(string key, string altKey, RotationOption rOption, ScaleOption sOption)
         {
-            var request = new SubmitRequest()
+            
+            SubmitRequest(JsonUtility.ToJson(new AndroidParamSubmitRequest()
             {
-                Key = key,
-                Type = "key",
-                Parameters = new Dictionary<string, object>
+                key = key,
+                type = "key",
+                parameters =  new AndroidParameters()
                 {
-                    {"rotationOption", rOption},
-                    {"scaleOption", sOption},
-                    {"altKey", altKey}
+                    altKey = altKey,
+                    scaleOption = new AndroidScaleOption()
+                    {
+                        duration = sOption.Duration,
+                        intensity = sOption.Intensity
+                    },
+                    rotationOption = new AndroidRotationOption()
+                    {
+                        offsetAngleX = rOption.OffsetAngleX,
+                        offsetY = rOption.OffsetY
+                    }
                 }
-            };
-            SubmitRequest(request);
+            }));
         }
 
         public void SubmitRegistered(string key)
         {
-            var request = new SubmitRequest()
-            {
-                Key = key,
-                Type = "key"
-            };
-            SubmitRequest(request);
+            var json = JsonUtility.ToJson(
+                new AndroidSubmitRequest() { key = key, type = "key" });
+            SubmitRequest(json);
         }
 
         public void SubmitRegistered(string key, int startTimeMillis)
         {
-            var request = new SubmitRequest()
+            SubmitRequest(JsonUtility.ToJson(new AndroidParamStartTimeSubmitRequest()
             {
-                Key = key,
-                Type = "key",
-                Parameters = new Dictionary<string, object>
+                key = key,
+                type = "key",
+                parameters = new AndroidStartTimeParameters()
                 {
-                    {"startTimeMillis", (int) startTimeMillis + ""}
+                    startTimeMillis = startTimeMillis + ""
                 }
-            };
-            SubmitRequest(request);
+            }));
         }
 
         public void TurnOff(string key)
         {
-            var req = new SubmitRequest
-            {
-                Key = key,
-                Type = "turnOff"
-            };
-            SubmitRequest(req);
+            var json = JsonUtility.ToJson(
+                new AndroidSubmitRequest() { key = key, type = "turnOff" });
+            SubmitRequest(json);
         }
 
         public void TurnOff()
         {
-            var req = new SubmitRequest
-            {
-                Key = "",
-                Type = "turnOffAll"
-            };
-            SubmitRequest(req);
+            var json = JsonUtility.ToJson(
+                new AndroidSubmitRequest() { key = "", type = "turnOffAll"});
+            SubmitRequest(json);
         }
 
         public void Dispose()
@@ -199,29 +185,48 @@ namespace Bhaptics.Tact.Unity
 
         private void Submit(string key, Frame req)
         {
-            var submitRequest = new SubmitRequest
+            var androidFrame = new AndroidFrame();
+            androidFrame.durationMillis = req.DurationMillis;
+            androidFrame.position = req.Position.ToString();
+            androidFrame.dotPoints = new AndroidDotPoint[req.DotPoints.Count];
+            androidFrame.pathPoints = new AndroidPathPoint[req.PathPoints.Count];
+            for (var i = 0; i < req.DotPoints.Count; i++)
             {
-                Frame = req,
-                Key = key,
-                Type = "frame"
+                var p = req.DotPoints[i];
+                androidFrame.dotPoints[i] = new AndroidDotPoint() {index = p.Index, intensity = p.Intensity};
+            }
+            for (var i = 0; i < req.PathPoints.Count; i++)
+            {
+                var p = req.PathPoints[i];
+                androidFrame.pathPoints[i] = new AndroidPathPoint()
+                {
+                    x = p.X, y = p.Y, motorCount = p.MotorCount, intensity = p.Intensity
+                };
+            }
+
+
+            var submitRequest = new AndroidFrameRequest
+            {
+                frame = androidFrame,
+                key = key,
             };
-            SubmitRequest(submitRequest);
+
+            var json = JsonUtility.ToJson(submitRequest);
+            SubmitRequest(json);
         }
 
-        private void SubmitRequest(SubmitRequest submitRequest)
+        private void SubmitRequest(string submitRequest)
         {
             if (!AndroidPermissionsManager.CheckBluetoothPermissions())
             {
                 return;
             }
 
-            var request = PlayerRequest.Create();
-            request.Submit.Add(submitRequest);
             if (androidJavaObject != null)
             {
                 try
                 {
-                    androidJavaObject.Call("submit", request.ToJsonObject().ToString());
+                    androidJavaObject.Call("submit", submitRequest);
                 }
                 catch (Exception e)
                 {
@@ -230,28 +235,34 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        private void Register(string key, Project project)
+        private void Register(string key, string tactFileString)
         {
             if (!AndroidPermissionsManager.CheckBluetoothPermissions())
             {
                 return;
             }
-
-            var req = new RegisterRequest
-            {
-                Key = key,
-                Project = project
-            };
-            var registerRequests = new List<RegisterRequest> {req};
-            var request = PlayerRequest.Create();
-            request.Register = registerRequests;
             if (androidJavaObject == null)
             {
                 return;
             }
 
 
-            androidJavaObject.Call("register", request.ToJsonObject().ToString());
+            androidJavaObject.Call("register", key, tactFileString);
+        }
+
+        private void RegisterReflected(string key, string tactFileString)
+        {
+            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+            {
+                return;
+            }
+            if (androidJavaObject == null)
+            {
+                return;
+            }
+
+
+            androidJavaObject.Call("registerReflected", key, tactFileString);
         }
 
         public int[] GetCurrentFeedback(PositionType pos)

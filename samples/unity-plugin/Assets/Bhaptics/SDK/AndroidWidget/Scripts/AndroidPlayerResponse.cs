@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Bhaptics.Tact.Unity
 {
     [Serializable]
-    class AndroidPlayerResponse
+    struct AndroidPlayerResponse
     {
         public string[] RegisteredKeys;
         public string[] ActiveKeys;
@@ -33,6 +33,7 @@ namespace Bhaptics.Tact.Unity
             response.ConnectedDeviceCount = playerResponse2.ConnectedDeviceCount;
             response.Status = new Dictionary<string, int[]>();
 
+            response.Status["Head"] = playerResponse2.Status.Head;
             response.Status["VestFront"] = playerResponse2.Status.VestFront;
             response.Status["VestBack"] = playerResponse2.Status.VestBack;
             response.Status["ForearmL"] = playerResponse2.Status.ForearmL;
@@ -47,8 +48,9 @@ namespace Bhaptics.Tact.Unity
     }
 
     [Serializable]
-    class AndroidStatus
+    struct AndroidStatus
     {
+        public int[] Head;
         public int[] VestFront;
         public int[] VestBack;
         public int[] ForearmL;
@@ -66,65 +68,15 @@ namespace Bhaptics.Tact.Unity
     /// Request
     /// </summary>
     [Serializable]
-    class AndroidSubmitRequest
+    struct AndroidFrameRequest
     {
         public string key;
         public string type;
-    }
-
-    [Serializable]
-    class AndroidParamSubmitRequest
-    {
-        public string key;
-        public string type;
-        public AndroidParameters parameters;
-    }
-    [Serializable]
-    class AndroidParamStartTimeSubmitRequest
-    {
-        public string key;
-        public string type;
-        public AndroidStartTimeParameters parameters;
-    }
-
-    [Serializable]
-    class AndroidParameters
-    {
-        public AndroidRotationOption rotationOption;
-        public AndroidScaleOption scaleOption;
-        public string altKey;
-    }
-    [Serializable]
-
-    class AndroidStartTimeParameters
-    {
-        public string startTimeMillis;
-    }
-
-    [Serializable]
-    class AndroidRotationOption
-    {
-        public float offsetAngleX = 0;
-        public float offsetY = 0;
-    }
-
-    [Serializable]
-    class AndroidScaleOption
-    {
-        public float intensity = 0;
-        public float duration = 0;
-    }
-
-    [Serializable]
-    class AndroidFrameRequest
-    {
-        public string key;
-        public string type = "frame";
         public AndroidFrame frame;
     }
 
     [Serializable]
-    class AndroidFrame
+    struct AndroidFrame
     {
         public int durationMillis;
         public string position;
@@ -133,16 +85,16 @@ namespace Bhaptics.Tact.Unity
     }
 
     [Serializable]
-    class AndroidPathPoint
+    struct AndroidPathPoint
     {
         public float x;
         public float y;
         public int intensity;
-        public int motorCount = 3;
+        public int motorCount;
     }
 
     [Serializable]
-    class AndroidDotPoint
+    struct AndroidDotPoint
     {
         public int index;
         public int intensity;

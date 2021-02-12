@@ -93,21 +93,25 @@ namespace Bhaptics.Tact.Unity
 
         public void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis)
         {
-            var frame = new Frame();
-            frame.DotPoints = points;
-            frame.PathPoints = new List<PathPoint>();
-            frame.Position = position;
-            frame.DurationMillis = durationMillis;
+            var frame = new Frame
+            {
+                DotPoints = points,
+                PathPoints = new List<PathPoint>(),
+                Position = position,
+                DurationMillis = durationMillis
+            };
             Submit(key, frame);
         }
 
         public void Submit(string key, PositionType position, List<PathPoint> points, int durationMillis)
         {
-            var frame = new Frame();
-            frame.DotPoints = new List<DotPoint>();
-            frame.PathPoints = points;
-            frame.Position = position;
-            frame.DurationMillis = durationMillis;
+            var frame = new Frame
+            {
+                DotPoints = new List<DotPoint>(),
+                PathPoints = points,
+                Position = position,
+                DurationMillis = durationMillis
+            };
             Submit(key, frame);
         }
 
@@ -118,60 +122,74 @@ namespace Bhaptics.Tact.Unity
 
         public void SubmitRegistered(string key, string altKey, RotationOption rOption, ScaleOption sOption)
         {
-            
-            SubmitRequest(JsonUtility.ToJson(new AndroidParamSubmitRequest()
-            {
-                key = key,
-                type = "key",
-                parameters =  new AndroidParameters()
-                {
-                    altKey = altKey,
-                    scaleOption = new AndroidScaleOption()
-                    {
-                        duration = sOption.Duration,
-                        intensity = sOption.Intensity
-                    },
-                    rotationOption = new AndroidRotationOption()
-                    {
-                        offsetAngleX = rOption.OffsetAngleX,
-                        offsetY = rOption.OffsetY
-                    }
-                }
-            }));
+            SubmitRequest(key, altKey, sOption.Intensity, sOption.Duration, rOption.OffsetAngleX, rOption.OffsetY);
         }
 
         public void SubmitRegistered(string key)
         {
-            var json = JsonUtility.ToJson(
-                new AndroidSubmitRequest() { key = key, type = "key" });
-            SubmitRequest(json);
+            SubmitRequest(key, key, 1, 1, 0, 0);
         }
 
         public void SubmitRegistered(string key, int startTimeMillis)
         {
-            SubmitRequest(JsonUtility.ToJson(new AndroidParamStartTimeSubmitRequest()
+            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
             {
-                key = key,
-                type = "key",
-                parameters = new AndroidStartTimeParameters()
+                return;
+            }
+
+            if (androidJavaObject != null)
+            {
+                try
                 {
-                    startTimeMillis = startTimeMillis + ""
+                    androidJavaObject.Call("submitRegisteredWithTime",
+                        key, startTimeMillis);
                 }
-            }));
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("TurnOff() : {0}", e.Message);
+                }
+            }
         }
 
         public void TurnOff(string key)
         {
-            var json = JsonUtility.ToJson(
-                new AndroidSubmitRequest() { key = key, type = "turnOff" });
-            SubmitRequest(json);
+            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+            {
+                return;
+            }
+
+            if (androidJavaObject != null)
+            {
+                try
+                {
+                    androidJavaObject.Call("turnOff",
+                        key);
+                }
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("TurnOff() : {0}", e.Message);
+                }
+            }
         }
 
         public void TurnOff()
         {
-            var json = JsonUtility.ToJson(
-                new AndroidSubmitRequest() { key = "", type = "turnOffAll"});
-            SubmitRequest(json);
+            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+            {
+                return;
+            }
+
+            if (androidJavaObject != null)
+            {
+                try
+                {
+                    androidJavaObject.Call("turnOffAll");
+                }
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("turnOffAll() : {0}", e.Message);
+                }
+            }
         }
 
         public void Dispose()
@@ -185,11 +203,13 @@ namespace Bhaptics.Tact.Unity
 
         private void Submit(string key, Frame req)
         {
-            var androidFrame = new AndroidFrame();
-            androidFrame.durationMillis = req.DurationMillis;
-            androidFrame.position = req.Position.ToString();
-            androidFrame.dotPoints = new AndroidDotPoint[req.DotPoints.Count];
-            androidFrame.pathPoints = new AndroidPathPoint[req.PathPoints.Count];
+            var androidFrame = new AndroidFrame
+            {
+                durationMillis = req.DurationMillis,
+                position = req.Position.ToString(),
+                dotPoints = new AndroidDotPoint[req.DotPoints.Count],
+                pathPoints = new AndroidPathPoint[req.PathPoints.Count]
+            };
             for (var i = 0; i < req.DotPoints.Count; i++)
             {
                 var p = req.DotPoints[i];
@@ -208,6 +228,7 @@ namespace Bhaptics.Tact.Unity
             var submitRequest = new AndroidFrameRequest
             {
                 frame = androidFrame,
+                type = "frame",
                 key = key,
             };
 
@@ -227,6 +248,28 @@ namespace Bhaptics.Tact.Unity
                 try
                 {
                     androidJavaObject.Call("submit", submitRequest);
+                }
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("SubmitRequest() : {0}", e.Message);
+                }
+            }
+        }
+
+        private void SubmitRequest(string key, string altKey,
+            float intensity, float duration, float offsetAngleX, float offsetY)
+        {
+            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+            {
+                return;
+            }
+
+            if (androidJavaObject != null)
+            {
+                try
+                {
+                    androidJavaObject.Call("submitRegistered", 
+                        key, altKey, intensity, duration, offsetAngleX, offsetY);
                 }
                 catch (Exception e)
                 {

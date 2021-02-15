@@ -7,8 +7,8 @@ namespace Bhaptics.Tact.Unity
         [SerializeField, Range(0f, 360f)] protected float TactFileAngleX;
         [SerializeField, Range(-0.5f, 0.5f)] protected float TactFileOffsetY;
 
-
-
+        private RotationOption _rotationOption = new RotationOption(0, 0);
+        private ScaleOption _scaleOption = new ScaleOption(1, 1);
 
 
         #region Play method
@@ -42,7 +42,6 @@ namespace Bhaptics.Tact.Unity
             if (!BhapticsManager.Init)
             {
                 BhapticsManager.Initialize();
-                //return;
             }
 
             var haptic = BhapticsManager.GetHaptic();
@@ -57,10 +56,14 @@ namespace Bhaptics.Tact.Unity
                 haptic.RegisterTactFileStr(assetId, JsonValue);
             }
 
+            _rotationOption.OffsetAngleX = vestRotationAngleX + this.TactFileAngleX;
+            _rotationOption.OffsetY = vestRotationOffsetY + this.TactFileOffsetY;
+
+            _scaleOption.Intensity = intensity;
+            _scaleOption.Duration = duration;
+
             haptic.SubmitRegistered(assetId, keyId + identifier,
-                new RotationOption(
-                    vestRotationAngleX + this.TactFileAngleX,
-                    vestRotationOffsetY + this.TactFileOffsetY), new ScaleOption(intensity, duration));
+                _rotationOption, _scaleOption);
         }
         #endregion
 

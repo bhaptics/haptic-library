@@ -11,19 +11,19 @@ namespace Bhaptics.Tact.Unity
 
         private List<HapticDevice> deviceList = new List<HapticDevice>();
 
+        private List<string> registeredCache = new List<string>();
 
-        private readonly object syncObject = new object();
 
-        private readonly List<string> activeKeys = new List<string>();
-        private readonly List<string> registered = new List<string>();
-        private Dictionary<string, int[]> status = new Dictionary<string, int[]>();
+        private static readonly object[] SubmitRegisteredParams = new object[6];
+        private static readonly int[] Empty = new int[20];
+
+        private static readonly RotationOption DefaultRotationOption = new RotationOption(0, 0);
 
         public AndroidHaptic()
         {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
             androidJavaObject = new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity);
-            TurnOnVisualization();
             if (AndroidPermissionsManager.CheckBluetoothPermissions())
             {
                 deviceList = GetDevices(true);
@@ -59,26 +59,64 @@ namespace Bhaptics.Tact.Unity
 
         public bool IsPlaying(string key)
         {
-            lock (syncObject)
+            if (androidJavaObject != null)
             {
-                return activeKeys.Contains(key);
+                try
+                {
+                    return androidJavaObject.Call<bool>("isPlaying", key);
+                }
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("isPlaying() : {0}", e.Message);
+                }
             }
+
+            return false;
         }
 
         public bool IsFeedbackRegistered(string key)
         {
-            lock (syncObject)
+            if (registeredCache.Contains(key))
             {
-                return registered.Contains(key);
+                return true;
             }
+
+            if (androidJavaObject != null)
+            {
+                try
+                {
+                    var res = androidJavaObject.Call<bool>("isRegistered", key);
+                    if (res)
+                    {
+                        registeredCache.Add(key);
+                    }
+
+                    return res;
+                }
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("isRegistered() : {0}", e.Message);
+                }
+            }
+
+            return false;
         }
 
         public bool IsPlaying()
         {
-            lock (syncObject)
+            if (androidJavaObject != null)
             {
-                return activeKeys.Count > 0;
+                try
+                {
+                    return androidJavaObject.Call<bool>("isAnythingPlaying");
+                }
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("isAnythingPlaying() : {0}", e.Message);
+                }
             }
+
+            return false;
         }
 
         public void RegisterTactFileStr(string key, string tactFileStr)
@@ -150,7 +188,7 @@ namespace Bhaptics.Tact.Unity
 
         public void SubmitRegistered(string key, string altKey, ScaleOption option)
         {
-            SubmitRegistered(key, altKey, new RotationOption(0, 0), option);
+            SubmitRegistered(key, altKey, DefaultRotationOption, option);
         }
 
         public void SubmitRegistered(string key, string altKey, RotationOption rOption, ScaleOption sOption)
@@ -246,8 +284,13 @@ namespace Bhaptics.Tact.Unity
             {
                 try
                 {
-                    androidJavaObject.Call("submitRegistered", 
-                        key, altKey, intensity, duration, offsetAngleX, offsetY);
+                    SubmitRegisteredParams[0] = key;
+                    SubmitRegisteredParams[1] = altKey;
+                    SubmitRegisteredParams[2] = intensity;
+                    SubmitRegisteredParams[3] = duration;
+                    SubmitRegisteredParams[4] = offsetAngleX;
+                    SubmitRegisteredParams[5] = offsetY;
+                    androidJavaObject.Call("submitRegistered", SubmitRegisteredParams);
                 }
                 catch (Exception e)
                 {
@@ -288,13 +331,15 @@ namespace Bhaptics.Tact.Unity
 
         public int[] GetCurrentFeedback(PositionType pos)
         {
-
-            if (status.ContainsKey(pos.ToString()))
+            if (androidJavaObject == null)
             {
-                return status[pos.ToString()];
+                return Empty;
             }
 
-            return new int[20];
+
+            int[] result = androidJavaObject.Call<int[]>("getPositionStatus", pos.ToString());
+
+            return result;
         }
 
 
@@ -312,30 +357,6 @@ namespace Bhaptics.Tact.Unity
         public void UpdateDeviceList(List<HapticDevice> devices)
         {
             deviceList = devices;
-        }
-
-        public void Receive(PlayerResponse response)
-        {
-            if (Monitor.TryEnter(syncObject, 5))
-            {
-                try
-                {
-                    activeKeys.Clear();
-                    activeKeys.AddRange(response.ActiveKeys);
-                    registered.Clear();
-                    registered.AddRange(response.RegisteredKeys);
-                    status = response.Status;
-                }
-                finally
-                {
-                    Monitor.Exit(syncObject);
-                }
-            }
-            else
-            {
-                // failed to get lock: throw exceptions, log messages, get angry etc.
-                BhapticsLogger.LogInfo("Receive update failed.");
-            }
         }
 
         public void Pair(string address, string position)
@@ -405,14 +426,6 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        public void TurnOnVisualization()
-        {
-            if (androidJavaObject != null)
-            {
-                androidJavaObject.Call("turnOnVisualization");
-            }
-        }
-
         public void PingAll()
         {
             if (androidJavaObject != null)
@@ -427,6 +440,11 @@ namespace Bhaptics.Tact.Unity
             {
                 androidJavaObject.Call("ping", address);
             }
+        }
+
+        public void CheckChange()
+        {
+            
         }
     }
 }

@@ -366,13 +366,8 @@ namespace Bhaptics.Tact.Unity
 
         #region Callback Functions from native code
 
-
-        public void OnChangeResponse(string message)
+        public void OnChange()
         {
-            if (string.IsNullOrEmpty(message))
-            {
-                return;
-            }
             try
             {
                 var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
@@ -380,11 +375,12 @@ namespace Bhaptics.Tact.Unity
                 {
                     return;
                 }
-                androidHapticPlayer.Receive(AndroidPlayerResponse.ConvertToPlayerResponse(message));
+
+                androidHapticPlayer.CheckChange();
             }
             catch (Exception e)
             {
-                BhapticsLogger.LogInfo("{0} {1}", message, e.Message);
+                BhapticsLogger.LogInfo("OnChange {0}", e.Message);
             }
         }
 

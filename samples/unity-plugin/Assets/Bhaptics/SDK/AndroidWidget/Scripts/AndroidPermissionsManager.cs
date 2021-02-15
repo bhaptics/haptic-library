@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Bhaptics.Tact.Unity
@@ -9,6 +10,8 @@ namespace Bhaptics.Tact.Unity
         private const string BLUETOOTH_PERMISSION = "android.permission.ACCESS_FINE_LOCATION";
         private static AndroidJavaObject activity;
         private static AndroidJavaObject permissionService;
+
+        private static readonly Dictionary<string, bool> permissionCache = new Dictionary<string, bool>();
 
         private static AndroidJavaObject GetActivity()
         {
@@ -31,11 +34,6 @@ namespace Bhaptics.Tact.Unity
             return GetPermissionsService().Call<bool>("IsPermissionGranted", GetActivity(), permissionName);
         }
 
-        private static void RequestPermission(string permissionName)
-        {
-            RequestPermission(new[] { permissionName });
-        }
-
         private static void RequestPermission(string[] permissionNames)
         {
             GetPermissionsService().Call("RequestPermissionAsync", GetActivity(),
@@ -50,7 +48,15 @@ namespace Bhaptics.Tact.Unity
                 return true;
             }
 
-            return IsPermissionGranted(STORAGE_PERMISSION);
+            if (permissionCache.ContainsKey(STORAGE_PERMISSION))
+            {
+                return permissionCache[STORAGE_PERMISSION];
+            }
+
+            bool hasPermission = IsPermissionGranted(STORAGE_PERMISSION);
+            permissionCache[STORAGE_PERMISSION] = hasPermission;
+
+            return hasPermission;
         }
 
         public static bool CheckBluetoothPermissions()
@@ -60,11 +66,20 @@ namespace Bhaptics.Tact.Unity
                 return true;
             }
 
-            return IsPermissionGranted(BLUETOOTH_PERMISSION);
+            if (permissionCache.ContainsKey(BLUETOOTH_PERMISSION))
+            {
+                return permissionCache[BLUETOOTH_PERMISSION];
+            }
+
+            bool hasPermission = IsPermissionGranted(BLUETOOTH_PERMISSION);
+            permissionCache[BLUETOOTH_PERMISSION] = hasPermission;
+
+            return hasPermission;
         }
 
         public static void RequestPermission()
         {
+            permissionCache.Clear();
             RequestPermission(
                 new[] { STORAGE_PERMISSION, BLUETOOTH_PERMISSION });
         }

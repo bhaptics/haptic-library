@@ -93,26 +93,59 @@ namespace Bhaptics.Tact.Unity
 
         public void Submit(string key, PositionType position, List<DotPoint> points, int durationMillis)
         {
-            var frame = new Frame
+            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
             {
-                DotPoints = points,
-                PathPoints = new List<PathPoint>(),
-                Position = position,
-                DurationMillis = durationMillis
-            };
-            Submit(key, frame);
+                return;
+            }
+
+            if (androidJavaObject != null)
+            {
+                try
+                {
+                    int[] indexes = new int[points.Count];
+                    int[] intensity = new int[points.Count];
+                    for (var i = 0; i < points.Count; i++)
+                    {
+                        indexes[i] = points[i].Index;
+                        intensity[i] = points[i].Intensity;
+                    }
+                    androidJavaObject.Call("submitDot",
+                        key, position.ToString(), indexes, intensity, durationMillis);
+                }
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("submitDot() : {0}", e.Message);
+                }
+            }
         }
 
         public void Submit(string key, PositionType position, List<PathPoint> points, int durationMillis)
         {
-            var frame = new Frame
+            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
             {
-                DotPoints = new List<DotPoint>(),
-                PathPoints = points,
-                Position = position,
-                DurationMillis = durationMillis
-            };
-            Submit(key, frame);
+                return;
+            }
+            if (androidJavaObject != null)
+            {
+                try
+                {
+                    float[] x = new float[points.Count];
+                    float[] y = new float[points.Count];
+                    int[] intensity = new int[points.Count];
+                    for (var i = 0; i < points.Count; i++)
+                    {
+                        x[i] = points[i].X;
+                        y[i] = points[i].Y;
+                        intensity[i] = points[i].Intensity;
+                    }
+                    androidJavaObject.Call("submitPath",
+                        key, position.ToString(), x, y, intensity, durationMillis);
+                }
+                catch (Exception e)
+                {
+                    BhapticsLogger.LogError("submitPath() : {0}", e.Message);
+                }
+            }
         }
 
         public void SubmitRegistered(string key, string altKey, ScaleOption option)
@@ -198,61 +231,6 @@ namespace Bhaptics.Tact.Unity
             {
                 androidJavaObject.Call("quit");
                 androidJavaObject = null;
-            }
-        }
-
-        private void Submit(string key, Frame req)
-        {
-            var androidFrame = new AndroidFrame
-            {
-                durationMillis = req.DurationMillis,
-                position = req.Position.ToString(),
-                dotPoints = new AndroidDotPoint[req.DotPoints.Count],
-                pathPoints = new AndroidPathPoint[req.PathPoints.Count]
-            };
-            for (var i = 0; i < req.DotPoints.Count; i++)
-            {
-                var p = req.DotPoints[i];
-                androidFrame.dotPoints[i] = new AndroidDotPoint() {index = p.Index, intensity = p.Intensity};
-            }
-            for (var i = 0; i < req.PathPoints.Count; i++)
-            {
-                var p = req.PathPoints[i];
-                androidFrame.pathPoints[i] = new AndroidPathPoint()
-                {
-                    x = p.X, y = p.Y, motorCount = p.MotorCount, intensity = p.Intensity
-                };
-            }
-
-
-            var submitRequest = new AndroidFrameRequest
-            {
-                frame = androidFrame,
-                type = "frame",
-                key = key,
-            };
-
-            var json = JsonUtility.ToJson(submitRequest);
-            SubmitRequest(json);
-        }
-
-        private void SubmitRequest(string submitRequest)
-        {
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-            {
-                return;
-            }
-
-            if (androidJavaObject != null)
-            {
-                try
-                {
-                    androidJavaObject.Call("submit", submitRequest);
-                }
-                catch (Exception e)
-                {
-                    BhapticsLogger.LogError("SubmitRequest() : {0}", e.Message);
-                }
             }
         }
 

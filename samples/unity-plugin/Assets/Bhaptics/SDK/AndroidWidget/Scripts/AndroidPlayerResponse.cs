@@ -60,43 +60,4 @@ namespace Bhaptics.Tact.Unity
         public int[] FootL;
         public int[] FootR;
     }
-
-
-
-
-    /// <summary>
-    /// Request
-    /// </summary>
-    [Serializable]
-    struct AndroidFrameRequest
-    {
-        public string key;
-        public string type;
-        public AndroidFrame frame;
-    }
-
-    [Serializable]
-    struct AndroidFrame
-    {
-        public int durationMillis;
-        public string position;
-        public AndroidPathPoint[] pathPoints;
-        public AndroidDotPoint[] dotPoints;
-    }
-
-    [Serializable]
-    struct AndroidPathPoint
-    {
-        public float x;
-        public float y;
-        public int intensity;
-        public int motorCount;
-    }
-
-    [Serializable]
-    struct AndroidDotPoint
-    {
-        public int index;
-        public int intensity;
-    }
 }

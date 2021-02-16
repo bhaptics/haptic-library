@@ -19,6 +19,10 @@ namespace Bhaptics.Tact.Unity
 
         private static readonly RotationOption DefaultRotationOption = new RotationOption(0, 0);
 
+
+        private readonly object syncLock = new object();
+        private Dictionary<PositionType, int[]> updatedList = new Dictionary<PositionType, int[]>();
+
         public AndroidHaptic()
         {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
@@ -336,10 +340,19 @@ namespace Bhaptics.Tact.Unity
                 return Empty;
             }
 
+            lock (syncLock)
+            {
+                if (updatedList.ContainsKey(pos))
+                {
+                    return updatedList[pos];
+                }
 
-            int[] result = androidJavaObject.Call<int[]>("getPositionStatus", pos.ToString());
+                byte[] result = androidJavaObject.Call<byte[]>("getPositionStatus", pos.ToString());
+                int[] res = Array.ConvertAll(result, System.Convert.ToInt32);
+                updatedList[pos] = res;
 
-            return result;
+                return  res;
+            }
         }
 
 
@@ -444,7 +457,10 @@ namespace Bhaptics.Tact.Unity
 
         public void CheckChange()
         {
-            
+            lock (syncLock)
+            {
+                updatedList.Clear();
+            }
         }
     }
 }

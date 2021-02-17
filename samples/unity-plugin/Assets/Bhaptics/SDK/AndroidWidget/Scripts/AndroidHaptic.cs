@@ -23,11 +23,19 @@ namespace Bhaptics.Tact.Unity
         private readonly object syncLock = new object();
         private Dictionary<PositionType, int[]> updatedList = new Dictionary<PositionType, int[]>();
 
+        private readonly IntPtr AndroidJavaObjectPtr;
+        private readonly IntPtr SubmitRegisteredPtr;
+
         public AndroidHaptic()
         {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
             androidJavaObject = new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity);
+
+            AndroidJavaObjectPtr = androidJavaObject.GetRawObject();
+            SubmitRegisteredPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "submitRegistered");
+
+
             if (AndroidPermissionsManager.CheckBluetoothPermissions())
             {
                 deviceList = GetDevices(true);
@@ -286,19 +294,27 @@ namespace Bhaptics.Tact.Unity
 
             if (androidJavaObject != null)
             {
+                SubmitRegisteredParams[0] = key;
+                SubmitRegisteredParams[1] = altKey;
+                SubmitRegisteredParams[2] = intensity;
+                SubmitRegisteredParams[3] = duration;
+                SubmitRegisteredParams[4] = offsetAngleX;
+                SubmitRegisteredParams[5] = offsetY;
+
+                jvalue[] args = AndroidJNIHelper.CreateJNIArgArray(SubmitRegisteredParams);
                 try
                 {
-                    SubmitRegisteredParams[0] = key;
-                    SubmitRegisteredParams[1] = altKey;
-                    SubmitRegisteredParams[2] = intensity;
-                    SubmitRegisteredParams[3] = duration;
-                    SubmitRegisteredParams[4] = offsetAngleX;
-                    SubmitRegisteredParams[5] = offsetY;
-                    androidJavaObject.Call("submitRegistered", SubmitRegisteredParams);
+                    AndroidJNI.CallVoidMethod(AndroidJavaObjectPtr, SubmitRegisteredPtr, args);
+
+                    //androidJavaObject.Call("submitRegistered", _params);
                 }
                 catch (Exception e)
                 {
                     BhapticsLogger.LogError("SubmitRequest() : {0}", e.Message);
+                }
+                finally
+                {
+                    AndroidJNIHelper.DeleteJNIArgArray(SubmitRegisteredParams, args);
                 }
             }
         }
@@ -351,7 +367,7 @@ namespace Bhaptics.Tact.Unity
                 int[] res = Array.ConvertAll(result, System.Convert.ToInt32);
                 updatedList[pos] = res;
 
-                return  res;
+                return res;
             }
         }
 

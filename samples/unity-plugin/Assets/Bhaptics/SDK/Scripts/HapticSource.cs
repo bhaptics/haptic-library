@@ -24,20 +24,24 @@ namespace Bhaptics.Tact.Unity
         {
             BhapticsManager.GetHaptic();
 
-            var findObjectOfType = FindObjectOfType<Bhaptics_Setup>();
-            if (findObjectOfType == null)
+            if (Bhaptics_Setup.instance == null)
             {
-                var go = new GameObject("[bhaptics]");
-                go.SetActive(false);
-                var setup = go.AddComponent<Bhaptics_Setup>();
-                var config = Resources.Load<BhapticsConfig>("BhapticsConfig");
-                if (config == null)
+                var findObjectOfType = FindObjectOfType<Bhaptics_Setup>();
+                if (findObjectOfType == null)
                 {
-                    BhapticsLogger.LogError("Cannot find 'BhapticsConfig' in the Resources folder.");
+                    var go = new GameObject("[bhaptics]");
+                    go.SetActive(false);
+                    var setup = go.AddComponent<Bhaptics_Setup>();
+                    var config = Resources.Load<BhapticsConfig>("BhapticsConfig");
+                    if (config == null)
+                    {
+                        BhapticsLogger.LogError("Cannot find 'BhapticsConfig' in the Resources folder.");
+                    }
+                    setup.Config = config;
+                    go.SetActive(true);
                 }
-                setup.Config = config;
-                go.SetActive(true);
             }
+
 
             if (playOnAwake)
             {

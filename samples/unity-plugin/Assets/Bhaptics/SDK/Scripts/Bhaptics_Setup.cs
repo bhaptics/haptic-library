@@ -6,7 +6,7 @@ public class Bhaptics_Setup : MonoBehaviour
     [SerializeField] public BhapticsConfig Config;
 
 
-    private static Bhaptics_Setup instance;
+    public static Bhaptics_Setup instance;
 
     void Awake()
     {

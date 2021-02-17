@@ -180,6 +180,46 @@ namespace Bhaptics.Tact.Unity
             }
             return 3;
         }
+
+
+
+        public static void CallNativeVoidMethod(IntPtr androidObjPtr, IntPtr methodPtr, object[] param)
+        {
+            jvalue[] args = AndroidJNIHelper.CreateJNIArgArray(param);
+            try
+            {
+                AndroidJNI.CallVoidMethod(androidObjPtr, methodPtr, args);
+            }
+            catch (Exception e)
+            {
+                BhapticsLogger.LogError("CallNativeVoidMethod() : {0}", e.Message);
+            }
+            finally
+            {
+                AndroidJNIHelper.DeleteJNIArgArray(param, args);
+            }
+        }
+
+
+        public static bool CallNativeBoolMethod(IntPtr androidObjPtr, IntPtr methodPtr, object[] param)
+        {
+            jvalue[] args = AndroidJNIHelper.CreateJNIArgArray(param);
+            bool res = false;
+            try
+            {
+                res = AndroidJNI.CallBooleanMethod(androidObjPtr, methodPtr, args);
+            }
+            catch (Exception e)
+            {
+                BhapticsLogger.LogError("CallNativeBoolMethod() : {0}", e.Message);
+            }
+            finally
+            {
+                AndroidJNIHelper.DeleteJNIArgArray(param, args);
+            }
+
+            return res;
+        }
     }
 
 }

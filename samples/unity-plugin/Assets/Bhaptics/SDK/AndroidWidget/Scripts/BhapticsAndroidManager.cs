@@ -407,6 +407,10 @@ namespace Bhaptics.Tact.Unity
         {
             // nothing to do
         }
+        public void PermissionGranted(string permission)
+        {
+            Scan();
+        }
 #endregion
 
 #region Callback Functions from UI update 

@@ -168,65 +168,6 @@ namespace Bhaptics.Tact.Unity
             return 0;
         }
 
-        public static Project ReflectLeftRight(string projectStr)
-        {
-            var feedbackFile = CommonUtils.ConvertJsonStringToTactosyFile(projectStr);
-            var project = feedbackFile.Project;
-            
-            List<string> keys = new List<string>();
-
-            bool isFinished = false;
-
-            foreach (var projectTrack in project.Tracks)
-            {
-                foreach (var projectTrackEffect in projectTrack.Effects)
-                {
-                    if (isFinished)
-                    {
-                        continue;
-                    }
-
-                    foreach (var modesKey in projectTrackEffect.Modes.Keys)
-                    {
-                        keys.Add(modesKey);
-                        
-                    }
-
-                    isFinished = true;
-                    break;
-                }
-            }
-
-            if (keys.Count != 2)
-            {
-                return feedbackFile.Project;
-            }
-
-            string rightType = keys[0];
-            string reftType = keys[1];
-            foreach (var projectTrack in project.Tracks)
-            {
-                foreach (var projectTrackEffect in projectTrack.Effects)
-                {
-                    HapticEffectMode right = null, left = null;
-                    if (projectTrackEffect.Modes.ContainsKey(rightType))
-                    {
-                        right = projectTrackEffect.Modes[rightType];
-                    }
-
-                    if (projectTrackEffect.Modes.ContainsKey(reftType))
-                    {
-                        left = projectTrackEffect.Modes[reftType];
-                    }
-
-                    projectTrackEffect.Modes[reftType] = right;
-                    projectTrackEffect.Modes[rightType] = left;
-                }
-            }
-
-            return project;
-        }
-
         public static PositionType ToPositionType(HapticClipPositionType pos)
         {
             switch (pos)

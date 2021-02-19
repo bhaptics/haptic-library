@@ -1,3 +1,10 @@
+## Unity plugin 1.5.4(Feb 15th, 2021.)
+* Update: Improve performance on Android
+* Fix: Fix minor issues
+
+## Unity plugin 1.5.3(Feb 1th, 2021.)
+* Update: Change bHaptics logo and images
+
 ## Unity plugin 1.5.2(Jan 15th, 2021.)
 * Update: Change class & enum names
 * Update: Update ui and Add more example scenes

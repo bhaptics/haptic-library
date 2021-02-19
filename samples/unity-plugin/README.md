@@ -1,6 +1,12 @@
 # Unity plugin
-* This project will help integrate bHaptics' haptic devices into Unity environments. 
-* Current version is 1.5.2 -> **You must check [Migration guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide) !**
+* This project will help integrate bHaptics' haptic devices into Unity environments.
+* Current version is 1.5.4
+```
+## Unity SDK Migration Guide 1.5.3 to 1.5.4
+- The latest version of the *.aar files in \Assets\Bhaptics\SDK\Plugins\Android\ is 1.10.
+- Delete the previous version of the *.aar files. Otherwise, there will be a problem.
+```
+* You can check the migration guide for previous versions **[HERE](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide)**.
 
 ## Prerequisite (Only for Windows8.1 or higher)
 * [bHaptics Player](https://www.bhaptics.com/support/download) has to be installed (windows) and running. 
@@ -22,6 +28,6 @@
 * [Migration guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide)
 
 
-##### Last update of README.md: Jan 15th, 2021.
+##### Last update of README.md: Feb 19th, 2021.
 
 ##### Copyright 2017~21 bHaptics Inc.

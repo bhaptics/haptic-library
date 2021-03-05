@@ -1,10 +1,10 @@
 # Unity plugin
 * This project will help integrate bHaptics' haptic devices into Unity environments.
-* Current version is 1.5.4
+* Current version is 1.5.5
 ```
-## Unity SDK Migration Guide 1.5.3 to 1.5.4
-- The latest version of the *.aar files in \Assets\Bhaptics\SDK\Plugins\Android\ is 1.10.
-- Delete the previous version of the *.aar files. Otherwise, there will be a problem.
+## Unity SDK Migration Guide 1.5.* to 1.5.5
+* The *.aar files are no longer contains a version.(ex: bhaptics_ble.aar, bhaptics_commons.aar)
+* Delete the previous version of the *.aar files. Otherwise, there will be a problem.
 ```
 * You can check the migration guide for previous versions **[HERE](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide)**.
 

@@ -1,3 +1,7 @@
+## Unity plugin 1.5.5(Mar 05th, 2021.)
+* Update: Add recover connection on android
+* Fix: Fix multiple disconnect issue on android
+
 ## Unity plugin 1.5.4(Feb 15th, 2021.)
 * Update: Improve performance on Android
 * Fix: Fix minor issues

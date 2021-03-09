@@ -31,7 +31,7 @@ namespace Bhaptics.Tact.Unity
 
         private void OnPairSelected()
         {
-            if (AndroidUtils.ConvertConnectionStatus(device.ConnectionStatus) == 2)
+            if (!(device.IsPaired))
             {
                 BhapticsAndroidManager.Pair(device.Address);
             }

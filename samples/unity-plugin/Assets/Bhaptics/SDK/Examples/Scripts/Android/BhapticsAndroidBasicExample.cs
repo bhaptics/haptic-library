@@ -68,15 +68,15 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
 
     public void RequestPermission()
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+        if (!BhapticsAndroidManager.CheckPermission())
         {
-            AndroidPermissionsManager.RequestPermission();
+            BhapticsAndroidManager.RequestPermission();
         }
     }
 
     public void Scan()
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+        if (!BhapticsAndroidManager.CheckPermission())
         {
             return;
         }
@@ -86,7 +86,7 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
 
     public void ScanStop()
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+        if (!BhapticsAndroidManager.CheckPermission())
         {
             return;
         }
@@ -147,11 +147,6 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
 
     public void ToggleTactosyArms(bool isLeft)
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-        {
-            return;
-        }
-
         var connectedDevices = BhapticsAndroidManager.GetConnectedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, isLeft));
         for (int i = 0; i < connectedDevices.Count; ++i)
         {
@@ -176,31 +171,16 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
 
     private void PairHapticDevice(PositionType deviceType)
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-        {
-            return;
-        }
-
         BhapticsAndroidManager.Pair(deviceType);
     }
 
     private void UnpairHapticDevice(PositionType deviceType)
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-        {
-            return;
-        }
-
         BhapticsAndroidManager.Unpair(deviceType);
     }
 
     private void PingPairedDevice(PositionType deviceType)
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-        {
-            return;
-        }
-
         BhapticsAndroidManager.Ping(deviceType);
     }
 }

@@ -41,12 +41,6 @@ namespace Bhaptics.Tact.Unity
 
         void Start()
         {
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-            {
-                BhapticsLogger.LogError("bhaptics requires bluetooth permission.");
-            }
-
-
             if (WidgetSetting == null)
             {
                 BhapticsLogger.LogError("[bhaptics] WidgetSetting is null");
@@ -57,7 +51,6 @@ namespace Bhaptics.Tact.Unity
                 animator.Play("HideWidget", -1, 1);
             }
 
-            BhapticsAndroidManager.AddRefresh(Refresh);
         }
 
         private void OnEnable()
@@ -73,8 +66,6 @@ namespace Bhaptics.Tact.Unity
                     animator.Play("HideWidget", -1, 1);
                 }
             }
-
-            BhapticsAndroidManager.AddRefresh(Refresh);
         }
 
         private void OnDisable()
@@ -84,8 +75,6 @@ namespace Bhaptics.Tact.Unity
                 StopCoroutine(scanCoroutine);
                 scanCoroutine = null;
             }
-
-            BhapticsAndroidManager.RemoveRefresh(Refresh);
         }
         
 
@@ -110,9 +99,10 @@ namespace Bhaptics.Tact.Unity
         // calling from the UI Button
         public void ToggleWidgetButton()
         {
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+            Debug.LogErrorFormat("ToggleWidgetButton()");
+            if (!BhapticsAndroidManager.CheckPermission())
             {
-                AndroidPermissionsManager.RequestPermission();
+                BhapticsAndroidManager.RequestPermission();
 
                 return;
             }
@@ -126,7 +116,6 @@ namespace Bhaptics.Tact.Unity
 
             if (widgetActive)
             {
-                BhapticsAndroidManager.ForceUpdateDeviceList();
                 foreach (var controlButton in controllButtons)
                 {
                     controlButton.Refresh();

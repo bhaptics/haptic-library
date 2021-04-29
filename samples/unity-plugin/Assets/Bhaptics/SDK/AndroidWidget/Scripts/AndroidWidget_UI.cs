@@ -99,11 +99,10 @@ namespace Bhaptics.Tact.Unity
         // calling from the UI Button
         public void ToggleWidgetButton()
         {
-            Debug.LogErrorFormat("ToggleWidgetButton()");
             if (!BhapticsAndroidManager.CheckPermission())
             {
                 BhapticsAndroidManager.RequestPermission();
-
+            
                 return;
             }
 
@@ -194,8 +193,6 @@ namespace Bhaptics.Tact.Unity
             {
                 if (device.IsPaired)
                 {
-                    bool isConnect = device.IsConnected;
-
                     var ui = settingObjectPool.GetPairedDeviceUI();
                     if (ui == null)
                     {

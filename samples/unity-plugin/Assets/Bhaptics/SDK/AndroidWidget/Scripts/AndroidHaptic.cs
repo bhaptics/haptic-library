@@ -96,7 +96,7 @@ namespace Bhaptics.Tact.Unity
             }
 
 
-            deviceList = GetDevices(true);
+            deviceList = GetDevices();
         }
 
         public List<AndroidUtils.StreamHost> GetStreamingHosts()
@@ -377,20 +377,13 @@ namespace Bhaptics.Tact.Unity
         }
 
 
-        public List<HapticDevice> GetDevices(bool force = false)
+        public List<HapticDevice> GetDevices()
         {
-            if (force)
-            {
-                string[] result = androidJavaObject.Call<string[]>("getDeviceList");
-                deviceList = AndroidUtils.ConvertToBhapticsDevices(result);
-            }
+            string[] result = androidJavaObject.Call<string[]>("getDeviceList");
+            deviceList = AndroidUtils.ConvertToBhapticsDevices(result);
+            
 
             return deviceList;
-        }
-
-        public void UpdateDeviceList(List<HapticDevice> devices)
-        {
-            deviceList = devices;
         }
 
         public void Pair(string address, string position)

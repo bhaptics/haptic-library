@@ -61,7 +61,6 @@ public class Bhaptics_Setup : MonoBehaviour
         }
 
         var go = Instantiate(Config.AndroidManagerPrefab, transform);
-        go.alwaysScanDisconnectedDevice = Config.AlwaysScanDisconnectedDevice;
 #endif
 
     }

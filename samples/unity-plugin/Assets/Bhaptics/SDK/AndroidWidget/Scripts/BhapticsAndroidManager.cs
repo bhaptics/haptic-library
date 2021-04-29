@@ -10,13 +10,8 @@ namespace Bhaptics.Tact.Unity
     {
         private static BhapticsAndroidManager Instance;
 
-        [HideInInspector] public bool alwaysScanDisconnectedDevice;
 
-        private List<UnityAction> refreshActions = new List<UnityAction>();
-
-
-
-
+        public static bool pcAndoidTestMode = false;
 
         void Awake()
         {
@@ -35,30 +30,10 @@ namespace Bhaptics.Tact.Unity
 #if UNITY_ANDROID
             if (Application.platform != RuntimePlatform.Android)
             {
-                // only for debugging
-                BhapticsLogger.LogDebug("InvokeRefresh for debuggin usage.");
-
-                InvokeRepeating("InvokeRefresh", 1f, 1f);
+                pcAndoidTestMode = true;
             }
 #endif
         }
-
-        void OnEnable()
-        {
-            if (alwaysScanDisconnectedDevice)
-            {
-                InvokeRepeating("CheckIfNeededToScan", 0.5f, 0.5f);
-            }
-        }
-
-        void OnDisable()
-        {
-            if (alwaysScanDisconnectedDevice)
-            {
-                CancelInvoke();
-            }
-        }
-
         public static void Ping(PositionType pos)
         {
             var connectedDevices = GetConnectedDevices(pos);
@@ -66,16 +41,6 @@ namespace Bhaptics.Tact.Unity
             {
                 Ping(pairedDevice);
             }
-        }
-
-        private static void OnUpdateDevicesChange(List<HapticDevice> devices)
-        {
-            var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
-            if (androidHapticPlayer == null)
-            {
-                return;
-            }
-            androidHapticPlayer.UpdateDeviceList(devices);
         }
 
         #region Connection Related Functions
@@ -233,7 +198,7 @@ namespace Bhaptics.Tact.Unity
             return false;
         }
 
-        public static List<HapticDevice> GetDevices(bool force = false)
+        public static List<HapticDevice> GetDevices()
         {
             var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
             if (androidHapticPlayer == null)
@@ -241,7 +206,7 @@ namespace Bhaptics.Tact.Unity
                 var device =new HapticDevice()
                 {
                     Position = PositionType.Vest,
-                    IsConnected = false,
+                    IsConnected = true,
                     IsPaired =  true,
                     Address = "aaaa",
                     DeviceName = "Tactot",
@@ -263,7 +228,7 @@ namespace Bhaptics.Tact.Unity
                 return list;
             }
 
-            return androidHapticPlayer.GetDevices(force);
+            return androidHapticPlayer.GetDevices();
         }
 
         public static List<HapticDevice> GetConnectedDevices(PositionType pos)
@@ -302,6 +267,11 @@ namespace Bhaptics.Tact.Unity
             var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
             if (androidHapticPlayer == null)
             {
+                if (pcAndoidTestMode)
+                {
+                    return true;
+                }
+
                 return false;
             }
 

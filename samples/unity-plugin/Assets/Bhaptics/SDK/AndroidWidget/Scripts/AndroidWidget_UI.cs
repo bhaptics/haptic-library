@@ -50,6 +50,10 @@ namespace Bhaptics.Tact.Unity
             {
                 animator.Play("HideWidget", -1, 1);
             }
+            else
+            {
+                BhapticsAndroidManager.AddRefreshAction(Refresh);
+            }
 
         }
 
@@ -115,20 +119,17 @@ namespace Bhaptics.Tact.Unity
 
             if (widgetActive)
             {
-                foreach (var controlButton in controllButtons)
-                {
-                    controlButton.Refresh();
-                }
-
-
                 animator.Play("ShowWidget");
                 
                 ShowWidget();
+                BhapticsAndroidManager.AddRefreshAction(Refresh);
             }
             else
             {
                 animator.Play("HideWidget");
                 HideWidget();
+
+                BhapticsAndroidManager.RemoveRefreshAction();
             }
         }
 
@@ -228,6 +229,11 @@ namespace Bhaptics.Tact.Unity
             settingObjectPool.DisableAll();
             RefreshPairedDevices(devices);
             RefreshScannedDevices(devices);
+
+            foreach (var controlButton in controllButtons)
+            {
+                controlButton.Refresh();
+            }
         }
         #endregion
     }

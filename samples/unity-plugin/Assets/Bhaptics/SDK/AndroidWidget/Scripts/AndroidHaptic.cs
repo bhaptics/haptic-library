@@ -108,7 +108,7 @@ namespace Bhaptics.Tact.Unity
 
             var list = new List<AndroidUtils.StreamHost>();
 
-            string[] res = androidJavaObject.Call<string[]>("getStreamHosts");
+            string[] res = androidJavaObject.Call<string[]>("getStreamingHosts");
             for (int index = 0; index < res.Length; index++)
             {
                 try
@@ -125,14 +125,24 @@ namespace Bhaptics.Tact.Unity
             return list;
         }
 
-        public bool ConnectStream(string host)
+        public bool IsStreamingEnable()
         {
             if (androidJavaObject == null)
             {
                 return false;
             }
 
-            return androidJavaObject.Call<bool>("connectStream", host);
+            return androidJavaObject.Call<bool>("isStreamingEnable");
+        }
+
+        public void ToggleStreaming()
+        {
+            if (androidJavaObject == null)
+            {
+                return;
+            }
+
+            androidJavaObject.Call("toggleStreamingEnable");
         }
 
         public bool IsConnect(PositionType type)

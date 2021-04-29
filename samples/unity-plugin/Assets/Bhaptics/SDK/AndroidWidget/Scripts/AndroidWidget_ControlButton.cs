@@ -33,7 +33,7 @@ namespace Bhaptics.Tact.Unity
 
         private void OnEnable()
         {
-            InvokeRepeating("BlinkCanPair", 0f, 0.1f);
+            InvokeRepeating("BlinkCanPair", 0f, 0.2f);
         }
 
         private void OnDisable()

@@ -20,7 +20,7 @@ public class BhapticsAndroidScanExample : MonoBehaviour
 
     private void CheckScanning()
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+        if (!BhapticsAndroidManager.CheckPermission())
         {
             return;
         }
@@ -30,9 +30,9 @@ public class BhapticsAndroidScanExample : MonoBehaviour
 
     public void CheckPermission()
     {
-        if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+        if (!BhapticsAndroidManager.CheckPermission())
         {
-            AndroidPermissionsManager.RequestPermission();
+            BhapticsAndroidManager.RequestPermission();
         }
     }
 }

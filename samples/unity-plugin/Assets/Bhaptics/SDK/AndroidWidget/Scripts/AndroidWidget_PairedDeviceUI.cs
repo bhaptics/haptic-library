@@ -67,8 +67,7 @@ namespace Bhaptics.Tact.Unity
 
         private void OnUnpair()
         {
-            if (device.IsConnected ||
-                (AndroidUtils.ConvertConnectionStatus(device.ConnectionStatus) == 2 && device.IsPaired))
+            if (device.IsPaired)
             { 
                 BhapticsAndroidManager.Unpair(device.Address);
             }

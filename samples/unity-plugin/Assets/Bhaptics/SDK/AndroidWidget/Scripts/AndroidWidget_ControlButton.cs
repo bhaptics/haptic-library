@@ -27,7 +27,6 @@ namespace Bhaptics.Tact.Unity
             button = GetComponent<Button>();
             unPairButton.GetComponent<Button>().onClick.AddListener(OnUnpairDevice);
             button.onClick.AddListener(OnClickDevice);
-            BhapticsAndroidManager.AddRefresh(Refresh);
 
             BhapticsLogger.LogDebug("start");
         }
@@ -35,13 +34,11 @@ namespace Bhaptics.Tact.Unity
         private void OnEnable()
         {
             InvokeRepeating("BlinkCanPair", 0f, 0.1f);
-            BhapticsAndroidManager.AddRefresh(Refresh);
         }
 
         private void OnDisable()
         {
             CancelInvoke();
-            BhapticsAndroidManager.RemoveRefresh(Refresh);
         }
 
 
@@ -109,18 +106,14 @@ namespace Bhaptics.Tact.Unity
         public void OnPairDevice()
         {
             var devices = BhapticsAndroidManager.GetDevices();
-            int rssi = -9999;
             int index = -1;
 
             for(int i = 0; i < devices.Count; i++)
             {
                 if (AndroidUtils.CanPair(devices[i], DeviceType))
                 {
-                    if(rssi < devices[i].Rssi)
-                    {
-                        rssi = devices[i].Rssi;
-                        index = i;
-                    }
+                    index = i;
+                    break;
                 }
             }
 

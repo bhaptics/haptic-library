@@ -59,19 +59,6 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-
-
-
-
-
-
-
-        public static void ForceUpdateDeviceList()
-        {
-            GetDevices(true);
-            RefreshDeviceListUi();
-        }
-
         public static void Ping(PositionType pos)
         {
             var connectedDevices = GetConnectedDevices(pos);
@@ -91,43 +78,19 @@ namespace Bhaptics.Tact.Unity
             androidHapticPlayer.UpdateDeviceList(devices);
         }
 
-        private static void RefreshDeviceListUi()
-        {
-            var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
-            if (androidHapticPlayer == null)
-            {
-                return;
-            }
-
-            if (Instance != null)
-            {
-                Instance.InvokeRefresh();
-            }
-        }
-
-        private void UpdateScanning(bool isScanning)
-        {
-            RefreshDeviceListUi();
-        }
-
-
         #region Connection Related Functions
 
         public static void Pair(PositionType deviceType)
         {
             var devices = GetDevices();
-            int rssi = -9999;
             int index = -1;
 
             for (int i = 0; i < devices.Count; i++)
             {
                 if (AndroidUtils.CanPair(devices[i], deviceType))
                 {
-                    if (rssi < devices[i].Rssi)
-                    {
-                        rssi = devices[i].Rssi;
-                        index = i;
-                    }
+                    index = i;
+                    break;
                 }
             }
 
@@ -191,7 +154,7 @@ namespace Bhaptics.Tact.Unity
         public static void Scan()
         {
             var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
-            if (androidHapticPlayer == null || !AndroidPermissionsManager.CheckBluetoothPermissions())
+            if (androidHapticPlayer == null)
             {
                 return;
             }
@@ -281,11 +244,8 @@ namespace Bhaptics.Tact.Unity
                     IsConnected = false,
                     IsPaired =  true,
                     Address = "aaaa",
-                    Battery = 100,
-                    Rssi = -100,
                     DeviceName = "Tactot",
                     Candidates = new PositionType[] { PositionType.Vest },
-                    ConnectionStatus = "Disconnected",
                 };
                 var device2 =new HapticDevice()
                 {
@@ -293,15 +253,12 @@ namespace Bhaptics.Tact.Unity
                     IsConnected = false,
                     IsPaired =  false,
                     Address = "aaaa22",
-                    Battery = 100,
-                    Rssi = -100,
                     DeviceName = "Tactosy",
-                    ConnectionStatus = "Disconnected",
                     Candidates = new PositionType[] {PositionType.ForearmR, PositionType.ForearmL},
                 };
                 var list = new List<HapticDevice>();
-                // list.Add(device);
-                // list.Add(device2);
+                list.Add(device);
+                list.Add(device2);
                 // TODO DEBUGGING USAGE.
                 return list;
             }
@@ -324,28 +281,6 @@ namespace Bhaptics.Tact.Unity
             return pairedDeviceList;
         }
 
-        public static bool IsNeededToScan()
-        {
-            var devices = GetDevices();
-            if (IsScanning())
-            {
-                return false;
-            }
-
-            if (devices != null)
-            {
-                for (int i = 0; i < devices.Count; i++)
-                {
-                    if (devices[i].IsPaired && AndroidUtils.ConvertConnectionStatus(devices[i].ConnectionStatus) == 2)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
         public static List<HapticDevice> GetPairedDevices(PositionType pos)
         {
             var res = new List<HapticDevice>();
@@ -361,117 +296,38 @@ namespace Bhaptics.Tact.Unity
             return res;
         }
 
+
+        public static bool CheckPermission()
+        {
+            var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
+            if (androidHapticPlayer == null)
+            {
+                return false;
+            }
+
+            return androidHapticPlayer.CheckPermission();
+        }
+
+        public static void RequestPermission()
+        {
+
+            var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+
+            androidHapticPlayer.RequestPermission();
+        }
+
         #endregion
 
 
         #region Callback Functions from native code
 
-        public void OnChange()
-        {
-            try
-            {
-                var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
-                if (androidHapticPlayer == null)
-                {
-                    return;
-                }
-
-                androidHapticPlayer.CheckChange();
-            }
-            catch (Exception e)
-            {
-                BhapticsLogger.LogInfo("OnChange {0}", e.Message);
-            }
-        }
-
-        public void ScanStatusChanged(string message)
-        {
-            var isScanning = JSON.Parse((message));
-            UpdateScanning(isScanning.AsBool);
-        }
-
-        public void OnDeviceUpdate(string message)
-        {
-            var deviceList = AndroidUtils.ConvertToBhapticsDevices(message);
-            OnUpdateDevicesChange(deviceList);
-            RefreshDeviceListUi();
-
-        }
-
-        public void OnConnect(string address)
-        {
-            // nothing to do
-        }
-
-        public void OnDisconnect(string address)
-        {
-            // nothing to do
-        }
-        public void PermissionGranted(string permission)
+        public void PermissionGranted(string s)
         {
             Scan();
-        }
-#endregion
-
-#region Callback Functions from UI update 
-        public static void AddRefresh(UnityAction call)
-        {
-            if (Instance == null)
-            {
-                return;
-            }
-
-            int index = Instance.GetListenerIndex(call);
-            if (index == -1)
-            {
-                Instance.refreshActions.Add(call);
-            }
-        }
-
-        public static void RemoveRefresh(UnityAction call)
-        {
-            if (Instance == null)
-            {
-                return;
-            }
-
-            int index = Instance.GetListenerIndex(call);
-            if (index != -1)
-            {
-                Instance.refreshActions.RemoveAt(index);
-            }
-        }
-
-        private int GetListenerIndex(UnityAction call)
-        {
-            for (int i = 0; i < Instance.refreshActions.Count; i++)
-            {
-                if (refreshActions[i] == call)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        private void InvokeRefresh()
-        {
-            for (int i = 0; i < refreshActions.Count; i++)
-            {
-                refreshActions[i].Invoke();
-            }
-        }
-#endregion
-
-
-
-#region Check for Disconnected devices
-        private void CheckIfNeededToScan()
-        {
-            if (IsNeededToScan())
-            {
-                Scan();
-            }
         }
 #endregion
     }

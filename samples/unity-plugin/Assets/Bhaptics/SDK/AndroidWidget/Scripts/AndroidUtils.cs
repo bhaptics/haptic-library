@@ -10,10 +10,7 @@ namespace Bhaptics.Tact.Unity
         public bool IsPaired;
         public bool IsConnected;
         public string DeviceName;
-        public int Battery;
         public PositionType Position;
-        public string ConnectionStatus;
-        public int Rssi;
         public string Address;
         public PositionType[] Candidates;
     }
@@ -30,34 +27,38 @@ namespace Bhaptics.Tact.Unity
         [Serializable]
         private class Device
         {
-            public bool IsPaired;
-            public string DeviceName;
-            public int Battery;
-            public string Position;
-            public string ConnectionStatus;
-            public int Rssi;
-            public string Address;
+            public bool paired;
+            public string deviceName;
+            public int position;
+            public bool connected;
+            public string address;
+        }
+        [Serializable]
+        public class StreamHost
+        {
+            public string ip;
+            public bool connected;
         }
 
-        private static PositionType ToDeviceType(string type)
+        private static PositionType ToDeviceType(int type)
         {
             switch (type)
             {
-                case "Head":
+                case 3:
                     return PositionType.Head;
-                case "Vest":
+                case 0:
                     return PositionType.Vest;
-                case "ForearmL":
+                case 1:
                     return PositionType.ForearmL;
-                case "ForearmR":
+                case 2:
                     return PositionType.ForearmR;
-                case "HandL":
+                case 4:
                     return PositionType.HandL;
-                case "HandR":
+                case 5:
                     return PositionType.HandR;
-                case "FootL":
+                case 6:
                     return PositionType.FootL;
-                case "FootR":
+                case 7:
                     return PositionType.FootR;
 
             }
@@ -65,25 +66,25 @@ namespace Bhaptics.Tact.Unity
             return PositionType.Vest;
         }
 
-        private static PositionType[] ToCandidates(string type)
+        private static PositionType[] ToCandidates(int type)
         {
             switch (type)
             {
-                case "Head":
+                case 3:
                     return new PositionType[] { PositionType.Head };
-                case "Vest":
+                case 0:
                     return new PositionType[] { PositionType.Vest };
-                case "ForearmL":
+                case 1:
                     return new PositionType[] { PositionType.ForearmL, PositionType.ForearmR };
-                case "ForearmR":
+                case 2:
                     return new PositionType[] { PositionType.ForearmL, PositionType.ForearmR };
-                case "HandL":
+                case 4:
                     return new PositionType[] { PositionType.HandL, PositionType.HandR };
-                case "HandR":
+                case 5:
                     return new PositionType[] { PositionType.HandL, PositionType.HandR };
-                case "FootL":
+                case 6:
                     return new PositionType[] { PositionType.FootR, PositionType.FootL };
-                case "FootR":
+                case 7:
                     return new PositionType[] { PositionType.FootR, PositionType.FootL };
 
             }
@@ -116,18 +117,15 @@ namespace Bhaptics.Tact.Unity
 
         private static HapticDevice Convert(Device d)
         {
-            var isConnected = ConvertConnectionStatus(d.ConnectionStatus) == 0;
+            var isConnected = d.connected;
             return new HapticDevice()
             {
-                IsPaired = d.IsPaired,
+                IsPaired = d.paired,
                 IsConnected = isConnected,
-                Address = d.Address,
-                Battery = d.Battery,
-                Position = ToDeviceType(d.Position),
-                DeviceName = d.DeviceName,
-                Rssi = d.Rssi,
-                ConnectionStatus = d.ConnectionStatus,
-                Candidates = ToCandidates(d.Position),
+                Address = d.address,
+                Position = ToDeviceType(d.position),
+                DeviceName = d.deviceName,
+                Candidates = ToCandidates(d.position),
 
             };
         }
@@ -146,41 +144,21 @@ namespace Bhaptics.Tact.Unity
             }
 
             return (containsInCandidates || device.Position == deviceType) &&
-                   !device.IsPaired &&
-                   ConvertConnectionStatus(device.ConnectionStatus) == 2;
+                   !device.IsPaired;
         }
 
-        public static List<HapticDevice> ConvertToBhapticsDevices(string deviceJson)
+        public static List<HapticDevice> ConvertToBhapticsDevices(string[] deviceJson)
         {
             var res = new List<HapticDevice>();
 
-            var devices = GetJsonArray<Device>(deviceJson);
-
-            foreach (var d in devices)
+            for (var i = 0; i < deviceJson.Length; i++)
             {
-                res.Add(Convert(d));
+                var device = JsonUtility.FromJson<Device>(deviceJson[i]);
+                res.Add(Convert(device));
             }
 
             return res;
         }
-
-        public static int ConvertConnectionStatus(string status)
-        {
-            if (status == "Connected")
-            {
-                return 0;
-            }
-            else if (status == "Connecting")
-            {
-                return 1;
-            }
-            else if (status == "Disconnected")
-            {
-                return 2;
-            }
-            return 3;
-        }
-
 
 
         public static void CallNativeVoidMethod(IntPtr androidObjPtr, IntPtr methodPtr, object[] param)

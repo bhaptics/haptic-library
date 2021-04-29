@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
@@ -24,15 +25,20 @@ namespace Bhaptics.Tact.Unity
         private readonly object syncLock = new object();
         private Dictionary<PositionType, int[]> updatedList = new Dictionary<PositionType, int[]>();
 
+
         private readonly IntPtr AndroidJavaObjectPtr;
+
+        private readonly IntPtr HasPermissionPtr;
+        private readonly IntPtr RequestPermissionPtr;
+        
+        
         private readonly IntPtr SubmitRegisteredPtr;
         private readonly IntPtr SubmitRegisteredWithTimePtr;
         private readonly IntPtr RegisterPtr;
         private readonly IntPtr RegisterReflectedPtr;
-        private readonly IntPtr ScanPtr;
-        private readonly IntPtr StopScanPtr;
-        private readonly IntPtr PingAllPtr;
+        private readonly IntPtr ToggleScanPtr;
         private readonly IntPtr PingPtr;
+        private readonly IntPtr PingAllPtr;
         private readonly IntPtr UnpairPtr;
         private readonly IntPtr UnpairAllPtr;
 
@@ -42,38 +48,91 @@ namespace Bhaptics.Tact.Unity
         private readonly IntPtr IsPlayingAnythingPtr;
         private readonly IntPtr IsScanningPtr;
 
+        // Streaming methods
+        private readonly IntPtr ToggleStreamPtr;
+        private readonly IntPtr IsStreamingEnablePtr;
+        private readonly IntPtr GetStreamingHostsPtr;
 
         public AndroidHaptic()
         {
-            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            androidJavaObject =
-                new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity);
-
-            AndroidJavaObjectPtr = androidJavaObject.GetRawObject();
-            SubmitRegisteredPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "submitRegistered");
-            SubmitRegisteredWithTimePtr =
-                AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "submitRegisteredWithTime");
-            RegisterPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "register");
-            RegisterReflectedPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "registerReflected");
-            ScanPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "scan");
-            StopScanPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "stopScan");
-            PingAllPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "pingAll");
-            PingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "ping");
-            UnpairPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "unpair");
-            UnpairAllPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "unpairAll");
-
-            IsRegisteredPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isRegistered");
-            IsPlayingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isPlaying");
-            IsPlayingAnythingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isAnythingPlaying");
-            IsScanningPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isScanning");
-
-
-            if (AndroidPermissionsManager.CheckBluetoothPermissions())
+            try
             {
-                deviceList = GetDevices(true);
-                StartScan();
+
+                AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                androidJavaObject =
+                    new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity, Application.productName);
+
+                AndroidJavaObjectPtr = androidJavaObject.GetRawObject();
+
+                ToggleStreamPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "toggleStreamingEnable");
+                HasPermissionPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "hasPermission");
+                RequestPermissionPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "requestPermission");
+
+                SubmitRegisteredPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "submitRegistered");
+                SubmitRegisteredWithTimePtr =
+                    AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "submitRegisteredWithTime");
+                RegisterPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "register");
+                RegisterReflectedPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "registerReflected");
+                PingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "ping");
+                PingAllPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "pingAll");
+                UnpairPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "unpair");
+                UnpairAllPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "unpairAll");
+
+                IsRegisteredPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isRegistered");
+                IsPlayingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isPlaying");
+                IsPlayingAnythingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isAnythingPlaying");
+
+
+                ToggleScanPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "toggleScan");
+                IsScanningPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isScanning");
+
+                IsStreamingEnablePtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isStreamingEnable");
+                GetStreamingHostsPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "getStreamingHosts");
             }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat("AndroidHaptic {0} {1} ", e.Message, e);
+            }
+
+
+            deviceList = GetDevices(true);
+        }
+
+        public List<AndroidUtils.StreamHost> GetStreamingHosts()
+        {
+            if (androidJavaObject == null)
+            {
+                return new List<AndroidUtils.StreamHost>();
+            }
+
+            var list = new List<AndroidUtils.StreamHost>();
+
+            string[] res = androidJavaObject.Call<string[]>("getStreamHosts");
+            for (int index = 0; index < res.Length; index++)
+            {
+                try
+                {
+                    var streamHost = JsonUtility.FromJson<AndroidUtils.StreamHost>(res[index]);
+                    list.Add(streamHost);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogFormat("FromJson {0} {1}", res[index], e.Message);
+                }
+            }
+
+            return list;
+        }
+
+        public bool ConnectStream(string host)
+        {
+            if (androidJavaObject == null)
+            {
+                return false;
+            }
+
+            return androidJavaObject.Call<bool>("connectStream", host);
         }
 
         public bool IsConnect(PositionType type)
@@ -171,11 +230,6 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-            {
-                return;
-            }
-
             try
             {
                 int[] indexes = new int[points.Count];
@@ -201,12 +255,6 @@ namespace Bhaptics.Tact.Unity
             {
                 return;
             }
-
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-            {
-                return;
-            }
-
             try
             {
                 float[] x = new float[points.Count];
@@ -245,11 +293,6 @@ namespace Bhaptics.Tact.Unity
 
         public void SubmitRegistered(string key, int startTimeMillis)
         {
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-            {
-                return;
-            }
-
             if (androidJavaObject == null)
             {
                 return;
@@ -260,11 +303,6 @@ namespace Bhaptics.Tact.Unity
 
         public void TurnOff(string key)
         {
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-            {
-                return;
-            }
-
             if (androidJavaObject != null)
             {
                 try
@@ -281,11 +319,6 @@ namespace Bhaptics.Tact.Unity
 
         public void TurnOff()
         {
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-            {
-                return;
-            }
-
             if (androidJavaObject != null)
             {
                 try
@@ -316,11 +349,6 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
-            {
-                return;
-            }
-
             SubmitRegisteredParams[0] = key;
             SubmitRegisteredParams[1] = altKey;
             SubmitRegisteredParams[2] = intensity;
@@ -340,11 +368,6 @@ namespace Bhaptics.Tact.Unity
 
             lock (syncLock)
             {
-                if (updatedList.ContainsKey(pos))
-                {
-                    return updatedList[pos];
-                }
-
                 byte[] result = androidJavaObject.Call<byte[]>("getPositionStatus", pos.ToString());
                 int[] res = Array.ConvertAll(result, System.Convert.ToInt32);
                 updatedList[pos] = res;
@@ -358,7 +381,7 @@ namespace Bhaptics.Tact.Unity
         {
             if (force)
             {
-                string result = androidJavaObject.Call<string>("getDeviceList");
+                string[] result = androidJavaObject.Call<string[]>("getDeviceList");
                 deviceList = AndroidUtils.ConvertToBhapticsDevices(result);
             }
 
@@ -413,12 +436,12 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+            if (!CheckPermission())
             {
                 return;
             }
 
-            CallNativeVoidMethod(ScanPtr, EmptyParams);
+            CallNativeVoidMethod(ToggleScanPtr, EmptyParams);
         }
 
         public void StopScan()
@@ -428,12 +451,12 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            if (!AndroidPermissionsManager.CheckBluetoothPermissions())
+            if (!CheckPermission())
             {
                 return;
             }
 
-            CallNativeVoidMethod(StopScanPtr, EmptyParams);
+            CallNativeVoidMethod(ToggleScanPtr, EmptyParams);
         }
 
         public bool IsScanning()
@@ -480,15 +503,6 @@ namespace Bhaptics.Tact.Unity
             CallNativeVoidMethod(PingPtr, new object[] {address});
         }
 
-        public void CheckChange()
-        {
-            lock (syncLock)
-            {
-                updatedList.Clear();
-            }
-        }
-
-
         private void CallNativeVoidMethod(IntPtr methodPtr, object[] param)
         {
             if (androidJavaObject == null)
@@ -508,6 +522,22 @@ namespace Bhaptics.Tact.Unity
             }
 
             return AndroidUtils.CallNativeBoolMethod(AndroidJavaObjectPtr, methodPtr, param);
+        }
+
+
+        public void RequestPermission()
+        {
+            AndroidUtils.CallNativeVoidMethod(AndroidJavaObjectPtr, RequestPermissionPtr, EmptyParams);
+        }
+
+        public bool CheckPermission()
+        {
+            if (androidJavaObject == null)
+            {
+                return false;
+            }
+
+            return AndroidUtils.CallNativeBoolMethod(AndroidJavaObjectPtr, HasPermissionPtr, EmptyParams);
         }
     }
 }

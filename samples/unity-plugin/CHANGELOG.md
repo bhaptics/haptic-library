@@ -1,3 +1,7 @@
+## Unity plugin 1.5.6(Apr 30th, 2021.)
+* Update: Add haptic stream function on android
+* Fix: Fix minor issues
+
 ## Unity plugin 1.5.5(Mar 05th, 2021.)
 * Update: Add recover connection on android
 * Fix: Fix multiple disconnect issue on android

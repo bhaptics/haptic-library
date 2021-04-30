@@ -11,7 +11,7 @@ public class BhapticsWidgetInstiate : MonoBehaviour
     void Start()
     {
 
-        Invoke("CreateWidget", 10f);
+        Invoke("CreateWidget", 3f);
     }
 
     void CreateWidget()

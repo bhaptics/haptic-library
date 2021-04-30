@@ -27,6 +27,8 @@ namespace Bhaptics.Tact.Unity
 
         private AndroidWidget_ControlButton[] controllButtons;
 
+        public static AndroidWidget_UI Instance;
+
         void Awake()
         {
             InitializeButtons();
@@ -37,6 +39,7 @@ namespace Bhaptics.Tact.Unity
             controllButtons = GetComponentsInChildren<AndroidWidget_ControlButton>(true);
             animator = GetComponent<Animator>();
             GetComponent<Canvas>().worldCamera = Camera.main;
+            Instance = this;
         }
 
         void Start()

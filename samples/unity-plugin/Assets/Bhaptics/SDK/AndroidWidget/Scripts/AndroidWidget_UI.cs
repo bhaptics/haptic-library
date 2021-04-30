@@ -231,7 +231,12 @@ namespace Bhaptics.Tact.Unity
         public void Refresh()
         {
             var devices = BhapticsAndroidManager.GetDevices();
-            settingObjectPool.DisableAll();
+
+            if (settingObjectPool != null)
+            {
+                settingObjectPool.DisableAll();
+            }
+
             RefreshPairedDevices(devices);
             RefreshScannedDevices(devices);
 

@@ -55,12 +55,15 @@ namespace Bhaptics.Tact.Unity
                 BhapticsAndroidManager.AddRefreshAction(Refresh);
             }
 
+            Refresh();
+
         }
 
         private void OnEnable()
         {
             if (alwaysActive)
             {
+                ShowWidget();
                 scanCoroutine = StartCoroutine(LoopScan());
             }
             else
@@ -137,15 +140,19 @@ namespace Bhaptics.Tact.Unity
         {
             uiContainer.SetActive(true);
             hideTimer = autoHideTime;
+
+            BhapticsAndroidManager.Scan();
             scanCoroutine = StartCoroutine(LoopScan());
         }
 
         public void HideWidget()
         {
             uiContainer.SetActive(false);
+
+            BhapticsAndroidManager.ScanStop();
+
             if (scanCoroutine != null)
             {
-                BhapticsAndroidManager.ScanStop();
                 StopCoroutine(scanCoroutine);
                 scanCoroutine = null;
             }
@@ -160,8 +167,6 @@ namespace Bhaptics.Tact.Unity
         {
             while (true)
             {
-                BhapticsAndroidManager.Scan();
-
                 if (!alwaysActive)
                 {
                     if (hideTimer < 0f)

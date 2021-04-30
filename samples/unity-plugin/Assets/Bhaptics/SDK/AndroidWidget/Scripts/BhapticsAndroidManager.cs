@@ -38,43 +38,49 @@ namespace Bhaptics.Tact.Unity
             }
 
             InvokeRepeating("RefreshDevices", 1f, 1f);
+
 #endif
         }
 
         private void RefreshDevices()
         {
+            if (refreshActions.Count == 0)
+            {
+                return;
+            }
+
             var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
             if (androidHapticPlayer == null)
             {
-                if (Devices.Count == 0)
-                {
-                    var device = new HapticDevice()
-                    {
-                        Position = PositionType.Vest,
-                        IsConnected = true,
-                        IsPaired = true,
-                        Address = "aaaa",
-                        DeviceName = "Tactot",
-                        Candidates = new PositionType[] { PositionType.Vest },
-                    };
-                    var device2 = new HapticDevice()
-                    {
-                        Position = PositionType.ForearmL,
-                        IsConnected = false,
-                        IsPaired = false,
-                        Address = "aaaa22",
-                        DeviceName = "Tactosy",
-                        Candidates = new PositionType[] { PositionType.ForearmR, PositionType.ForearmL },
-                    };
-                    Devices.Add(device);
-                    Devices.Add(device2);
-
-                }
-                // TODO DEBUGGING USAGE.
-                for (var i = 0; i < refreshActions.Count; i++)
-                {
-                    refreshActions[i].Invoke();
-                }
+                // if (Devices.Count == 0)
+                // {
+                //     var device = new HapticDevice()
+                //     {
+                //         Position = PositionType.Vest,
+                //         IsConnected = true,
+                //         IsPaired = true,
+                //         Address = "aaaa",
+                //         DeviceName = "Tactot",
+                //         Candidates = new PositionType[] { PositionType.Vest },
+                //     };
+                //     var device2 = new HapticDevice()
+                //     {
+                //         Position = PositionType.ForearmL,
+                //         IsConnected = false,
+                //         IsPaired = false,
+                //         Address = "aaaa22",
+                //         DeviceName = "Tactosy",
+                //         Candidates = new PositionType[] { PositionType.ForearmR, PositionType.ForearmL },
+                //     };
+                //     Devices.Add(device);
+                //     Devices.Add(device2);
+                //
+                // }
+                // // TODO DEBUGGING USAGE.
+                // for (var i = 0; i < refreshActions.Count; i++)
+                // {
+                //     refreshActions[i].Invoke();
+                // }
                 return;
             }
 
@@ -189,7 +195,10 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            androidHapticPlayer.StopScan();
+            if (androidHapticPlayer.IsScanning())
+            {
+                androidHapticPlayer.StopScan();
+            }
         }
 
         public static void TogglePosition(string address)

@@ -127,12 +127,7 @@ namespace Bhaptics.Tact.Unity
 
         public bool IsStreamingEnable()
         {
-            if (androidJavaObject == null)
-            {
-                return false;
-            }
-
-            return androidJavaObject.Call<bool>("isStreamingEnable");
+            return CallNativeBoolMethod(IsStreamingEnablePtr, EmptyParams);
         }
 
         public void ToggleStreaming()
@@ -142,7 +137,8 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
-            androidJavaObject.Call("toggleStreamingEnable");
+            CallNativeVoidMethod(ToggleStreamPtr, EmptyParams);
+
         }
 
         public bool IsConnect(PositionType type)

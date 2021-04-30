@@ -381,7 +381,10 @@ namespace Bhaptics.Tact.Unity
 
         public void PermissionGranted(string s)
         {
-            Scan();
+            if (AndroidWidget_UI.Instance != null)
+            {
+                AndroidWidget_UI.Instance.ToggleWidgetButton();
+            }
         }
 #endregion
     }

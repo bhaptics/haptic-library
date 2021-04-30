@@ -18,7 +18,7 @@ namespace Bhaptics.Tact.Unity
         private List<AndroidWidget_ScannedDeviceUI> scannedUIList;
 
 
-        void Start()
+        void Awake()
         {
             pairedUIList = new List<AndroidWidget_PairedDeviceUI>();
             scannedUIList = new List<AndroidWidget_ScannedDeviceUI>();

@@ -8,9 +8,9 @@ namespace Bhaptics.Tact.Unity
 {
     public class AndroidHaptic : IHaptic
     {
-        private static AndroidJavaObject androidJavaObject;
+        protected static AndroidJavaObject androidJavaObject;
 
-        private List<HapticDevice> deviceList = new List<HapticDevice>();
+        protected List<HapticDevice> deviceList = new List<HapticDevice>();
 
         private List<string> registeredCache = new List<string>();
 
@@ -26,32 +26,32 @@ namespace Bhaptics.Tact.Unity
         private Dictionary<PositionType, int[]> updatedList = new Dictionary<PositionType, int[]>();
 
 
-        private readonly IntPtr AndroidJavaObjectPtr;
+        protected IntPtr AndroidJavaObjectPtr;
 
-        private readonly IntPtr HasPermissionPtr;
-        private readonly IntPtr RequestPermissionPtr;
-        
-        
-        private readonly IntPtr SubmitRegisteredPtr;
-        private readonly IntPtr SubmitRegisteredWithTimePtr;
-        private readonly IntPtr RegisterPtr;
-        private readonly IntPtr RegisterReflectedPtr;
-        private readonly IntPtr ToggleScanPtr;
-        private readonly IntPtr PingPtr;
-        private readonly IntPtr PingAllPtr;
-        private readonly IntPtr UnpairPtr;
-        private readonly IntPtr UnpairAllPtr;
+        protected IntPtr HasPermissionPtr;
+        protected IntPtr RequestPermissionPtr;
+
+
+        protected IntPtr SubmitRegisteredPtr;
+        protected IntPtr SubmitRegisteredWithTimePtr;
+        protected IntPtr RegisterPtr;
+        protected IntPtr RegisterReflectedPtr;
+        protected IntPtr ToggleScanPtr;
+        protected IntPtr PingPtr;
+        protected IntPtr PingAllPtr;
+        protected IntPtr UnpairPtr;
+        protected IntPtr UnpairAllPtr;
 
         // bool methods
-        private readonly IntPtr IsRegisteredPtr;
-        private readonly IntPtr IsPlayingPtr;
-        private readonly IntPtr IsPlayingAnythingPtr;
-        private readonly IntPtr IsScanningPtr;
+        protected IntPtr IsRegisteredPtr;
+        protected IntPtr IsPlayingPtr;
+        protected IntPtr IsPlayingAnythingPtr;
+        protected IntPtr IsScanningPtr;
 
         // Streaming methods
-        private readonly IntPtr ToggleStreamPtr;
-        private readonly IntPtr IsStreamingEnablePtr;
-        private readonly IntPtr GetStreamingHostsPtr;
+        protected IntPtr ToggleStreamPtr;
+        protected IntPtr IsStreamingEnablePtr;
+        protected IntPtr GetStreamingHostsPtr;
 
         public AndroidHaptic()
         {
@@ -526,6 +526,11 @@ namespace Bhaptics.Tact.Unity
 
         public void RequestPermission()
         {
+            if (androidJavaObject == null)
+            {
+                return;
+            }
+
             AndroidUtils.CallNativeVoidMethod(AndroidJavaObjectPtr, RequestPermissionPtr, EmptyParams);
         }
 

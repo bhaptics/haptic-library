@@ -38,6 +38,7 @@ namespace Bhaptics.Tact.Unity
             }
 
             InvokeRepeating("RefreshDevices", 1f, 1f);
+            Scan();
 
 #endif
         }

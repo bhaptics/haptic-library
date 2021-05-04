@@ -1,3 +1,7 @@
+## Unity plugin 1.5.7(May 4th, 2021.)
+* Fix: Fix connection issue
+* Fix: scanning when there is no permission
+
 ## Unity plugin 1.5.6(Apr 30th, 2021.)
 * Update: Add haptic stream function on android
 * Fix: Fix minor issues

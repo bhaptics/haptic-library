@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Timers;
 using System.Windows;
 using Bhaptics.Tact;
 
@@ -11,17 +13,24 @@ namespace SampleApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private Timer timerToCheckIfDeviceActive = new Timer(4000);
         private HapticPlayer hapticPlayer;
         public MainWindow()
         {
             InitializeComponent();
 
-            hapticPlayer = new HapticPlayer();
+            hapticPlayer = new HapticPlayer("sample", "sample");
 
             var file = File.ReadAllText("ElectricFront.tact");
             var project = CommonUtils.ConvertJsonStringToTactosyFile(file).Project;
             hapticPlayer.Register("file", project);
-            
+
+            timerToCheckIfDeviceActive.Elapsed += (sender, args) =>
+            {
+                hapticPlayer.Submit("ping", PositionType.FootL, new List<DotPoint>(), 100);
+            };
+
+            timerToCheckIfDeviceActive.Start();
         }
 
         private void PathClicked(object sender, RoutedEventArgs e)
@@ -31,6 +40,8 @@ namespace SampleApp
             hapticPlayer.Submit("path3", PositionType.ForearmR, new PathPoint(0.5f, 0.5f, 100), 1000);
             hapticPlayer.Submit("path4", PositionType.VestBack, new PathPoint(0.5f, 0.5f, 100), 1000);
             hapticPlayer.Submit("path5", PositionType.Head, new PathPoint(0.5f, 0.5f, 100), 1000);
+
+            Debug.WriteLine("Device Connected: " + hapticPlayer.IsActive(PositionType.Vest));
         }
 
         private void DotClicked(object sender, RoutedEventArgs e)

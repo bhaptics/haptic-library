@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bhaptics.Tact, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Bhaptics.Tac.1.4.2\lib\net35\Bhaptics.Tact.dll</HintPath>
+      <HintPath>..\packages\Bhaptics.Tac.1.4.16\lib\net35\Bhaptics.Tact.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

@@ -52,11 +52,16 @@ namespace SampleApp
                 new DotPoint(5, 30)
             };
 
+            byte[] bytes = new byte[20];
+            bytes[2] = 100;
+            bytes[1] = 50;
+
             hapticPlayer.Submit("dot1", PositionType.VestFront, list, 1000);
             hapticPlayer.Submit("dot2", PositionType.ForearmL, list, 1000);
             hapticPlayer.Submit("dot3", PositionType.ForearmR, list, 1000);
             hapticPlayer.Submit("dot4", PositionType.VestBack, list, 1000);
             hapticPlayer.Submit("dot5", PositionType.Head, list, 1000);
+            hapticPlayer.Submit("dot6", PositionType.VestBack, bytes, 1000);
         }
 
         private void FileClicked(object sender, RoutedEventArgs e)

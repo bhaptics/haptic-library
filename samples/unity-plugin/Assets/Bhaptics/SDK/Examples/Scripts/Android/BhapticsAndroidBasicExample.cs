@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Bhaptics.Tact;
 using Bhaptics.Tact.Unity;
-
+using UnityEngine.Events;
 
 
 // This example script does not handle multiple pair, such as using two Tactot or two Tactosy_arms_left.
@@ -27,12 +27,13 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
     public BhapticsAndroidExampleButtons armsRightButtons;
 
 
+    void Awake()
+    {
+        BhapticsAndroidManager.AddRefreshAction(Refresh);
+    }
 
 
-
-
-
-    void Update()
+    private void Refresh()
     {
         #region Button UI
         if (scanStateText != null)
@@ -40,30 +41,29 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
             scanStateText.text = BhapticsAndroidManager.IsScanning() ? "Scanning" : "Scan Stopped";
         }
 
-        talButtons.pair.interactable = BhapticsAndroidManager.CanPairDevice(BhapticsUtils.ToPositionType(HapticDeviceType.Tactal));
-        talButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactal)).Count > 0;
-        talButtons.unpair.interactable = BhapticsAndroidManager.GetPairedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactal)).Count > 0;
+        var head = BhapticsUtils.ToPositionType(HapticDeviceType.Tactal);
+        talButtons.pair.interactable = BhapticsAndroidManager.CanPairDevice(head);
+        talButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(head).Count > 0;
+        talButtons.unpair.interactable = BhapticsAndroidManager.GetPairedDevices(head).Count > 0;
 
-        suitButtons.pair.interactable = BhapticsAndroidManager.CanPairDevice(BhapticsUtils.ToPositionType(HapticDeviceType.TactSuit));
-        suitButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.TactSuit)).Count > 0;
-        suitButtons.unpair.interactable = BhapticsAndroidManager.GetPairedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.TactSuit)).Count > 0;
+        var suit = BhapticsUtils.ToPositionType(HapticDeviceType.TactSuit);
+        suitButtons.pair.interactable = BhapticsAndroidManager.CanPairDevice(suit);
+        suitButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(suit).Count > 0;
+        suitButtons.unpair.interactable = BhapticsAndroidManager.GetPairedDevices(suit).Count > 0;
 
-        armsLeftButtons.pair.interactable = BhapticsAndroidManager.CanPairDevice(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, true));
-        armsLeftButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, true)).Count > 0;
-        armsLeftButtons.unpair.interactable = BhapticsAndroidManager.GetPairedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, true)).Count > 0;
-        armsLeftButtons.toggle.interactable = BhapticsAndroidManager.GetPairedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, true)).Count > 0;
+        var leftArm = BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, true);
+        armsLeftButtons.pair.interactable = BhapticsAndroidManager.CanPairDevice(leftArm);
+        armsLeftButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(leftArm).Count > 0;
+        armsLeftButtons.unpair.interactable = BhapticsAndroidManager.GetPairedDevices(leftArm).Count > 0;
+        armsLeftButtons.toggle.interactable = BhapticsAndroidManager.GetPairedDevices(leftArm).Count > 0;
 
-        armsRightButtons.pair.interactable = BhapticsAndroidManager.CanPairDevice(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, false));
-        armsRightButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, false)).Count > 0;
-        armsRightButtons.unpair.interactable = BhapticsAndroidManager.GetPairedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, false)).Count > 0;
-        armsRightButtons.toggle.interactable = BhapticsAndroidManager.GetPairedDevices(BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, false)).Count > 0;
+        var rightArm = BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, false);
+        armsRightButtons.pair.interactable = BhapticsAndroidManager.CanPairDevice(rightArm);
+        armsRightButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(rightArm).Count > 0;
+        armsRightButtons.unpair.interactable = BhapticsAndroidManager.GetPairedDevices(rightArm).Count > 0;
+        armsRightButtons.toggle.interactable = BhapticsAndroidManager.GetPairedDevices(rightArm).Count > 0;
         #endregion
     }
-
-
-
-
-
 
 
     public void RequestPermission()

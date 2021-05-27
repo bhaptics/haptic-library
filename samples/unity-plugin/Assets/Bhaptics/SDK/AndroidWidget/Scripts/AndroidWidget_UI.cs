@@ -109,10 +109,22 @@ namespace Bhaptics.Tact.Unity
         // calling from the UI Button
         public void ToggleWidgetButton()
         {
+
             if (!BhapticsAndroidManager.CheckPermission())
             {
+                if (Bhaptics_Setup.instance != null && Bhaptics_Setup.instance.Config.UseOnlyBackgroundMode)
+                {
+                    if (BhapticsAlertManager.Instance != null)
+                    {
+                        BhapticsAlertManager.Instance.ShowAlert();
+                    }
+
+                    return;
+                }
+
+
+
                 BhapticsAndroidManager.RequestPermission();
-            
                 return;
             }
 

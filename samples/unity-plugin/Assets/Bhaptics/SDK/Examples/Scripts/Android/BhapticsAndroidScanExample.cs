@@ -5,9 +5,28 @@ using UnityEngine;
 
 public class BhapticsAndroidScanExample : MonoBehaviour
 {
+    [SerializeField] private AndroidWidget_ControlButton[] controlButtons;
+
     void Start()
     {
-        InvokeRepeating("CheckScanning", 1f, 5f);
+        BhapticsAndroidManager.AddRefreshAction(Refresh);
+    }
+
+    private void Refresh()
+    {
+        if (controlButtons == null)
+        {
+            BhapticsLogger.LogDebug("no control buttons");
+            return;
+        }
+
+        for (var i = 0; i < controlButtons.Length; i++)
+        {
+            if (controlButtons[i] != null)
+            {
+                controlButtons[i].Refresh();
+            }
+        }
     }
 
     void Update()

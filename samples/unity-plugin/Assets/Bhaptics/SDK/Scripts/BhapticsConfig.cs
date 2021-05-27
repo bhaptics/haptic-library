@@ -9,4 +9,8 @@ public class BhapticsConfig : ScriptableObject
 
     [Header("Android Settings")]
     public BhapticsAndroidManager AndroidManagerPrefab;
+
+
+    // If you set it true, you don't need to define permissions and external bhaptics player will be required.
+    public bool UseOnlyBackgroundMode = false;
 }

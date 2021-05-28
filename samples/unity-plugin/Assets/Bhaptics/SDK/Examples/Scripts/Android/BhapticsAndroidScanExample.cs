@@ -6,9 +6,15 @@ using UnityEngine;
 public class BhapticsAndroidScanExample : MonoBehaviour
 {
     [SerializeField] private AndroidWidget_ControlButton[] controlButtons;
+    private bool open = false;
 
     void Start()
     {
+        if (!open)
+        {
+            Close();
+        }
+
         BhapticsAndroidManager.AddRefreshAction(Refresh);
     }
 
@@ -20,20 +26,13 @@ public class BhapticsAndroidScanExample : MonoBehaviour
             return;
         }
 
+
         for (var i = 0; i < controlButtons.Length; i++)
         {
             if (controlButtons[i] != null)
             {
                 controlButtons[i].Refresh();
             }
-        }
-    }
-
-    void Update()
-    {
-        if (Input.anyKeyDown)
-        {
-            CheckPermission();
         }
     }
 
@@ -52,6 +51,61 @@ public class BhapticsAndroidScanExample : MonoBehaviour
         if (!BhapticsAndroidManager.CheckPermission())
         {
             BhapticsAndroidManager.RequestPermission();
+        }
+    }
+
+    public void Toggle()
+    {
+        if (!BhapticsAndroidManager.CheckPermission())
+        {
+
+            Debug.Log("aaaaaa "  + Bhaptics_Setup.instance);
+            if (Bhaptics_Setup.instance != null && Bhaptics_Setup.instance.Config.UseOnlyBackgroundMode)
+            {
+                Debug.Log("bbbb");
+                if (BhapticsAlertManager.Instance != null)
+                {
+                    BhapticsAlertManager.Instance.ShowAlert();
+                }
+
+                return;
+            }
+
+            BhapticsAndroidManager.RequestPermission();
+            return;
+        }
+
+        open = !open;
+
+        if (open)
+        {
+            Open();
+        }
+        else
+        {
+            Close();
+        }
+    }
+
+    private void Open()
+    {
+        for (var i = 0; i < controlButtons.Length; i++)
+        {
+            if (controlButtons[i] != null)
+            {
+                controlButtons[i].gameObject.SetActive(true);
+            }
+        }
+    }
+
+    private void Close()
+    {
+        for (var i = 0; i < controlButtons.Length; i++)
+        {
+            if (controlButtons[i] != null)
+            {
+                controlButtons[i].gameObject.SetActive(false);
+            }
         }
     }
 }

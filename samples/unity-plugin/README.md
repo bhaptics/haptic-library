@@ -1,6 +1,6 @@
 # Unity plugin
 * This project will help integrate bHaptics' haptic devices into Unity environments.
-* Current version is 1.5.7
+* Current version is 1.5.8
 ```
 ## Unity SDK Migration Guide 1.5.* to 1.5.7
 * The *.aar files are no longer contains a version.(ex: bhaptics_ble.aar, bhaptics_commons.aar)
@@ -18,6 +18,7 @@
 `Or`
 
 * [Download the package file](https://github.com/bhaptics/haptic-library/releases), then import it into your Unity Project
+* If you don't want to define permissions on Android, [Download bHaptics VR Player(beta) on SideQuest](https://sidequestvr.com/app/3165/bhaptics-vr-player).
 
 
 ## Documentation
@@ -28,6 +29,6 @@
 * [Migration guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide)
 
 
-##### Last update of README.md: Apr 30th, 2021.
+##### Last update of README.md: Jun 02th, 2021.
 
 ##### Copyright 2017~21 bHaptics Inc.

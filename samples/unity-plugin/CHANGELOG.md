@@ -1,3 +1,6 @@
+## Unity plugin 1.5.9(Jun 10th, 2021.)
+* Update: Update Unity version to 2018.4.0f1
+
 ## Unity plugin 1.5.8(Jun 2th, 2021.)
 * Update: Add the option to use the bHapticsVRPlayer on SideQuest(beta)
 * Fix: Fix minor issues including CPU usage issue

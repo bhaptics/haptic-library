@@ -8,7 +8,6 @@ namespace Bhaptics.Tact.Unity
         [Header("[UI]")] [SerializeField] private Image deviceImage;
         [SerializeField] private Text deviceName;
         [SerializeField] private Button pingButton;
-        [SerializeField] private Button unPairButton;
         [SerializeField] private Button toggleButton;
 
 
@@ -19,7 +18,6 @@ namespace Bhaptics.Tact.Unity
         void Start()
         {
             pingButton.onClick.AddListener(OnPing);
-            unPairButton.onClick.AddListener(OnUnpair);
             toggleButton.onClick.AddListener(OnSwap);
         }
         
@@ -62,14 +60,6 @@ namespace Bhaptics.Tact.Unity
             if (device.IsConnected)
             {
                 BhapticsAndroidManager.Ping(device);
-            }
-        }
-
-        private void OnUnpair()
-        {
-            if (device.IsPaired)
-            { 
-                BhapticsAndroidManager.Unpair(device.Address);
             }
         }
 

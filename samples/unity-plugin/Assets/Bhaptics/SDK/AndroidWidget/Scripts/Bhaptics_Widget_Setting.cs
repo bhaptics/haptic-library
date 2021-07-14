@@ -10,7 +10,6 @@ namespace Bhaptics.Tact.Unity
     {
         public Sprite pairImage;
         public Sprite unpairImage;
-        public Sprite scanImage;
     }
 
 
@@ -53,36 +52,6 @@ namespace Bhaptics.Tact.Unity
             if (deviceType.StartsWith("Tactot"))
             {
                 return isConnect ? SettingTactot.pairImage : SettingTactot.unpairImage;
-            }
-
-            return null;
-        }
-
-        public Sprite GetScannedDeviceSprite(string deviceType)
-        {
-            if (deviceType.StartsWith("TactosyH"))
-            {
-                return SettingTactosyHand.scanImage;
-            }
-
-            if (deviceType.StartsWith("TactosyF"))
-            {
-                return SettingTactosyFoot.scanImage;
-            }
-
-            if (deviceType.StartsWith("Tactosy"))
-            {
-                return SettingTactosyArm.scanImage;
-            }
-
-            if (deviceType.StartsWith("Tactal"))
-            {
-                return SettingTactal.scanImage;
-            }
-
-            if (deviceType.StartsWith("Tactot"))
-            {
-                return SettingTactot.scanImage;
             }
 
             return null;

@@ -15,11 +15,26 @@ public class BhapticsTestScript : MonoBehaviour
 
     public Toggle reflectToggle;
 
-    public void Start()
+    [SerializeField] private Button openBluetoothSettingButton, playButton;
+
+    void Awake()
     {
+        if (openBluetoothSettingButton != null)
+        {
+            openBluetoothSettingButton.onClick.AddListener(Open);
+        }
+        if (playButton != null)
+        {
+            playButton.onClick.AddListener(Play);
+        }
     }
 
-    public void Play()
+    private void Open()
+    {
+        BhapticsAndroidManager.ShowBluetoothSetting();
+    }
+
+    private void Play()
     {
         foreach (var hapticClip in tactClips)
         {

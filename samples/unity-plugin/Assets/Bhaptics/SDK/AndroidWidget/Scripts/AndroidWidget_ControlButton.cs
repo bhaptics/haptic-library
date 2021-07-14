@@ -16,8 +16,6 @@ namespace Bhaptics.Tact.Unity
         [SerializeField] private Sprite pairHoverImage;
 
 
-        [Header("UI")] [SerializeField] private Image canPairImage;
-        [SerializeField] private GameObject unPairButton;
         [SerializeField] private Transform pairDeviceCount;
 
         private Button button;
@@ -25,36 +23,27 @@ namespace Bhaptics.Tact.Unity
         void Awake()
         {
             button = GetComponent<Button>();
-            unPairButton.GetComponent<Button>().onClick.AddListener(OnUnpairDevice);
             button.onClick.AddListener(OnClickDevice);
-
-            BhapticsLogger.LogDebug("start");
         }
-
-        private void OnEnable()
-        {
-            InvokeRepeating("BlinkCanPair", 0f, 0.2f);
-        }
-
-        private void OnDisable()
-        {
-            CancelInvoke();
-        }
-
 
         public void Refresh()
         {
+            if (button == null)
+            {
+                // TODO
+                Debug.LogFormat("not ready.");
+                return;
+            }
+
             BhapticsLogger.LogDebug("Refresh()");
 
             var connectedDevices = BhapticsAndroidManager.GetConnectedDevices(DeviceType);
             if (connectedDevices.Count > 0)
             {
                 button.image.sprite = pairImage;
-                unPairButton.SetActive(true);
                 var spriteState = button.spriteState;
                 spriteState.highlightedSprite = pairHoverImage;
                 button.spriteState = spriteState;
-                canPairImage.gameObject.SetActive(false);
 
                 for (int i = 0; i < pairDeviceCount.childCount; i++)
                 {
@@ -80,66 +69,16 @@ namespace Bhaptics.Tact.Unity
             }
             else
             {
-                BhapticsLogger.LogDebug("button + ", " + defaultImage");
+                BhapticsLogger.LogDebug("button + ", " + defaultImage " + DeviceType + ", " + button);
                 button.image.sprite = defaultImage;
-                unPairButton.SetActive(false);
                 var spriteState = button.spriteState;
                 spriteState.highlightedSprite = defaultHoverImage;
                 button.spriteState = spriteState;
-                canPairImage.gameObject.SetActive(BhapticsAndroidManager.CanPairDevice(DeviceType));
                 
 
                 for (int i = 0; i < pairDeviceCount.childCount; i++)
                 {
                     pairDeviceCount.GetChild(i).gameObject.SetActive(false);
-                }
-            }
-        }
-
-
-        private void BlinkCanPair()
-        {
-            canPairImage.enabled = !canPairImage.enabled;
-        }
-
-
-        public void OnPairDevice()
-        {
-            var devices = BhapticsAndroidManager.GetDevices();
-            int index = -1;
-
-            for(int i = 0; i < devices.Count; i++)
-            {
-                if (AndroidUtils.CanPair(devices[i], DeviceType))
-                {
-                    index = i;
-                    break;
-                }
-            }
-
-            if (index != -1)
-            {
-                
-                if(DeviceType == PositionType.Vest)
-                {
-                    BhapticsAndroidManager.Pair(devices[index].Address);
-                }
-                else
-                {
-                    BhapticsAndroidManager.Pair(devices[index].Address, DeviceType.ToString());
-                }
-            }
-        }
-
-
-        private void OnUnpairDevice()
-        {
-            var pairedDevices = BhapticsAndroidManager.GetPairedDevices(DeviceType);
-            foreach (var pairedDevice in pairedDevices)
-            {
-                if (pairedDevice.IsConnected)
-                {
-                    BhapticsAndroidManager.Unpair(pairedDevice.Address);
                 }
             }
         }
@@ -156,10 +95,6 @@ namespace Bhaptics.Tact.Unity
             if (connectedDevices.Count > 0)
             {
                 OnPingDevice();
-            }
-            else
-            {
-                OnPairDevice();
             }
         }
     }

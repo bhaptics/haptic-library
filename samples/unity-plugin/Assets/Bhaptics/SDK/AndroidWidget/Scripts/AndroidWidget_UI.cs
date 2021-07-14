@@ -7,23 +7,18 @@ namespace Bhaptics.Tact.Unity
 {
     public class AndroidWidget_UI : MonoBehaviour
     {
-        private const float autoHideTime = 60f;
-        [SerializeField] private bool alwaysActive;
         [SerializeField] private GameObject uiContainer;
         [SerializeField] private Button pingAllButton;
-        [SerializeField] private Button unpairAllButton;
 
 
         [Header("DeviceImages")] [SerializeField]
         private Bhaptics_Widget_Setting WidgetSetting;
 
         private AndroidWidget_ObjectPool settingObjectPool;
-        private Coroutine scanCoroutine;
         private AudioSource buttonClickAudio;
         private Animator animator;
 
-        private bool widgetActive;
-        private float hideTimer;
+        private bool widgetActive = true;
 
         private AndroidWidget_ControlButton[] controllButtons;
 
@@ -40,6 +35,7 @@ namespace Bhaptics.Tact.Unity
             animator = GetComponent<Animator>();
             GetComponent<Canvas>().worldCamera = Camera.main;
             Instance = this;
+            BhapticsAndroidManager.AddRefreshAction(Refresh);
         }
 
         void Start()
@@ -49,44 +45,9 @@ namespace Bhaptics.Tact.Unity
                 BhapticsLogger.LogError("[bhaptics] WidgetSetting is null");
             }
 
-            if (!alwaysActive)
-            {
-                animator.Play("HideWidget", -1, 1);
-            }
-            else
-            {
-                BhapticsAndroidManager.AddRefreshAction(Refresh);
-            }
-
             Refresh();
 
         }
-
-        private void OnEnable()
-        {
-            if (alwaysActive)
-            {
-                ShowWidget();
-                scanCoroutine = StartCoroutine(LoopScan());
-            }
-            else
-            {
-                if (animator != null)
-                {
-                    animator.Play("HideWidget", -1, 1);
-                }
-            }
-        }
-
-        private void OnDisable()
-        {
-            if(scanCoroutine != null)
-            {
-                StopCoroutine(scanCoroutine);
-                scanCoroutine = null;
-            }
-        }
-        
 
         private void InitializeButtons()
         {
@@ -100,39 +61,13 @@ namespace Bhaptics.Tact.Unity
                     col.size = new Vector3(rect.sizeDelta.x, rect.sizeDelta.y, 0f);
                 }
                 btn.onClick.AddListener(ButtonClickSound);
-                btn.onClick.AddListener(ResetHideTimer);
             }
             pingAllButton.onClick.AddListener(BhapticsAndroidManager.PingAll);
-            unpairAllButton.onClick.AddListener(BhapticsAndroidManager.UnpairAll);
         }
 
         // calling from the UI Button
         public void ToggleWidgetButton()
         {
-
-            if (!BhapticsAndroidManager.CheckPermission())
-            {
-                if (Bhaptics_Setup.instance != null && Bhaptics_Setup.instance.Config.UseOnlyBackgroundMode)
-                {
-                    if (BhapticsAlertManager.Instance != null)
-                    {
-                        BhapticsAlertManager.Instance.ShowAlert();
-                    }
-
-                    return;
-                }
-
-
-
-                BhapticsAndroidManager.RequestPermission();
-                return;
-            }
-
-            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") || alwaysActive)
-            {
-                return;
-            }
-
             widgetActive = !widgetActive;
 
             if (widgetActive)
@@ -140,70 +75,27 @@ namespace Bhaptics.Tact.Unity
                 animator.Play("ShowWidget");
                 
                 ShowWidget();
-                BhapticsAndroidManager.AddRefreshAction(Refresh);
             }
             else
             {
                 animator.Play("HideWidget");
                 HideWidget();
-
-                BhapticsAndroidManager.RemoveRefreshAction();
             }
         }
 
         public void ShowWidget()
         {
             uiContainer.SetActive(true);
-            hideTimer = autoHideTime;
-
-            BhapticsAndroidManager.Scan();
-            scanCoroutine = StartCoroutine(LoopScan());
         }
 
         public void HideWidget()
         {
             uiContainer.SetActive(false);
-
-            BhapticsAndroidManager.ScanStop();
-
-            if (scanCoroutine != null)
-            {
-                StopCoroutine(scanCoroutine);
-                scanCoroutine = null;
-            }
         } 
 
         public void ButtonClickSound()
         {
             buttonClickAudio.Play();
-        }
-
-        private IEnumerator LoopScan()
-        {
-            while (true)
-            {
-                if (!alwaysActive)
-                {
-                    if (hideTimer < 0f)
-                    {
-                        scanCoroutine = null;
-                        animator.Play("HideWidget");
-                        HideWidget();
-                        widgetActive = !widgetActive;
-                        break;
-                    }
-                    else
-                    {
-                        hideTimer -= 0.5f;
-                    }
-                }
-                yield return new WaitForSeconds(0.5f);
-            }
-        }
-
-        private void ResetHideTimer()
-        {
-            hideTimer = autoHideTime;
         }
 
 
@@ -226,23 +118,6 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        private void RefreshScannedDevices(List<HapticDevice> devices)
-        {
-            foreach (var device in devices)
-            {
-                if (!device.IsPaired)
-                {
-                    var ui = settingObjectPool.GetScannedDeviceUI();
-                    if (ui == null)
-                    {
-                        continue;
-                    }
-                    ui.Refresh(device, WidgetSetting);
-                    ui.gameObject.SetActive(true);
-                }
-            }
-        }
-
         public void Refresh()
         {
             var devices = BhapticsAndroidManager.GetDevices();
@@ -253,7 +128,6 @@ namespace Bhaptics.Tact.Unity
             }
 
             RefreshPairedDevices(devices);
-            RefreshScannedDevices(devices);
 
             foreach (var controlButton in controllButtons)
             {

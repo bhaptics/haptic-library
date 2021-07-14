@@ -28,36 +28,31 @@ namespace Bhaptics.Tact.Unity
 
         protected IntPtr AndroidJavaObjectPtr;
 
-        protected IntPtr HasPermissionPtr;
-        protected IntPtr RequestPermissionPtr;
-
-
         protected IntPtr SubmitRegisteredPtr;
         protected IntPtr SubmitRegisteredWithTimePtr;
         protected IntPtr RegisterPtr;
         protected IntPtr RegisterReflectedPtr;
-        protected IntPtr ToggleScanPtr;
         protected IntPtr PingPtr;
         protected IntPtr PingAllPtr;
-        protected IntPtr UnpairPtr;
-        protected IntPtr UnpairAllPtr;
 
         // bool methods
         protected IntPtr IsRegisteredPtr;
         protected IntPtr IsPlayingPtr;
         protected IntPtr IsPlayingAnythingPtr;
-        protected IntPtr IsScanningPtr;
 
         // Streaming methods
         protected IntPtr ToggleStreamPtr;
         protected IntPtr IsStreamingEnablePtr;
         protected IntPtr GetStreamingHostsPtr;
 
+        // show bluetooth
+        protected IntPtr ShowBluetoothPtr;
+        protected IntPtr RefreshPairingInfoPtr;
+
         public AndroidHaptic()
         {
             try
             {
-
                 AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                 AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
                 androidJavaObject =
@@ -66,8 +61,6 @@ namespace Bhaptics.Tact.Unity
                 AndroidJavaObjectPtr = androidJavaObject.GetRawObject();
 
                 ToggleStreamPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "toggleStreamingEnable");
-                HasPermissionPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "hasPermission");
-                RequestPermissionPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "requestPermission");
 
                 SubmitRegisteredPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "submitRegistered");
                 SubmitRegisteredWithTimePtr =
@@ -76,19 +69,15 @@ namespace Bhaptics.Tact.Unity
                 RegisterReflectedPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "registerReflected");
                 PingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "ping");
                 PingAllPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "pingAll");
-                UnpairPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "unpair");
-                UnpairAllPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "unpairAll");
 
                 IsRegisteredPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isRegistered");
                 IsPlayingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isPlaying");
                 IsPlayingAnythingPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isAnythingPlaying");
 
-
-                ToggleScanPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "toggleScan");
-                IsScanningPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isScanning");
-
                 IsStreamingEnablePtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "isStreamingEnable");
                 GetStreamingHostsPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "getStreamingHosts");
+                ShowBluetoothPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "showBluetoothSetting");
+                RefreshPairingInfoPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "refreshPairing");
             }
             catch (Exception e)
             {
@@ -392,82 +381,6 @@ namespace Bhaptics.Tact.Unity
             return deviceList;
         }
 
-        public void Pair(string address, string position)
-        {
-            if (androidJavaObject != null)
-            {
-                if (position != "")
-                {
-                    androidJavaObject.Call("pair", address, position);
-                }
-                else
-                {
-                    androidJavaObject.Call("pair", address);
-                }
-            }
-        }
-
-        public void Unpair(string address)
-        {
-            if (androidJavaObject == null)
-            {
-                return;
-            }
-
-            CallNativeVoidMethod(UnpairPtr, new object[] {address});
-        }
-
-        public void UnpairAll()
-        {
-            if (androidJavaObject == null)
-            {
-                return;
-            }
-
-            CallNativeVoidMethod(UnpairAllPtr, EmptyParams);
-        }
-
-
-        public void StartScan()
-        {
-            if (androidJavaObject == null)
-            {
-                return;
-            }
-
-            if (!CheckPermission())
-            {
-                return;
-            }
-
-            CallNativeVoidMethod(ToggleScanPtr, EmptyParams);
-        }
-
-        public void StopScan()
-        {
-            if (androidJavaObject == null)
-            {
-                return;
-            }
-
-            if (!CheckPermission())
-            {
-                return;
-            }
-
-            CallNativeVoidMethod(ToggleScanPtr, EmptyParams);
-        }
-
-        public bool IsScanning()
-        {
-            if (androidJavaObject == null)
-            {
-                return false;
-            }
-
-            return CallNativeBoolMethod(IsScanningPtr, EmptyParams);
-        }
-
         public void TogglePosition(string address)
         {
             if (androidJavaObject == null)
@@ -502,6 +415,28 @@ namespace Bhaptics.Tact.Unity
             CallNativeVoidMethod(PingPtr, new object[] {address});
         }
 
+        public void ShowBluetoothSetting()
+        {
+
+            if (androidJavaObject == null)
+            {
+                return;
+            }
+
+            CallNativeVoidMethod(ShowBluetoothPtr, new object[] { });
+        }
+
+        public void RefreshPairingInfo()
+        {
+
+            if (androidJavaObject == null)
+            {
+                return;
+            }
+
+            CallNativeVoidMethod(RefreshPairingInfoPtr, new object[] { });
+        }
+
         private void CallNativeVoidMethod(IntPtr methodPtr, object[] param)
         {
             if (androidJavaObject == null)
@@ -521,27 +456,6 @@ namespace Bhaptics.Tact.Unity
             }
 
             return AndroidUtils.CallNativeBoolMethod(AndroidJavaObjectPtr, methodPtr, param);
-        }
-
-
-        public void RequestPermission()
-        {
-            if (androidJavaObject == null)
-            {
-                return;
-            }
-
-            AndroidUtils.CallNativeVoidMethod(AndroidJavaObjectPtr, RequestPermissionPtr, EmptyParams);
-        }
-
-        public bool CheckPermission()
-        {
-            if (androidJavaObject == null)
-            {
-                return false;
-            }
-
-            return AndroidUtils.CallNativeBoolMethod(AndroidJavaObjectPtr, HasPermissionPtr, EmptyParams);
         }
     }
 }

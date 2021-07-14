@@ -1,6 +1,6 @@
 ﻿using Bhaptics.Tact.Unity;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 
 public class BhapticsAndroidScanExample : MonoBehaviour
@@ -8,13 +8,16 @@ public class BhapticsAndroidScanExample : MonoBehaviour
     [SerializeField] private AndroidWidget_ControlButton[] controlButtons;
     private bool open = false;
 
+    [SerializeField]
+    private Button activeButton;
+
     void Start()
     {
         if (!open)
         {
             Close();
         }
-
+        activeButton.onClick.AddListener(Toggle);
         BhapticsAndroidManager.AddRefreshAction(Refresh);
     }
 
@@ -36,45 +39,8 @@ public class BhapticsAndroidScanExample : MonoBehaviour
         }
     }
 
-    private void CheckScanning()
-    {
-        if (!BhapticsAndroidManager.CheckPermission())
-        {
-            return;
-        }
-
-        BhapticsAndroidManager.Scan();
-    }
-
-    public void CheckPermission()
-    {
-        if (!BhapticsAndroidManager.CheckPermission())
-        {
-            BhapticsAndroidManager.RequestPermission();
-        }
-    }
-
     public void Toggle()
     {
-        if (!BhapticsAndroidManager.CheckPermission())
-        {
-
-            Debug.Log("aaaaaa "  + Bhaptics_Setup.instance);
-            if (Bhaptics_Setup.instance != null && Bhaptics_Setup.instance.Config.UseOnlyBackgroundMode)
-            {
-                Debug.Log("bbbb");
-                if (BhapticsAlertManager.Instance != null)
-                {
-                    BhapticsAlertManager.Instance.ShowAlert();
-                }
-
-                return;
-            }
-
-            BhapticsAndroidManager.RequestPermission();
-            return;
-        }
-
         open = !open;
 
         if (open)

@@ -8,8 +8,6 @@
       1.  If your project contains a custom AndroidManifest.xml file, add permissions
           <uses-permission android:name="android.permission.BLUETOOTH" />
           <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-          <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-          <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
       
     2.  Otherwise, copy this file to this location in your project:
         Assets/Plugins/Android/AndroidManifest.xml.
@@ -29,6 +27,4 @@
     </application>
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>

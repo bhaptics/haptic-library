@@ -72,8 +72,21 @@ namespace Bhaptics.Tact.Unity
                         DeviceName = "Tactosy",
                         Candidates = new PositionType[] { PositionType.ForearmR, PositionType.ForearmL },
                     };
-                    Devices.Add(device);
-                    Devices.Add(device2);
+                    var device3 = new HapticDevice()
+                    {
+                        Position = PositionType.HandL,
+                        IsConnected = false,
+                        IsPaired = true,
+                        Address = "aaaa22",
+                        DeviceName = "Tactosy",
+                        Candidates = new PositionType[] { PositionType.HandL, PositionType.HandR},
+                    };
+                    // Devices.Add(device);
+                    // Devices.Add(device);
+                    // Devices.Add(device);
+                    // Devices.Add(device);
+                    // Devices.Add(device2);
+                    // Devices.Add(device3);
                 
                 }
                 // TODO DEBUGGING USAGE.

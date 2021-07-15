@@ -15,7 +15,7 @@ public class BhapticsTestScript : MonoBehaviour
 
     public Toggle reflectToggle;
 
-    [SerializeField] private Button openBluetoothSettingButton, playButton;
+    [SerializeField] private Button openBluetoothSettingButton, playButton, toggleEnableAllButton;
 
     void Awake()
     {
@@ -26,6 +26,18 @@ public class BhapticsTestScript : MonoBehaviour
         if (playButton != null)
         {
             playButton.onClick.AddListener(Play);
+        }
+        if (toggleEnableAllButton != null)
+        {
+            toggleEnableAllButton.onClick.AddListener(ToggleEnable);
+        }
+    }
+
+    private void ToggleEnable()
+    {
+        foreach (var hapticDevice in BhapticsAndroidManager.GetDevices())
+        {
+            BhapticsAndroidManager.ToggleEnableDevice(hapticDevice);
         }
     }
 

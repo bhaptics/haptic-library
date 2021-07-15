@@ -48,6 +48,7 @@ namespace Bhaptics.Tact.Unity
         // show bluetooth
         protected IntPtr ShowBluetoothPtr;
         protected IntPtr RefreshPairingInfoPtr;
+        protected IntPtr EnableDevicePtr;
 
         public AndroidHaptic()
         {
@@ -78,6 +79,7 @@ namespace Bhaptics.Tact.Unity
                 GetStreamingHostsPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "getStreamingHosts");
                 ShowBluetoothPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "showBluetoothSetting");
                 RefreshPairingInfoPtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "refreshPairing");
+                EnableDevicePtr = AndroidJNIHelper.GetMethodID(androidJavaObject.GetRawClass(), "enableDevice");
             }
             catch (Exception e)
             {
@@ -425,6 +427,17 @@ namespace Bhaptics.Tact.Unity
 
             CallNativeVoidMethod(ShowBluetoothPtr, new object[] { });
         }
+
+        public void EnableDevice(string address, bool boo)
+        {
+            if (androidJavaObject == null)
+            {
+                return;
+            }
+
+            CallNativeVoidMethod(EnableDevicePtr, new object[] { address, boo ? 1 : 0 });
+        }
+
 
         public void RefreshPairingInfo()
         {

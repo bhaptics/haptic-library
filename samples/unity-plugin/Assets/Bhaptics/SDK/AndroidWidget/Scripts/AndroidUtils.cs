@@ -13,6 +13,9 @@ namespace Bhaptics.Tact.Unity
         public PositionType Position;
         public string Address;
         public PositionType[] Candidates;
+        public bool IsEnable;
+        public bool IsAudioJack;
+        public int Battery;
     }
 
     public static class AndroidUtils
@@ -32,6 +35,9 @@ namespace Bhaptics.Tact.Unity
             public int position;
             public bool connected;
             public string address;
+            public int battery;
+            public bool enable;
+            public bool audioJackIn;
         }
         [Serializable]
         public class StreamHost
@@ -126,25 +132,10 @@ namespace Bhaptics.Tact.Unity
                 Position = ToDeviceType(d.position),
                 DeviceName = d.deviceName,
                 Candidates = ToCandidates(d.position),
-
+                Battery = d.battery,
+                IsAudioJack = d.audioJackIn,
+                IsEnable = d.enable
             };
-        }
-
-        public static bool CanPair(HapticDevice device, PositionType deviceType)
-        {
-            var containsInCandidates = false;
-            for (var i = 0; i < device.Candidates.Length; i++)
-            {
-                var candi = device.Candidates[i];
-                if (candi == deviceType)
-                {
-                    containsInCandidates = true;
-                    break;
-                }
-            }
-
-            return (containsInCandidates || device.Position == deviceType) &&
-                   !device.IsPaired;
         }
 
         public static List<HapticDevice> ConvertToBhapticsDevices(string[] deviceJson)

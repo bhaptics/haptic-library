@@ -236,6 +236,16 @@ namespace Bhaptics.Tact.Unity
 
             androidHapticPlayer.ShowBluetoothSetting();
         }
+        public static void ToggleEnableDevice(HapticDevice device)
+        {
+            var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
+            if (androidHapticPlayer == null)
+            {
+                return;
+            }
+
+            androidHapticPlayer.EnableDevice(device.Address, !device.IsEnable);
+        }
 
         void OnApplicationPause(bool pauseStatus)
         {

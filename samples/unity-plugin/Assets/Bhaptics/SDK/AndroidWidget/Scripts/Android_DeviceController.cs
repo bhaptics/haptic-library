@@ -31,12 +31,15 @@ namespace Bhaptics.Tact.Unity
         [SerializeField] private Image icon;
 
         [SerializeField] private IconSetting widgetSetting;
+        [SerializeField] private Sprite TactsuitWiredIcon;
+        [SerializeField] private Image batteryLowImage;
 
         [Header("Connect Menu")]
         [SerializeField] private GameObject ConnectMenu;
         [SerializeField] private Button pingButton;
         [SerializeField] private Button lButton;
         [SerializeField] private Button rButton;
+        [SerializeField] private GameObject wiredNotification;
 
         [Header("Disconnect Menu")] 
         [SerializeField] private GameObject DisconnectMenu;
@@ -95,6 +98,11 @@ namespace Bhaptics.Tact.Unity
             ConnectMenu.gameObject.SetActive(true);
             DisconnectMenu.gameObject.SetActive(false);
 
+            if (device.Battery < 20 && device.Battery >= 0)
+            {
+                batteryLowImage.gameObject.SetActive(true);
+            }
+
             UpdateButtons();
         }
 
@@ -102,10 +110,22 @@ namespace Bhaptics.Tact.Unity
         {
             ConnectMenu.gameObject.SetActive(false);
             DisconnectMenu.gameObject.SetActive(true);
+            batteryLowImage.gameObject.SetActive(false);
         }
 
         private void UpdateButtons()
         {
+            if (device.IsAudioJack)
+            {
+                wiredNotification.SetActive(true);
+                pingButton.gameObject.SetActive(false);
+                rButton.gameObject.SetActive(false);
+                lButton.gameObject.SetActive(false);
+                return;
+            }
+            wiredNotification.SetActive(false);
+
+
             if (IsLeft(device.Position) || IsRight(device.Position))
             {
                 pingButton.gameObject.SetActive(false);
@@ -137,6 +157,12 @@ namespace Bhaptics.Tact.Unity
             switch (d.Position)
             {
                 case PositionType.Vest:
+                    if (d.IsAudioJack)
+                    {
+                        icon.sprite = TactsuitWiredIcon;
+                        return;
+                    }
+
                     icon.sprite = GetSprite(widgetSetting.Vest, d.IsConnected);
                     break;
                 case PositionType.FootL:

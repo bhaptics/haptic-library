@@ -75,7 +75,7 @@ namespace Bhaptics.Tact.Unity
                     var device3 = new HapticDevice()
                     {
                         Position = PositionType.HandL,
-                        IsConnected = false,
+                        IsConnected = true,
                         IsPaired = true,
                         Address = "aaaa22",
                         DeviceName = "Tactosy",
@@ -90,10 +90,23 @@ namespace Bhaptics.Tact.Unity
                         DeviceName = "Tactal",
                         Candidates = new PositionType[] { PositionType.Head},
                     };
+
+                    var device5 = new HapticDevice()
+                    {
+                        Position = PositionType.Vest,
+                        IsConnected = true,
+                        IsPaired = true,
+                        IsAudioJack = true,
+                        Address = "aaaa",
+                        DeviceName = "Tactot",
+                        Battery = 10,
+                        Candidates = new PositionType[] { PositionType.Vest },
+                    };
                     Devices.Add(device);
                     Devices.Add(device2);
                     Devices.Add(device3);
                     Devices.Add(device4);
+                    Devices.Add(device5);
                 
                 }
                 // TODO DEBUGGING USAGE.

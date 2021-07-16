@@ -14,6 +14,7 @@ namespace Bhaptics.Tact.Unity
         [Header("No Paired Device UI")]
         [SerializeField] private GameObject noPairedDeviceUi;
         [SerializeField] private Button helpButton;
+        [SerializeField] private Button bHpaticsLinkButton;
 
 
         [SerializeField] private GameObject helpUi;
@@ -46,7 +47,12 @@ namespace Bhaptics.Tact.Unity
             {
                 helpCloseButton.onClick.AddListener(CloseHelpNotification);
             }
+            if (bHpaticsLinkButton != null)
+            {
+                bHpaticsLinkButton.onClick.AddListener(OpenLink);
+            }
         }
+
 
         private void Refresh()
         {
@@ -102,6 +108,11 @@ namespace Bhaptics.Tact.Unity
             {
                 helpUi.SetActive(false);
             }
+        }
+
+        private void OpenLink()
+        {
+            Application.OpenURL("https://www.bhaptics.com/support/download");
         }
     }
 }

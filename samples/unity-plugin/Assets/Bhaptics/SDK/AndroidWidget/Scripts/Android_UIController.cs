@@ -7,7 +7,7 @@ namespace Bhaptics.Tact.Unity
 {
     public class Android_UIController : MonoBehaviour
     {
-        [SerializeField] private RectTransform MainMenu;
+        [SerializeField] private RectTransform mainMenu;
         [SerializeField] private Transform devicesContainer;
         [SerializeField] private Android_DeviceController devicePrefab;
 
@@ -23,10 +23,30 @@ namespace Bhaptics.Tact.Unity
         private List<Android_DeviceController> controllers = new List<Android_DeviceController>();
         private int deviceListSize = 10;
 
-        [SerializeField]
-        private int containerMaxHeight = 360;
 
-        private int containerDefaultHeight = 185; 
+
+
+
+        [SerializeField] private int containerMaxHeight = 360;
+
+        private int containerDefaultHeight = 185;
+
+
+
+
+        
+
+        private Vector2 defaultMainMenuSize;
+        private Vector2 defaultDeviceContainerSize;
+        private int expandHeight = 78;
+        private int expandDeviceCount = 4;
+        private int scrollActivateDeviceCount = 6;
+        private int scrollExpandHeight = 26;
+
+
+
+
+
 
         void Awake()
         {
@@ -38,6 +58,7 @@ namespace Bhaptics.Tact.Unity
             }
 
             BhapticsAndroidManager.AddRefreshAction(Refresh);
+
             if (helpButton != null)
             {
                 helpButton.onClick.AddListener(OnHelp);
@@ -47,16 +68,33 @@ namespace Bhaptics.Tact.Unity
             {
                 helpCloseButton.onClick.AddListener(CloseHelpNotification);
             }
+
             if (bHpaticsLinkButton != null)
             {
                 bHpaticsLinkButton.onClick.AddListener(OpenLink);
             }
+
+            if (mainMenu != null)
+            {
+                defaultMainMenuSize = mainMenu.sizeDelta;
+            }
+
+            if (devicesContainer != null)
+            {
+                defaultDeviceContainerSize = defaultMainMenuSize;
+            }
         }
 
 
+        //TEST
+        public List<HapticDevice> testDevices;
+
         private void Refresh()
         {
-            var devices = BhapticsAndroidManager.GetDevices();
+            //TEST
+            //var devices = BhapticsAndroidManager.GetDevices();
+
+            var devices = testDevices;
 
             if (devices.Count == 0)
             {
@@ -64,18 +102,33 @@ namespace Bhaptics.Tact.Unity
             }
             else
             {
-                if (devices.Count >= 4)
+                Vector2 currentExpandSize = Vector2.zero;
+
+                if (devices.Count >= scrollActivateDeviceCount)
                 {
-                    var rectTransform = devicesContainer.GetComponent<RectTransform>();
-                    rectTransform.sizeDelta = new Vector2(rectTransform.rect.width, containerMaxHeight);
-                    MainMenu.sizeDelta = new Vector2(MainMenu.rect.width, containerMaxHeight + 119);
+                    currentExpandSize = new Vector2(0f, expandHeight * (scrollActivateDeviceCount - expandDeviceCount) + scrollExpandHeight);
                 }
-                else
+                else if (devices.Count >= expandDeviceCount)
                 {
-                    var rectTransform = devicesContainer.GetComponent<RectTransform>();
-                    rectTransform.sizeDelta = new Vector2(rectTransform.rect.width, containerDefaultHeight);
-                    MainMenu.sizeDelta = new Vector2(MainMenu.rect.width, containerDefaultHeight + 119);
+                    currentExpandSize = new Vector2(0f, expandHeight * (1 + devices.Count - expandDeviceCount));
                 }
+
+                var deviceContainerRect = devicesContainer as RectTransform;
+                deviceContainerRect.sizeDelta = defaultDeviceContainerSize + currentExpandSize;
+                mainMenu.sizeDelta = defaultMainMenuSize + currentExpandSize;
+
+                //if (devices.Count >= 4)
+                //{
+                //    var deviceContainerRect = devicesContainer as RectTransform;
+                //    deviceContainerRect.sizeDelta = new Vector2(deviceContainerRect.rect.width, containerMaxHeight);
+                //    MainMenu.sizeDelta = new Vector2(MainMenu.rect.width, containerMaxHeight + 119);
+                //}
+                //else
+                //{
+                //    var deviceContainerRect = devicesContainer as RectTransform;
+                //    deviceContainerRect.sizeDelta = new Vector2(deviceContainerRect.rect.width, containerDefaultHeight);
+                //    MainMenu.sizeDelta = new Vector2(MainMenu.rect.width, containerDefaultHeight + 119);
+                //}
 
                 noPairedDeviceUi.SetActive(false);
                 helpUi.gameObject.SetActive(false);

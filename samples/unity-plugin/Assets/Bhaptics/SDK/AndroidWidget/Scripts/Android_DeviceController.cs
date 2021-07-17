@@ -44,8 +44,18 @@ namespace Bhaptics.Tact.Unity
         [Header("Disconnect Menu")] 
         [SerializeField] private GameObject DisconnectMenu;
 
-        private static Color SelectColor = new Color(82f/255, 103f/255, 249f/255);
-        private static Color DisableColor = new Color(82f/255, 84f/255, 102f/255);
+
+
+
+        private static string SelectHexColor = "#5267F9FF";
+        private static string SelectHoverHexColor = "#697CFFFF";
+        private static string DisableHexColor = "#525466FF";
+        private static string DisableHoverHexColor = "#63646FFF";
+
+
+
+
+
 
 
         private HapticDevice device;
@@ -56,10 +66,12 @@ namespace Bhaptics.Tact.Unity
             {
                 pingButton.onClick.AddListener(Ping);
             }
+
             if (lButton != null)
             {
                 lButton.onClick.AddListener(ToLeft);
             }
+            
             if (rButton != null)
             {
                 rButton.onClick.AddListener(ToRight);
@@ -70,6 +82,7 @@ namespace Bhaptics.Tact.Unity
         public void RefreshDevice(HapticDevice d)
         {
             device = d;
+
             if (device == null)
             {
                 gameObject.SetActive(false);
@@ -97,12 +110,7 @@ namespace Bhaptics.Tact.Unity
         {
             ConnectMenu.gameObject.SetActive(true);
             DisconnectMenu.gameObject.SetActive(false);
-
-            if (device.Battery < 20 && device.Battery >= 0)
-            {
-                batteryLowImage.gameObject.SetActive(true);
-            }
-
+            batteryLowImage.gameObject.SetActive(device.Battery < 20 && device.Battery >= 0);
             UpdateButtons();
         }
 
@@ -123,32 +131,26 @@ namespace Bhaptics.Tact.Unity
                 lButton.gameObject.SetActive(false);
                 return;
             }
-            wiredNotification.SetActive(false);
 
+            wiredNotification.SetActive(false);
 
             if (IsLeft(device.Position) || IsRight(device.Position))
             {
                 pingButton.gameObject.SetActive(false);
                 lButton.gameObject.SetActive(true);
-
                 rButton.gameObject.SetActive(true);
-                if (IsLeft(device.Position))
-                {
-                    lButton.image.color = SelectColor;
-                    rButton.image.color = DisableColor;
-                }
-                else
-                {
-                    lButton.image.color = DisableColor;
-                    rButton.image.color = SelectColor;
-                }
+
+                var isLeft = IsLeft(device.Position);
+                ChangeButtonColor(lButton, isLeft);
+                ChangeButtonColor(rButton, !isLeft);
             }
             else
             {
                 pingButton.gameObject.SetActive(true);
-                pingButton.image.color = SelectColor;
                 lButton.gameObject.SetActive(false);
                 rButton.gameObject.SetActive(false);
+
+                ChangeButtonColor(pingButton, true);
             }
         }
 
@@ -225,6 +227,30 @@ namespace Bhaptics.Tact.Unity
             {
                 BhapticsAndroidManager.TogglePosition(device.Address);
             }
+        }
+
+        private Color ToColor(string hex)
+        {
+            Color res = Color.white;
+
+            if (ColorUtility.TryParseHtmlString(hex, out res))
+            {
+                return res;
+            }
+
+            return res;
+        }
+
+        private void ChangeButtonColor(Button targetButton, bool isSelect)
+        {
+            var defaultColor = ToColor(isSelect ? SelectHexColor : DisableHexColor);
+            var hoverColor = ToColor(isSelect ? SelectHoverHexColor : DisableHoverHexColor);
+
+            var buttonColors = targetButton.colors;
+            buttonColors.normalColor = defaultColor;
+            buttonColors.highlightedColor = hoverColor;
+            buttonColors.pressedColor = defaultColor;
+            targetButton.colors = buttonColors;
         }
 
         private static bool IsLeft(PositionType pos)

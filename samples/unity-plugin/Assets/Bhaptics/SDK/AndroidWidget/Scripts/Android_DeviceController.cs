@@ -204,7 +204,6 @@ namespace Bhaptics.Tact.Unity
             BhapticsAndroidManager.Ping(device);
         }
 
-
         private void ToLeft()
         {
             if (device == null)
@@ -216,16 +215,26 @@ namespace Bhaptics.Tact.Unity
             {
                 BhapticsAndroidManager.TogglePosition(device.Address);
             }
+            else
+            {
+                Ping();
+            }
         }
+
         private void ToRight()
         {
             if (device == null)
             {
                 return;
             }
+
             if (IsLeft(device.Position))
             {
                 BhapticsAndroidManager.TogglePosition(device.Address);
+            }
+            else
+            {
+                Ping();
             }
         }
 

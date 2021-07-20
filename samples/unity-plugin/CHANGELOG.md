@@ -1,3 +1,7 @@
+## Unity plugin 1.6.0(Jul 20th, 2021.)
+* Update: Update sdk for android with bluetooth pairing.(Removed location permission)
+* Update: Update [bHapticsAndroidWidget] to [bHapticsAndroidUI]
+
 ## Unity plugin 1.5.9(Jun 10th, 2021.)
 * Update: Update Unity version to 2018.4.0f1
 

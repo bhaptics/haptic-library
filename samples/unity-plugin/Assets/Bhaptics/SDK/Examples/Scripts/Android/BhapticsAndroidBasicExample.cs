@@ -21,6 +21,16 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
     public BhapticsAndroidExampleButtons suitButtons;
     public BhapticsAndroidExampleButtons armsLeftButtons;
     public BhapticsAndroidExampleButtons armsRightButtons;
+    public Text pairedDevicesCount;
+
+
+
+
+
+
+
+
+
 
 
     void Awake()
@@ -29,9 +39,16 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
     }
 
 
+
+
+
+
+
+
+
     private void Refresh()
     {
-        #region Button UI
+        #region UI
         var head = BhapticsUtils.ToPositionType(HapticDeviceType.Tactal);
         talButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(head).Count > 0;
 
@@ -45,6 +62,11 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
         var rightArm = BhapticsUtils.ToPositionType(HapticDeviceType.Tactosy_arms, false);
         armsRightButtons.ping.interactable = BhapticsAndroidManager.GetConnectedDevices(rightArm).Count > 0;
         armsRightButtons.toggle.interactable = BhapticsAndroidManager.GetPairedDevices(rightArm).Count > 0;
+
+        if (pairedDevicesCount != null)
+        {
+            pairedDevicesCount.text = BhapticsAndroidManager.GetDevices().Count.ToString();
+        }
         #endregion
     }
 
@@ -52,7 +74,6 @@ public class BhapticsAndroidBasicExample : MonoBehaviour
     {
         PingPairedDevice(BhapticsUtils.ToPositionType(HapticDeviceType.Tactal));
     }
-
 
     public void PingTactSuit()
     {

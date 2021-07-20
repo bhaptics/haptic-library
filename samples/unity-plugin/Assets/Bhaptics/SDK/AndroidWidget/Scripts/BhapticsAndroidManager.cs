@@ -102,11 +102,11 @@ namespace Bhaptics.Tact.Unity
                         Battery = 10,
                         Candidates = new PositionType[] { PositionType.Vest },
                     };
-                    Devices.Add(device);
-                    Devices.Add(device2);
-                    Devices.Add(device3);
-                    Devices.Add(device4);
-                    Devices.Add(device5);
+                    //Devices.Add(device);
+                    //Devices.Add(device2);
+                    //Devices.Add(device3);
+                    //Devices.Add(device4);
+                    //Devices.Add(device5);
 
                 }
                 // TODO DEBUGGING USAGE.

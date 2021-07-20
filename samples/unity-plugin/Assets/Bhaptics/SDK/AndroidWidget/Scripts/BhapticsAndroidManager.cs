@@ -280,9 +280,9 @@ namespace Bhaptics.Tact.Unity
             androidHapticPlayer.EnableDevice(device.Address, !device.IsEnable);
         }
 
-        void OnApplicationPause(bool pauseStatus)
+        void OnApplicationFocus(bool pauseStatus)
         {
-            if (!pauseStatus)
+            if (pauseStatus)
             {
                 var androidHapticPlayer = BhapticsManager.GetHaptic() as AndroidHaptic;
                 if (androidHapticPlayer == null)

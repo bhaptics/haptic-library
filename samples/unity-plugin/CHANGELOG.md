@@ -1,3 +1,6 @@
+## Unity plugin 1.6.2(Jul 26th, 2021.)
+* Fix: minor issues
+
 ## Unity plugin 1.6.1(Jul 20th, 2021.)
 * Fix: minor issues
 

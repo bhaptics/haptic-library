@@ -213,10 +213,21 @@ namespace Bhaptics.Tact.Unity
 
         public static void AddRefreshAction(UnityAction action)
         {
-            refreshActions.Add(action);
-
+            if (!refreshActions.Contains(action))
+            {
+                refreshActions.Add(action);
+            }
         }
-        public static void RemoveRefreshAction()
+
+        public static void RemoveRefreshAction(UnityAction action)
+        {
+            if (refreshActions.Contains(action))
+            {
+                refreshActions.Remove(action);
+            }
+        }
+
+        public static void ClearRefreshAction()
         {
             refreshActions.Clear();
         }

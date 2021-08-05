@@ -92,6 +92,14 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
+        void OnDestroy()
+        {
+            BhapticsAndroidManager.RemoveRefreshAction(Refresh);
+        }
+
+
+
+
         private void Refresh()
         {
             var devices = BhapticsAndroidManager.GetDevices();

@@ -36,11 +36,7 @@ namespace bhaptics
     }
 
     std::string commonutils::posToString(const PositionType positionType) {
-        if (positionType == Left) {
-            return "Left";
-        } else if (positionType == Right) {
-            return "Right";
-        } else if (positionType == ForearmL) {
+        if (positionType == ForearmL) {
             return "ForearmL";
         } else if (positionType == ForearmR) {
             return "ForearmR";
@@ -60,6 +56,10 @@ namespace bhaptics
             return "FootL";
         } else if (positionType == FootR) {
             return "FootR";
+        } else if (positionType == GloveL) {
+            return "GloveL";
+        } else if (positionType == GloveR) {
+            return "GloveR";
         } else if (positionType == All) {
             return "All";
         }
@@ -70,15 +70,7 @@ namespace bhaptics
     }
 
     bool commonutils::TryParseToPosition(const std::string deviceName, PositionType &pos) {
-        if (deviceName == "Left")
-        {
-            pos = PositionType::Left;
-        }
-        else if (deviceName == "Right")
-        {
-            pos = PositionType::Right;
-        }
-        else if (deviceName == "ForearmL")
+        if (deviceName == "ForearmL")
         {
             pos = PositionType::ForearmL;
         }
@@ -102,10 +94,6 @@ namespace bhaptics
         {
             pos = PositionType::Head;
         }
-        else if (deviceName == "Racket")
-        {
-            pos = PositionType::Racket;
-        }
         else if (deviceName == "HandL")
         {
             pos = PositionType::HandL;
@@ -121,6 +109,14 @@ namespace bhaptics
         else if (deviceName == "FootR")
         {
             pos = PositionType::FootR;
+        }
+        else if (deviceName == "GloveL")
+        {
+            pos = PositionType::GloveL;
+        }
+        else if (deviceName == "GloveR")
+        {
+            pos = PositionType::GloveR;
         }  else
         {
             return false;

@@ -45,6 +45,7 @@ bin/**/*.exe
 bin/**/*.manifest
 bin/**/*.exp
 bin/**/hello_binary
+bin/**/Testing/
 
 # Mongo Explorer plugin
 .idea/**/mongoSettings.xml

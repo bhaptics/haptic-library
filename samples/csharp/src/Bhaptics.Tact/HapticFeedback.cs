@@ -97,17 +97,22 @@ namespace Bhaptics.Tact
 
     public enum PositionType
     {
-        All = 0, Left = 1, Right = 2,
+        All = 0,
+        [Obsolete("Use ForearmL instead")]
+        Left = 1,
+        [Obsolete("Use ForearmR instead")]
+        Right = 2,        
         Vest = 3,
         Head = 4,
-        Racket = 5,
+        [Obsolete("Will not work anymore")]
+        Racket = 5, // Deprecated
         HandL = 6,
         HandR = 7,
         FootL = 8,
         FootR = 9,
         ForearmL = 10, ForearmR = 11,
         VestFront =201, VestBack=202,
-        GloveLeft =203, GloveRight=204,
+        GloveL =203, GloveR=204,
         Custom1 =251, Custom2 = 252, Custom3 = 253, Custom4 = 254
     }
     

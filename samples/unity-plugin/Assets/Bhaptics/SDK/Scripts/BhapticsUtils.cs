@@ -190,6 +190,10 @@ namespace Bhaptics.Tact.Unity
                     return PositionType.ForearmR;
                 case HapticClipPositionType.LeftForearm:
                     return PositionType.ForearmL;
+                case HapticClipPositionType.LeftGlove:
+                    return PositionType.GloveL;
+                case HapticClipPositionType.RightGlove:
+                    return PositionType.GloveR;
             }
 
             return PositionType.Head;
@@ -215,6 +219,8 @@ namespace Bhaptics.Tact.Unity
                     return isLeft ? PositionType.FootL : PositionType.FootR;
                 case HapticDeviceType.Tactosy_hands:
                     return isLeft ? PositionType.HandL : PositionType.HandR;
+                case HapticDeviceType.TactGlove:
+                    return isLeft ? PositionType.GloveL : PositionType.GloveR;
             }
 
             return PositionType.Head;

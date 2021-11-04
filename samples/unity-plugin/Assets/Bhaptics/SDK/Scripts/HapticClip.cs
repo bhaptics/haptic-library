@@ -7,7 +7,8 @@ namespace Bhaptics.Tact.Unity
     public enum HapticDeviceType
     {
         None,
-        Tactal, TactSuit, Tactosy_arms, Tactosy_hands, Tactosy_feet
+        Tactal, TactSuit, Tactosy_arms, Tactosy_hands, Tactosy_feet,
+        TactGlove,
     }
 
     [Serializable]
@@ -21,7 +22,9 @@ namespace Bhaptics.Tact.Unity
         LeftHand,
         RightHand,
         LeftFoot,
-        RightFoot
+        RightFoot,
+        LeftGlove,
+        RightGlove
     }
 
     public class HapticClip : ScriptableObject

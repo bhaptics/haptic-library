@@ -27,10 +27,6 @@ namespace bhaptics
         switch (position) {
         case All:
             return "All";
-        case Right:
-            return "Right";
-        case Left:
-            return "Left";
         case Vest:
             return "Vest";
         case VestFront:
@@ -39,8 +35,6 @@ namespace bhaptics
             return "VestBack";
         case Head:
             return "Head";
-        case Racket:
-            return "Racket";
         case HandL:
             return "HandL";
         case HandR:
@@ -54,17 +48,11 @@ namespace bhaptics
         case ForearmR:
             return "ForearmR";
         default:
-            return "Left";
+            return "ForearmL";
         }
     }
 
     PositionType utils::to_position(std::string pos) {
-        if (pos == "Left")
-            return Left;
-
-        if (pos == "Right")
-            return Right;
-
         if (pos == "Vest")
             return Vest;
 
@@ -83,9 +71,6 @@ namespace bhaptics
         if (pos == "Head")
             return Head;
 
-        if (pos == "Racket")
-            return Racket;
-
         if (pos == "HandL")
             return HandL;
 
@@ -98,10 +83,16 @@ namespace bhaptics
         if (pos == "FootR")
             return FootR;
 
+        if (pos == "GloveL")
+            return GloveL;
+
+        if (pos == "GloveR")
+            return GloveR;
+
         if (pos == "All")
             return All;
 
-        return Left;
+        return ForearmL;
     }
 
     PathMovingPattern utils::to_moving_pattern(std::string s) {

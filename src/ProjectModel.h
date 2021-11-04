@@ -207,7 +207,7 @@ namespace bhaptics
     };
 
     struct HapticFeedbackFrame {
-        PositionType position = Left;
+        PositionType position = ForearmL;
         std::vector<PathPointInternal> pathPoints;
         std::vector<DotPointInternal> dotPoints;
 
@@ -224,7 +224,7 @@ namespace bhaptics
     class Frame {
     public:
         int durationMillis = 0;
-        PositionType position = Left;
+        PositionType position = ForearmL;
         std::vector<PathPointInternal> pathPoints;
         std::vector<DotPointInternal> dotPoints;
 

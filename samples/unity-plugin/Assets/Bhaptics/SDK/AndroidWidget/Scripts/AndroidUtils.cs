@@ -66,6 +66,10 @@ namespace Bhaptics.Tact.Unity
                     return PositionType.FootL;
                 case 7:
                     return PositionType.FootR;
+                case 8:
+                    return PositionType.GloveL;
+                case 9:
+                    return PositionType.GloveR;
 
             }
 
@@ -92,6 +96,10 @@ namespace Bhaptics.Tact.Unity
                     return new PositionType[] { PositionType.FootR, PositionType.FootL };
                 case 7:
                     return new PositionType[] { PositionType.FootR, PositionType.FootL };
+                case 8:
+                    return new PositionType[] { PositionType.GloveL, PositionType.GloveR };
+                case 9:
+                    return new PositionType[] { PositionType.GloveL, PositionType.GloveR };
 
             }
 

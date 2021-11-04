@@ -37,3 +37,5 @@ sysinfo.txt
 /Assets/SteamVR/
 /Assets/Plugins/
 /Assets/Plugins.meta
+
+.vsconfig

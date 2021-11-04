@@ -234,6 +234,7 @@ namespace Bhaptics.Tact.Unity
         public const string TypeTactosy2 = "Tactosy2";
         public const string TypeHand = "Hand";
         public const string TypeFoot = "Foot";
+        public const string TypeGlove = "Glove";
 
 #if UNITY_EDITOR
         public static List<T> FindAssetsByType<T>() where T : UnityEngine.Object

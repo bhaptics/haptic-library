@@ -23,7 +23,8 @@ namespace Bhaptics.Tact.Unity
         public PositonIconSetting Arm;
         public PositonIconSetting Foot;
         public PositonIconSetting Hand;
-        public PositonIconSetting Glove;
+        public PositonIconSetting GloveL;
+        public PositonIconSetting GloveR;
     }
 
     public class Android_DeviceController : MonoBehaviour
@@ -181,8 +182,10 @@ namespace Bhaptics.Tact.Unity
                     icon.sprite = GetSprite(widgetSetting.Arm, d.IsConnected);
                     break;
                 case PositionType.GloveL:
+                    icon.sprite = GetSprite(widgetSetting.GloveL, d.IsConnected);
+                    break;
                 case PositionType.GloveR:
-                    icon.sprite = GetSprite(widgetSetting.Glove, d.IsConnected);
+                    icon.sprite = GetSprite(widgetSetting.GloveR, d.IsConnected);
                     break;
                 case PositionType.Head:
                     icon.sprite = GetSprite(widgetSetting.Head, d.IsConnected);
@@ -280,7 +283,6 @@ namespace Bhaptics.Tact.Unity
                 case PositionType.HandL:
                 case PositionType.ForearmL:
                 case PositionType.Left:
-                case PositionType.GloveL:
                     return true;
 
             }
@@ -295,7 +297,6 @@ namespace Bhaptics.Tact.Unity
                 case PositionType.HandR:
                 case PositionType.ForearmR:
                 case PositionType.Right:
-                case PositionType.GloveR:
                     return true;
 
             }

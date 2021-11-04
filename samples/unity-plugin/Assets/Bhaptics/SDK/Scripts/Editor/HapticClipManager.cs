@@ -37,6 +37,9 @@ namespace Bhaptics.Tact.Unity
                 case BhapticsUtils.TypeFoot:
                     return HapticDeviceType.Tactosy_feet;
 
+                case BhapticsUtils.TypeGlove:
+                    return HapticDeviceType.TactGlove;
+
                 default:
                     return HapticDeviceType.None;
             }
@@ -102,6 +105,9 @@ namespace Bhaptics.Tact.Unity
                 }else if (type == HapticDeviceType.Tactosy_feet)
                 {
                     tactClip = CreateInstance<FeetHapticClip>();
+                }else if (type == HapticDeviceType.TactGlove)
+                {
+                    tactClip = CreateInstance<GloveHapticClip>();
                 }
                 else
                 {

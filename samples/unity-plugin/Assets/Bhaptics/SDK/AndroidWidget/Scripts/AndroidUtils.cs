@@ -97,9 +97,9 @@ namespace Bhaptics.Tact.Unity
                 case 7:
                     return new PositionType[] { PositionType.FootR, PositionType.FootL };
                 case 8:
-                    return new PositionType[] { PositionType.GloveL, PositionType.GloveR };
+                    return new PositionType[] { PositionType.GloveL};
                 case 9:
-                    return new PositionType[] { PositionType.GloveL, PositionType.GloveR };
+                    return new PositionType[] { PositionType.GloveL};
 
             }
 

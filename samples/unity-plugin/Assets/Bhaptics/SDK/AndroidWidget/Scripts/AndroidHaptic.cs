@@ -57,7 +57,7 @@ namespace Bhaptics.Tact.Unity
                 AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                 AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
                 androidJavaObject =
-                    new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity, Application.productName);
+                    new AndroidJavaObject("com.bhaptics.bhapticsunity.BhapticsManagerWrapper", currentActivity);
 
                 AndroidJavaObjectPtr = androidJavaObject.GetRawObject();
 

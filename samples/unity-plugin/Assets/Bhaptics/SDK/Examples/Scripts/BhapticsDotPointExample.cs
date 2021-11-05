@@ -32,6 +32,7 @@ public class BhapticsDotPointExample : MonoBehaviour
         {
             return;
         }
+
         controller.Toggle(dotPoint);
     }
 }

@@ -41,8 +41,10 @@ namespace Bhaptics.Tact.Unity
                     go.SetActive(true);
                 }
             }
+        }
 
-
+        void OnEnable()
+        {
             if (playOnAwake)
             {
                 if (loop)
@@ -54,6 +56,11 @@ namespace Bhaptics.Tact.Unity
                     PlayHapticClip();
                 }
             }
+        }
+
+        void OnDisable()
+        {
+            Stop();
         }
 
 

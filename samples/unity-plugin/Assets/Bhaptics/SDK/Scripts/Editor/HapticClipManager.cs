@@ -53,7 +53,7 @@ namespace Bhaptics.Tact.Unity
             for (int i = 0; i < tactFiles.Length; ++i)
             {
                 var fileName = Path.GetFileNameWithoutExtension(tactFiles[i]);
-                EditorUtility.DisplayProgressBar("Hold On", "Converting " + fileName + ".tact -> "
+                EditorUtility.DisplayProgressBar("Hold on", "Converting " + fileName + ".tact -> "
                                                 + fileName + ".asset (" + i + " / " + tactFiles.Length + ")", i / (float)tactFiles.Length);
                 CreateTactClip(tactFiles[i]);
             }

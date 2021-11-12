@@ -11,17 +11,17 @@ public class VestHapticClipEditor : FileHapticClipEditor
     {
         serializedObject.Update();
 
-        DefaultPropertyUi();
+        DefaultPropertyUI();
         
         DetailPropertyUi();
 
-        ResetUi();
+        ResetUI();
 
         GUILayout.Space(20);
-        PlayUi();
+        PlayUI();
         
         GUILayout.Space(3);
-        SaveAsUi();
+        SaveAsUI();
 
         serializedObject.ApplyModifiedProperties();
     }

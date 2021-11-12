@@ -9,33 +9,53 @@ namespace Bhaptics.Tact.Unity
     [CustomEditor(typeof(FileHapticClip), true)]
     public class FileHapticClipEditor : Editor
     {
-        FileHapticClip targetScript;
+        private readonly string PlayAutoConfig = "BHAPTICS-HAPTICCLIP-PLAYAUTO";
 
+        private FileHapticClip targetScript;
+        private bool isAutoPlay;
+
+        
 
         void OnEnable()
         {
             targetScript = target as FileHapticClip;
+
+            isAutoPlay = PlayerPrefs.GetInt(PlayAutoConfig, 1) == 0;
+
+            if (isAutoPlay)
+            {
+                targetScript.Play();
+            }
         }
+
+        void OnDisable()
+        {
+            if (isAutoPlay)
+            {
+                targetScript.Stop();
+            }
+        }
+
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            DefaultPropertyUi();
+            DefaultPropertyUI();
 
             GUILayout.Space(3);
-            ResetUi();
+            ResetUI();
 
             GUILayout.Space(20);
-            PlayUi();
+            PlayUI();
             
             GUILayout.Space(3);
-            SaveAsUi();
+            SaveAsUI();
 
             serializedObject.ApplyModifiedProperties();
         }
 
-        protected void ReflectUi()
+        protected void ReflectUI()
         {
             var clipType = targetScript.ClipType;
             if (clipType == HapticDeviceType.Tactosy_arms || clipType == HapticDeviceType.Tactosy_feet || clipType == HapticDeviceType.Tactosy_hands)
@@ -46,7 +66,7 @@ namespace Bhaptics.Tact.Unity
             }
         }
 
-        protected void DefaultPropertyUi()
+        protected void DefaultPropertyUI()
         {
             GUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Clip Type", GUILayout.Width(100f));
@@ -68,7 +88,7 @@ namespace Bhaptics.Tact.Unity
 
             EditorGUIUtility.labelWidth = 105f;
 
-            ReflectUi();
+            ReflectUI();
 
             GUILayout.BeginHorizontal();
             EditorGUILayout.PropertyField(serializedObject.FindProperty("Intensity"), GUILayout.Width(350f));
@@ -81,7 +101,7 @@ namespace Bhaptics.Tact.Unity
             EditorGUIUtility.labelWidth = originLabelWidth;
         }
 
-        protected void PlayUi()
+        protected void PlayUI()
         {
             GUILayout.BeginHorizontal();
             if (targetScript == null)
@@ -102,7 +122,7 @@ namespace Bhaptics.Tact.Unity
             GUILayout.EndHorizontal();
         }
 
-        protected void ResetUi()
+        protected void ResetUI()
         {
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Reset Values"))
@@ -112,7 +132,7 @@ namespace Bhaptics.Tact.Unity
             GUILayout.EndHorizontal();
         }
 
-        protected void SaveAsUi()
+        protected void SaveAsUI()
         {
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Save As *.tact File"))
@@ -144,6 +164,30 @@ namespace Bhaptics.Tact.Unity
                 return true;
             }
             return false;
+        }
+
+        public override bool HasPreviewGUI()
+        {
+            return true;
+        }
+
+        public override void OnPreviewGUI(Rect r, GUIStyle background)
+        {
+        }
+
+        public override void OnPreviewSettings()
+        {
+            if (GUILayout.Button(new GUIContent(isAutoPlay ? "AUTO PLAY ON" : "AUTO PLAY OFF", isAutoPlay ? "Turn auto play off" : "Turn auto play on"), "preButton"))
+            {
+                var currentPlayAutoValue = PlayerPrefs.GetInt(PlayAutoConfig, 1);
+                currentPlayAutoValue = (currentPlayAutoValue + 1) % 2;
+                PlayerPrefs.SetInt(PlayAutoConfig, currentPlayAutoValue);
+                isAutoPlay = PlayerPrefs.GetInt(PlayAutoConfig, 1) == 0;
+                if (isAutoPlay)
+                {
+                    targetScript.Play();
+                }
+            }
         }
     }
 }

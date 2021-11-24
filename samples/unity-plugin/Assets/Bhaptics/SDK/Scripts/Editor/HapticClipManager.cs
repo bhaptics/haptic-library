@@ -175,13 +175,13 @@ namespace Bhaptics.Tact.Unity
             return json;
         }
 
-        [MenuItem("Bhaptics/tact files ->  HapticClips")]
+        [MenuItem("Bhaptics/.tact files -> HapticClips")]
         private static void OnClickRefreshAssetFiles()
         {
             RefreshTactFiles();
         }
 
-        [MenuItem("Bhaptics/HapticClips -> tact files")]
+        [MenuItem("Bhaptics/HapticClips -> .tact files")]
         private static void OnClickRefreshTactFiles()
         {
             var saveAsPath = EditorUtility.SaveFolderPanel("Save as *.tact File", @"\download\", "");

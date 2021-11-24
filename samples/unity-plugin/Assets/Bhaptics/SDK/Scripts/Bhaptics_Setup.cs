@@ -1,12 +1,21 @@
 ﻿using Bhaptics.Tact.Unity;
 using UnityEngine;
 
+
 public class Bhaptics_Setup : MonoBehaviour
 {
-    [SerializeField] public BhapticsConfig Config;
-
-
     public static Bhaptics_Setup instance;
+
+
+    public BhapticsConfig Config;
+
+    [Tooltip("It is a haptic used as a notification when executed.")]
+    public HapticClip[] hapticClipsOnAwake;
+
+    
+
+
+
 
     void Awake()
     {
@@ -23,6 +32,18 @@ public class Bhaptics_Setup : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
+    void Start()
+    {
+        for (int i = 0; i < hapticClipsOnAwake.Length; ++i)
+        {
+            if (hapticClipsOnAwake[i] == null)
+            {
+                continue;
+            }
+
+            hapticClipsOnAwake[i].Play();
+        }
+    }
 
     void OnApplicationQuit()
     {

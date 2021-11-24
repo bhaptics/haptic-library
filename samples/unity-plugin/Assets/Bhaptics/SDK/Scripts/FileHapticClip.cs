@@ -4,7 +4,9 @@ namespace Bhaptics.Tact.Unity
 {
     public class FileHapticClip : HapticClip
     {
+        [Tooltip("Value applied by multiplying")]
         [Range(0.2f, 5f)] public float Intensity = 1f;
+        [Tooltip("Value applied by multiplying")]
         [Range(0.2f, 5f)] public float Duration = 1f;
 
         public HapticDeviceType ClipType;

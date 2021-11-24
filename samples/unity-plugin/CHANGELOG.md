@@ -1,3 +1,9 @@
+## Unity plugin 1.6.3(Nov 24th, 2021.)
+* Update: add hapticClip auto play on editor
+* Update: android aar files
+* Update: haptic clip library files
+* Fix: minor issues
+
 ## Unity plugin 1.6.2(Jul 26th, 2021.)
 * Fix: minor issues
 

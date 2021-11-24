@@ -96,7 +96,7 @@ public class SimpleHapticClipEditor : FileHapticClipEditor
 
             EditorGUILayout.PropertyField(x, new GUIContent(x.name));
             EditorGUILayout.PropertyField(y, new GUIContent(y.name));
-            GUILayout.Label(intensity.name, GUILayout.Width(55));
+            GUILayout.Label(new GUIContent(intensity.name, "means the intensity of the motor from 0 to 100."), GUILayout.Width(55));
             EditorGUILayout.PropertyField(intensity, GUIContent.none);
 
             if (GUILayout.Button(new GUIContent("-", "delete"), GUILayout.Width(50)))

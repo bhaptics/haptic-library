@@ -1,3 +1,6 @@
+## Unity plugin 1.6.4(Nov 30th, 2021.)
+* Fix: bug rotation offset of VestHapticClip
+
 ## Unity plugin 1.6.3(Nov 24th, 2021.)
 * Update: add hapticClip auto play on editor
 * Update: android aar files

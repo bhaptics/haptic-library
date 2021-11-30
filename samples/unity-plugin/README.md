@@ -1,6 +1,6 @@
 # Unity plugin
 * This project will help integrate bHaptics' haptic devices into Unity environments.
-* Current version is 1.6.3
+* Current version is 1.6.4
 ```
 ## Unity SDK Migration Guide 1.5.9 to 1.6.0 - for Android
 * The location permission is no longer need. Just use Bluetooth pairing on Android.
@@ -22,13 +22,13 @@
 
 
 ## Documentation
-* [Getting Started Guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Getting-Started)
+* [Getting Started Guide](https://github.com/bhaptics/haptic-library/wiki/Getting-Started(Unity))
 * [How to set up in the Oculus Quest](https://github.com/bhaptics/haptic-library/wiki/Getting-Started-(Unity-Oculus-Quest))
 * [Advanced Guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Advanced-Guide)
 * [FAQ](https://github.com/bhaptics/haptic-library/wiki/FAQ-(Unity))
 * [Migration guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide)
 
 
-##### Last update of README.md: Nov 24th, 2021.
+##### Last update of README.md: Nov 30th, 2021.
 
 ##### Copyright 2017~21 bHaptics Inc.

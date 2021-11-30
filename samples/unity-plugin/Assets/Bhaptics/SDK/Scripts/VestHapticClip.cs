@@ -14,27 +14,27 @@ namespace Bhaptics.Tact.Unity
         #region Play method
         public override void Play()
         {
-            Play(Intensity, Duration, this.TactFileAngleX, this.TactFileOffsetY, "");
+            Play(Intensity, Duration, 0f, 0f, "");
         }
 
         public override void Play(string identifier)
         {
-            Play(Intensity, Duration, this.TactFileAngleX, this.TactFileOffsetY, identifier);
+            Play(Intensity, Duration, 0f, 0f, identifier);
         }
 
         public override void Play(float intensity, string identifier = "")
         {
-            Play(intensity, Duration, this.TactFileAngleX, this.TactFileOffsetY, identifier);
+            Play(intensity, Duration, 0f, 0f, identifier);
         }
 
         public override void Play(float intensity, float duration, string identifier = "")
         {
-            Play(intensity, duration, this.TactFileAngleX, this.TactFileOffsetY, identifier);
+            Play(intensity, duration, 0f, 0f, identifier);
         }
 
         public override void Play(float intensity, float duration, float vestRotationAngleX, string identifier = "")
         {
-            Play(intensity, duration, vestRotationAngleX, this.TactFileOffsetY, identifier);
+            Play(intensity, duration, vestRotationAngleX, 0f, identifier);
         }
 
         public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY, string identifier = "")

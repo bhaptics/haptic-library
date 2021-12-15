@@ -1,3 +1,6 @@
+## Unity plugin 1.6.5(Dec 15th, 2021.)
+* Update: tactglove functions and haptic patterns files
+
 ## Unity plugin 1.6.4(Nov 30th, 2021.)
 * Fix: bug rotation offset of VestHapticClip
 

@@ -1,11 +1,10 @@
 ﻿using Bhaptics.Tact.Unity;
 using UnityEngine;
 
+
 public class BhapticsVisualizer : MonoBehaviour
 {
     private VisualFeedback[] visualFeedback;
-
-
 
 
     void Awake()
@@ -15,6 +14,11 @@ public class BhapticsVisualizer : MonoBehaviour
 
     void Update()
     {
+        if (!BhapticsManager.Init)
+        {
+            return;
+        }
+
         var haptic = BhapticsManager.GetHaptic();
 
         if (haptic == null)

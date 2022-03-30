@@ -190,30 +190,27 @@ namespace Bhaptics.Tact.Unity
             {
                 var allInstances = GetAllInstances<FileHapticClip>();
 
-
-                foreach (var allInstance in allInstances)
+                foreach (var ins in allInstances)
                 {
-                    var path = saveAsPath + @"\" + allInstance.ClipType;
-                    if (!Directory.Exists(saveAsPath + @"\" + allInstance.ClipType))
+                    var path = saveAsPath + @"\" + Path.GetDirectoryName(AssetDatabase.GetAssetPath(ins.GetInstanceID()));
+                    path = path.Replace("Assets/", "");
+
+                    if (!Directory.Exists(path))
                     {
                         //if it doesn't, create it
                         Directory.CreateDirectory(path);
-
                     }
 
-
-                    File.WriteAllText(path + "\\" + allInstance.name + ".tact", allInstance.JsonValue);
+                    File.WriteAllText(path + "\\" + ins.name + ".tact", ins.JsonValue);
                 }
 
-                BhapticsLogger.LogInfo("tact files saved to {0}", saveAsPath);
+                BhapticsLogger.LogInfo(".tact files saved count: {0}\n path: {1}", allInstances.Length ,saveAsPath);
             }
             else
             {
                 BhapticsLogger.LogError("Folder not selected.");
             }
-
         }
-
 
         public static T[] GetAllInstances<T>() where T : ScriptableObject
         {

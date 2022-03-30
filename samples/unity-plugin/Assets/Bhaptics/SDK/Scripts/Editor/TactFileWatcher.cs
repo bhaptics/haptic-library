@@ -8,11 +8,7 @@ namespace Bhaptics.Tact.Unity
 {
     public class TactFileWatcher : AssetPostprocessor
     {
-        static void OnPostprocessAllAssets(
-             string[] importedAssets,
-             string[] deletedAssets,
-             string[] movedAssets,
-             string[] movedFromAssetPaths)
+        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
             foreach (string str in importedAssets)
             {

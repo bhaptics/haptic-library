@@ -3,42 +3,48 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(SimpleHapticClip), true)]
-public class SimpleHapticClipEditor : FileHapticClipEditor
+public class SimpleHapticClipEditor : HapticClipEditor
 {
+    protected SimpleHapticClip m_targetScript
+    {
+        get
+        {
+            return targetScript as SimpleHapticClip;
+        }
+    }
+
+
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
 
-        FeedbackTypeUi();
+        FeedbackTypeUI();
 
-        PositionUi();
+        PositionUI();
 
         var feedbackTypeProperty = serializedObject.FindProperty("Mode");
 
         switch (feedbackTypeProperty.enumNames[feedbackTypeProperty.enumValueIndex])
         {
             case "DotMode":
-                DotPointUi();
+                DotPointUI();
                 break;
             case "PathMode":
-                PathPointUi();
+                PathPointUI();
                 break;
         }
 
-        TimeMillisUi();
+        TimeMillisUI();
 
         ResetUI();
 
         GUILayout.Space(20);
         PlayUI();
 
-        GUILayout.Space(3);
-        SaveAsUI();
-
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void FeedbackTypeUi()
+    private void FeedbackTypeUI()
     {
         GUILayout.BeginHorizontal();
         EditorGUILayout.PropertyField(serializedObject.FindProperty("Mode"));
@@ -46,7 +52,7 @@ public class SimpleHapticClipEditor : FileHapticClipEditor
         GUILayout.EndHorizontal();
     }
 
-    private void TimeMillisUi()
+    private void TimeMillisUI()
     {
         GUILayout.BeginHorizontal();
         EditorGUIUtility.labelWidth = 100f;
@@ -55,7 +61,7 @@ public class SimpleHapticClipEditor : FileHapticClipEditor
         GUILayout.EndHorizontal();
     }
 
-    private void PositionUi()
+    private void PositionUI()
     {
         GUILayout.BeginHorizontal();
         EditorGUILayout.PropertyField(serializedObject.FindProperty("Position"));
@@ -63,7 +69,7 @@ public class SimpleHapticClipEditor : FileHapticClipEditor
         GUILayout.EndHorizontal();
     }
 
-    private void PathPointUi()
+    private void PathPointUI()
     {
         GUILayout.BeginHorizontal();
         var points = serializedObject.FindProperty("Points");
@@ -108,7 +114,7 @@ public class SimpleHapticClipEditor : FileHapticClipEditor
         }
     }
 
-    private void DotPointUi()
+    private void DotPointUI()
     {
         GUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Dot Points", EditorStyles.boldLabel);

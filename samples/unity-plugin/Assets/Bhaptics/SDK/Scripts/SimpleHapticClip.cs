@@ -7,18 +7,13 @@ namespace Bhaptics.Tact.Unity
     [CreateAssetMenu(fileName = "SimpleHapticClip", menuName = "Bhaptics/Create Simple HapticClip")]
     public class SimpleHapticClip : HapticClip
     {
-        private static readonly Point[] DefaultPoints =
-        {
-            new Point(0.5f, 0.5f, 100)
-        };
-
         [SerializeField] private HapticClipPositionType Position = HapticClipPositionType.VestFront;
 
         [SerializeField] private SimpleHapticType Mode = SimpleHapticType.DotMode;
 
         [SerializeField] private int[] DotPoints = new int[20];
 
-        [SerializeField] private Point[] Points = {new Point(0.5f, 0.5f, 100)};
+        [SerializeField] private Point[] Points = { new Point(0.5f, 0.5f, 100) };
 
         [Range(20, 10000)] public int TimeMillis = 1000;
 
@@ -57,7 +52,11 @@ namespace Bhaptics.Tact.Unity
 
             DotPoints = new int[20];
 
-            Points = DefaultPoints;
+            Points = new Point[] { new Point(0.5f, 0.5f, 100) };
+
+            TimeMillis = 1000;
+
+            Position = HapticClipPositionType.VestFront;
         }
 
 

@@ -1,41 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEditor;
-using System.IO;
-using UnityEditor.Callbacks;
+
 
 
 namespace Bhaptics.Tact.Unity
 {
     [CustomEditor(typeof(FileHapticClip), true)]
-    public class FileHapticClipEditor : Editor
+    public class FileHapticClipEditor : HapticClipEditor
     {
-        private readonly string PlayAutoConfig = "BHAPTICS-HAPTICCLIP-PLAYAUTO";
 
-        private FileHapticClip targetScript;
-        private bool isAutoPlay;
-
-        
-
-        void OnEnable()
+        protected FileHapticClip m_targetScript
         {
-            targetScript = target as FileHapticClip;
-
-            isAutoPlay = PlayerPrefs.GetInt(PlayAutoConfig, 1) == 0;
-
-            if (isAutoPlay)
+            get
             {
-                targetScript.Play();
+                return targetScript as FileHapticClip;
             }
         }
-
-        void OnDisable()
-        {
-            if (isAutoPlay)
-            {
-                targetScript.Stop();
-            }
-        }
-
 
         public override void OnInspectorGUI()
         {
@@ -48,16 +30,18 @@ namespace Bhaptics.Tact.Unity
 
             GUILayout.Space(20);
             PlayUI();
-            
+
             GUILayout.Space(3);
             SaveAsUI();
 
             serializedObject.ApplyModifiedProperties();
         }
 
+
+
         protected void ReflectUI()
         {
-            var clipType = targetScript.ClipType;
+            var clipType = m_targetScript.ClipType;
             if (clipType == HapticDeviceType.Tactosy_arms || clipType == HapticDeviceType.Tactosy_feet || clipType == HapticDeviceType.Tactosy_hands)
             {
                 GUILayout.BeginHorizontal();
@@ -80,7 +64,7 @@ namespace Bhaptics.Tact.Unity
             EditorGUIUtility.labelWidth = 130f;
             GUI.enabled = false;
             GUILayout.BeginHorizontal();
-            var temp = targetScript.ClipDurationTime;
+            var temp = m_targetScript.ClipDurationTime;
             GUIContent customLabel = new GUIContent("└ Duration Time(ms)");
             EditorGUILayout.PropertyField(serializedObject.FindProperty("_clipDurationTime"), customLabel, GUILayout.Width(350f));
             GUILayout.EndHorizontal();
@@ -101,37 +85,6 @@ namespace Bhaptics.Tact.Unity
             EditorGUIUtility.labelWidth = originLabelWidth;
         }
 
-        protected void PlayUI()
-        {
-            GUILayout.BeginHorizontal();
-            if (targetScript == null)
-            {
-                BhapticsLogger.LogInfo("hapticClip null");
-                GUILayout.EndHorizontal();
-                return;
-            }
-
-            if (GUILayout.Button("Play"))
-            {
-                targetScript.Play();
-            }
-            if (GUILayout.Button("Stop"))
-            {
-                targetScript.Stop();
-            }
-            GUILayout.EndHorizontal();
-        }
-
-        protected void ResetUI()
-        {
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Reset Values"))
-            {
-                targetScript.ResetValues();
-            }
-            GUILayout.EndHorizontal();
-        }
-
         protected void SaveAsUI()
         {
             GUILayout.BeginHorizontal();
@@ -142,50 +95,17 @@ namespace Bhaptics.Tact.Unity
             GUILayout.EndHorizontal();
         }
 
+
+
+
         private void SaveAsTactFileFromClip(Object target)
         {
-            if (targetScript != null)
+            if (m_targetScript != null)
             {
-                var saveAsPath = EditorUtility.SaveFilePanel("Save as *.tact File", @"\download\", targetScript.name, "tact");
+                var saveAsPath = EditorUtility.SaveFilePanel("Save as *.tact File", @"\download\", m_targetScript.name, "tact");
                 if (saveAsPath != "")
                 {
-                    File.WriteAllText(saveAsPath, targetScript.JsonValue);
-                }
-            }
-        }
-
-        [OnOpenAsset(1)]
-        public static bool OnOpenTactClip(int instanceID, int line)
-        {
-            var obj = EditorUtility.InstanceIDToObject(instanceID);
-            if (obj is FileHapticClip)
-            {
-                (obj as FileHapticClip).Play();
-                return true;
-            }
-            return false;
-        }
-
-        public override bool HasPreviewGUI()
-        {
-            return true;
-        }
-
-        public override void OnPreviewGUI(Rect r, GUIStyle background)
-        {
-        }
-
-        public override void OnPreviewSettings()
-        {
-            if (GUILayout.Button(new GUIContent(isAutoPlay ? "AUTO PLAY ON" : "AUTO PLAY OFF", isAutoPlay ? "Turn auto play off" : "Turn auto play on"), "preButton"))
-            {
-                var currentPlayAutoValue = PlayerPrefs.GetInt(PlayAutoConfig, 1);
-                currentPlayAutoValue = (currentPlayAutoValue + 1) % 2;
-                PlayerPrefs.SetInt(PlayAutoConfig, currentPlayAutoValue);
-                isAutoPlay = PlayerPrefs.GetInt(PlayAutoConfig, 1) == 0;
-                if (isAutoPlay)
-                {
-                    targetScript.Play();
+                    System.IO.File.WriteAllText(saveAsPath, m_targetScript.JsonValue);
                 }
             }
         }

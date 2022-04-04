@@ -26,10 +26,6 @@ public class BhapticsDotPointControllerExample : MonoBehaviour
 
     void Update()
     {
-        return;
-
-
-
         var haptic = BhapticsManager.GetHaptic();
 
         if (haptic == null)

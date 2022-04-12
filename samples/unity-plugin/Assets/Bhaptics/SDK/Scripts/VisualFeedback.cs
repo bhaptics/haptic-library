@@ -26,9 +26,12 @@ namespace Bhaptics.Tact.Unity
                 return;
             }
 
+            var originSiblingIndex = motorContainer.GetSiblingIndex();
+
             var tmpMotorContainer = Instantiate(motorContainer, motorContainer.parent);
             tmpMotorContainer.localPosition = motorContainer.localPosition;
             tmpMotorContainer.localRotation = motorContainer.localRotation;
+            tmpMotorContainer.SetSiblingIndex(originSiblingIndex);
 
             var tmpList = new List<Transform>();
 

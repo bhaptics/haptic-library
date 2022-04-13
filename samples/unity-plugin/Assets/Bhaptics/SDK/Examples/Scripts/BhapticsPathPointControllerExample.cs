@@ -111,6 +111,14 @@ public class BhapticsPathPointControllerExample : MonoBehaviour
             currentHitCollider.transform.position.y + currentHitCollider.size.x * 0.5f
             , currentHitCollider.transform.position.y - currentHitCollider.size.y * 0.5f);
 
+        if (clipPositionType == HapticClipPositionType.VestFront
+            || clipPositionType == HapticClipPositionType.RightFoot)
+        {
+            return new Vector2(
+            (widthArea.y - currentPos.x) / (widthArea.y - widthArea.x)
+            , (currentPos.y - heightArea.x) / (heightArea.y - heightArea.x));
+        }
+
         return new Vector2(
             (currentPos.x - widthArea.x) / (widthArea.y - widthArea.x)
             , (currentPos.y - heightArea.x) / (heightArea.y - heightArea.x));

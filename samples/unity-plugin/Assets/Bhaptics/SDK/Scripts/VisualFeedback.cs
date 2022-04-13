@@ -13,7 +13,7 @@ namespace Bhaptics.Tact.Unity
 
 
         private Transform[] motors;
-        private float motorScaleOffset = 0.5f;
+        private float motorScaleOffset = 1f;
 
 
 

@@ -35,7 +35,7 @@ public class BhapticsIdentifierPlayExample : MonoBehaviour
     {
         if (identifierText != null)
         {
-            identifierText.text = applyIdentifier ? "use Identifier: True" : "use Identifier: False(Default)";
+            identifierText.text = applyIdentifier ? "True" : "False";
         }
 
         if (Input.GetKeyDown(KeyCode.Space))

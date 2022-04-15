@@ -40,11 +40,11 @@ const char* GetExePath() {
         std::wstring path = szBuffer;
         int size = WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, NULL, 0, NULL, NULL);
 
-        char *buffer = new char[size + 1];
-        WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, buffer, size, NULL, NULL);
-        std::string str(buffer);
+        std::unique_ptr<char[]> buffer(new char[size + 1]);
 
-        delete[]buffer;
+        WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, buffer.get(), size, NULL, NULL);
+        std::string str(buffer.get());
+
         exeFilePath = str;
     }
 #else
@@ -77,11 +77,11 @@ bool TryGetExePath(char* buf, int& buf_size)
         std::wstring path = szBuffer;
         int size = WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, NULL, 0, NULL, NULL);
 
-        char *buffer = new char[size + 1];
-        WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, buffer, size, NULL, NULL);
-        std::string str(buffer);
+        std::unique_ptr<char[]> buffer(new char[size + 1]);
 
-        delete[]buffer;
+        WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, buffer.get(), size, NULL, NULL);
+        std::string str(buffer.get());
+
         exeFilePath = str;
         buf_size = (int)exeFilePath.size();
         std::cout << buf_size << std::endl;

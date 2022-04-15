@@ -4,6 +4,7 @@ using Bhaptics.Tact;
 using Bhaptics.Tact.Unity;
 
 
+
 public class BhapticsIsConnectIsPlayingExample : MonoBehaviour
 {
     public FileHapticClip[] clips;
@@ -27,6 +28,7 @@ public class BhapticsIsConnectIsPlayingExample : MonoBehaviour
                 }
             }
         }
+
         InvokeRepeating("PlayClips", 1f, 2f);
     }
 

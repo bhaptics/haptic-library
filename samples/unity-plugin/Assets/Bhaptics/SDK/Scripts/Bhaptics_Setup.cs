@@ -9,7 +9,6 @@ public class Bhaptics_Setup : MonoBehaviour
 
     public BhapticsConfig Config;
 
-    [Tooltip("It is a haptic used as a notification when executed.")]
     public HapticClip[] hapticClipsOnAwake;
 
     

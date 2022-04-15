@@ -5,6 +5,11 @@ namespace Bhaptics.Tact.Unity
 {
     public interface IHaptic
     {
+        /// <summary>
+        /// If there is no haptic for more than 5 seconds due to a performance issue, it returns false.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         bool IsConnect(PositionType type);
 
         /// <summary>

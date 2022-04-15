@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Bhaptics.Tact;
 using Bhaptics.Tact.Unity;
 
@@ -13,6 +14,7 @@ public class BhapticsDotPointExample : MonoBehaviour
 
     private BhapticsDotPointControllerExample controller;
     private DotPoint dotPoint;
+    private Button thisButton;
 
 
 
@@ -20,6 +22,12 @@ public class BhapticsDotPointExample : MonoBehaviour
     {
         dotPoint = new DotPoint(motorIndex, motorIntensity);
         controller = GetComponentInParent<BhapticsDotPointControllerExample>();
+        thisButton = GetComponent<Button>();
+    }
+
+    void Start()
+    {
+        thisButton.onClick.AddListener(Toggle);
     }
 
 

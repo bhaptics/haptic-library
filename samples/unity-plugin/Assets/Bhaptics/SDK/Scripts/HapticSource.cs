@@ -163,7 +163,7 @@ namespace Bhaptics.Tact.Unity
 
             if (clip is FileHapticClip)
             {
-                clipDuration = (clip as FileHapticClip).ClipDurationTime;
+                clipDuration = (clip as FileHapticClip).ClipDurationTime * (clip as FileHapticClip).Duration;
             }
             else if (clip is SimpleHapticClip)
             {

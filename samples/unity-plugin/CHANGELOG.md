@@ -1,3 +1,7 @@
+## Unity plugin 1.6.6(Apr 15th, 2022.)
+* Update: Update visualizer UI and device icons
+* Fix: minor issues
+
 ## Unity plugin 1.6.5(Dec 15th, 2021.)
 * Update: tactglove functions and haptic patterns files
 

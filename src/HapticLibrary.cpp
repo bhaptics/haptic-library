@@ -119,6 +119,9 @@ void SubmitByteArray(const char* key, bhaptics::PositionType Pos, unsigned char*
         motorbyts[i] = buf[i];
     }
     Submit(key, Pos, motorbyts, durationMillis);
+
+    motorbyts.clear();
+    std::vector<uint8_t>().swap(motorbyts);
 }
 
 void ChangeUrl(const char* url)

@@ -28,24 +28,44 @@ namespace Bhaptics.Tact
         {
             var requestArray = new JSONArray();
 
-            foreach (var registerRequest in Register)
+            try
             {
-                var obj = new JSONObject();
-                obj["Key"]= registerRequest.Key;
-                obj["Project"] = registerRequest.Project.ToJsonObject();
-                requestArray.Add(obj);
+                foreach (var registerRequest in Register)
+                {
+                    if (registerRequest == null)
+                    {
+                        continue;
+                    }
+
+                    var obj = new JSONObject();
+                    obj["Key"] = registerRequest.Key;
+                    obj["Project"] = registerRequest.Project.ToJsonObject();
+                    requestArray.Add(obj);
+                }
+
+                var array = new JSONArray();
+
+                foreach (var submitRequest in Submit)
+                {
+                    if (submitRequest == null)
+                    {
+                        continue;
+                    }
+
+                    array.Add(submitRequest.ToJsonObject());
+                }
+
+                var jsonObject = new JSONObject();
+                jsonObject["Register"] = requestArray;
+                jsonObject["Submit"] = array;
+
+                return jsonObject;
             }
-            var array = new JSONArray();
-            foreach (var submitRequest in Submit)
+            catch (Exception e)
             {
-                array.Add(submitRequest.ToJsonObject());
+                Debug.WriteLine("ToJsonObject() / " + e.Message);
+                return null;
             }
-
-            var jsonObject = new JSONObject();
-            jsonObject["Register"] = requestArray;
-            jsonObject["Submit"]=  array;
-
-            return jsonObject;
         }
     }
 

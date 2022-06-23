@@ -111,7 +111,7 @@ namespace Bhaptics.Tact.Unity
             Vector3 targetDir = contactPos - targetPos;
 
             var angle = BhapticsUtils.Angle(targetDir, targetForward);
-            
+
             var offsetY = (contactPos.y - targetPos.y) / targetHeight;
 
             Play(1f, 1f, angle, offsetY, identifier);
@@ -215,11 +215,26 @@ namespace Bhaptics.Tact.Unity
 
         }
 
-
-
         public string GetAssetID()
         {
             return assetId;
+        }
+
+        public bool IsEnable()
+        {
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                return BhapticsManager.Init;
+            }
+            else
+            {
+                if (!BhapticsManager.Init)
+                {
+                    BhapticsManager.Initialize();
+                }
+
+                return true;
+            }
         }
     }
 }

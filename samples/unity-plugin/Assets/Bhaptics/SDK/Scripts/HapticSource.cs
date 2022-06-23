@@ -20,28 +20,6 @@ namespace Bhaptics.Tact.Unity
 
 
 
-        void Awake()
-        {
-            BhapticsManager.GetHaptic();
-
-            if (Bhaptics_Setup.instance == null)
-            {
-                var findObjectOfType = FindObjectOfType<Bhaptics_Setup>();
-                if (findObjectOfType == null)
-                {
-                    var go = new GameObject("[bhaptics]");
-                    go.SetActive(false);
-                    var setup = go.AddComponent<Bhaptics_Setup>();
-                    var config = Resources.Load<BhapticsConfig>("BhapticsConfig");
-                    if (config == null)
-                    {
-                        BhapticsLogger.LogError("Cannot find 'BhapticsConfig' in the Resources folder.");
-                    }
-                    setup.Config = config;
-                    go.SetActive(true);
-                }
-            }
-        }
 
         void OnEnable()
         {
@@ -171,6 +149,7 @@ namespace Bhaptics.Tact.Unity
             }
 
             WaitForSeconds duration = new WaitForSeconds(clipDuration * 0.001f * 0.95f);
+
             while (isLooping)
             {
                 yield return new WaitForSeconds(loopDelaySeconds);

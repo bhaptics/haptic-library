@@ -39,9 +39,9 @@ namespace Bhaptics.Tact.Unity
 
         public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY, string identifier = "")
         {
-            if (!BhapticsManager.Init)
+            if (!IsEnable())
             {
-                BhapticsManager.Initialize();
+                return;
             }
 
             var haptic = BhapticsManager.GetHaptic();
@@ -72,6 +72,24 @@ namespace Bhaptics.Tact.Unity
             base.ResetValues();
             this.TactFileAngleX = 0f;
             this.TactFileOffsetY = 0f;
+        }
+
+        public float GetTactFileAngleX()
+        {
+            return TactFileAngleX;
+        }
+        public float GetTactFileOffsetY()
+        {
+            return TactFileOffsetY;
+        }
+
+        public void SetTactFileAngleX(float value)
+        {
+            TactFileAngleX = value;
+        }
+        public void SetTactFileOffsetY(float value)
+        {
+            TactFileOffsetY = value;
         }
     }
 }

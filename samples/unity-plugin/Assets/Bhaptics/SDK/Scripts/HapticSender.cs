@@ -110,6 +110,6 @@ namespace Bhaptics.Tact.Unity
 
     public enum PositionTag
     {
-        Body, Head, LeftArm, RightArm, Default
+        Body, Head, LeftArm, RightArm, Default, LeftHand, RightHand, LeftFoot, RightFoot
     }
 }

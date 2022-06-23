@@ -23,10 +23,9 @@ namespace Bhaptics.Tact.Unity
 
         public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY, string identifier = "")
         {
-            if (!BhapticsManager.Init)
+            if (!IsEnable())
             {
-                BhapticsManager.Initialize();
-                //return;
+                return;
             }
 
             var haptic = BhapticsManager.GetHaptic();
@@ -57,6 +56,16 @@ namespace Bhaptics.Tact.Unity
             TimeMillis = 1000;
 
             Position = HapticClipPositionType.VestFront;
+        }
+
+        public HapticClipPositionType GetPosition()
+        {
+            return Position;
+        }
+
+        public Point[] GetPoints()
+        {
+            return Points;
         }
 
 

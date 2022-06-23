@@ -72,10 +72,9 @@ namespace Bhaptics.Tact.Unity
 
         public override void Play(float intensity, float duration, float vestRotationAngleX, float vestRotationOffsetY, string identifier = "")
         {
-            if (!BhapticsManager.Init)
+            if (!IsEnable())
             {
-                BhapticsManager.Initialize();
-                //return;
+                return;
             }
 
             var haptic = BhapticsManager.GetHaptic();

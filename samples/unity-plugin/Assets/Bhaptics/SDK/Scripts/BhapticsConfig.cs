@@ -10,7 +10,6 @@ public class BhapticsConfig : ScriptableObject
     [Header("Android Settings")]
     public BhapticsAndroidManager AndroidManagerPrefab;
 
-
-    [Tooltip("If you set it true, you don't need to define permissions and external bHaptics VR Player(beta) on SideQuest will be required.")]
+    [Tooltip("If you set it true, you don't need to define permissions and external bHaptics VR Player(beta) on AppLap will be required.")]
     public bool UseOnlyBackgroundMode = false;
 }

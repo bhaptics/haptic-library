@@ -4,17 +4,43 @@ using UnityEngine;
 public class BhapticsManager
 {
     private static IHaptic Haptic;
+    private static bool init;
 
-    public static bool Init = false;
+    public static bool Init
+    {
+        get
+        {
+            return init;
+        }
+    }
 
 
     public static IHaptic GetHaptic()
+    {
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            if (Init)
+            {
+                return Haptic;
+            }
+
+            return null;
+        }
+
+        if (!Init)
+        {
+            Initialize();
+        }
+
+        return Haptic;
+    }
+
+    public static void Initialize()
     {
         if (Haptic == null)
         {
             try
             {
-                Init = true;
                 if (Application.platform == RuntimePlatform.Android)
                 {
                     Haptic = new AndroidHaptic();
@@ -25,27 +51,22 @@ public class BhapticsManager
                     Haptic = new BhapticsHaptic();
                     BhapticsLogger.LogInfo("Initialized.");
                 }
+
+                init = true;
             }
             catch (System.Exception e)
             {
                 BhapticsLogger.LogError("BhapticsManager.cs - GetHaptic() / " + e.Message);
             }
         }
-
-        return Haptic;
-    }
-
-    public static void Initialize()
-    {
-        GetHaptic();
     }
 
     public static void Dispose()
     {
         if (Haptic != null)
         {
-            Init = false;
             Haptic.TurnOff();
+            init = false;
             BhapticsLogger.LogInfo("Dispose() bHaptics plugin.");
             Haptic.Dispose();
             Haptic = null;

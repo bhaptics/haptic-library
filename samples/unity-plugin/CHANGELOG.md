@@ -1,3 +1,6 @@
+## Unity plugin 1.6.7(May 19th, 2023.)
+* Update : Update android aar files for android api level 30 above higher.
+
 ## Unity plugin 1.6.6(Apr 15th, 2022.)
 * Update: Update visualizer UI and device icons
 * Fix: minor issues

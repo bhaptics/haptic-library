@@ -1,6 +1,6 @@
 # Unity plugin
 * This project will help integrate bHaptics' haptic devices into Unity environments.
-* Current version is 1.6.6
+* Current version is 1.6.7
 ```
 ## Unity SDK Migration Guide 1.5.9 to 1.6.0 - for Android
 * The location permission is no longer need. Just use Bluetooth pairing on Android.
@@ -29,6 +29,6 @@
 * [Migration guide](https://github.com/bhaptics/haptic-library/wiki/Unity-Migration-Guide)
 
 
-##### Last update of README.md: Apr 15th, 2022.
+##### Last update of README.md: May 19th, 2023.
 
-##### Copyright 2017~22 bHaptics Inc.
+##### Copyright 2017~23 bHaptics Inc.

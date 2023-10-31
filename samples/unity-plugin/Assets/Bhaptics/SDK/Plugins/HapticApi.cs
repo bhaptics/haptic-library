@@ -19,67 +19,73 @@ namespace Bhaptics.Tact.Unity
         };
 
         [DllImport("haptic_library")]
-        extern public static bool TryGetExePath(byte[] buf, ref int size);
+        [return:MarshalAs(UnmanagedType.I1)]
+        public static extern bool TryGetExePath(byte[] buf, ref int size);
 
         [DllImport("haptic_library")]
-        extern public static void Initialise(string appId, string appName);
+        public static extern void Initialise(string appId, string appName);
 
         [DllImport("haptic_library")]
-        extern public static void Destroy();
+        public static extern void Destroy();
         
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void RegisterFeedback(string str, string projectJson);
+        public static extern void RegisterFeedback(string str, string projectJson);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void RegisterFeedbackFromTactFile(string str, string tactFileStr);
+        public static extern void RegisterFeedbackFromTactFile(string str, string tactFileStr);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void RegisterFeedbackFromTactFileReflected(string str, string tactFileStr);
+        public static extern void RegisterFeedbackFromTactFileReflected(string str, string tactFileStr);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void SubmitRegistered(string key);
+        public static extern void SubmitRegistered(string key);
         
         // Works with bHaptics Player 1.5.6 onwards
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void SubmitRegisteredStartMillis(string key, int startTimeMillis);
+        public static extern void SubmitRegisteredStartMillis(string key, int startTimeMillis);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void SubmitRegisteredWithOption(string key, string altKey, float intensity, float duration, float offsetX, float offsetY);
+        public static extern void SubmitRegisteredWithOption(string key, string altKey, float intensity, float duration, float offsetX, float offsetY);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void SubmitByteArray(string key, PositionType pos, byte[] charPtr, int length, int durationMillis);
+        public static extern void SubmitByteArray(string key, PositionType pos, byte[] charPtr, int length, int durationMillis);
         
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void SubmitPathArray(string key, PositionType pos, point[] charPtr, int length, int durationMillis);
+        public static extern void SubmitPathArray(string key, PositionType pos, point[] charPtr, int length, int durationMillis);
         
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static bool IsFeedbackRegistered(string key);
+        [return:MarshalAs(UnmanagedType.I1)]
+        public static extern bool IsFeedbackRegistered(string key);
         
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static bool IsPlaying();
+        [return:MarshalAs(UnmanagedType.I1)]
+        public static extern bool IsPlaying();
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static bool IsPlayingKey(string key);
+        [return:MarshalAs(UnmanagedType.I1)]
+        public static extern bool IsPlayingKey(string key);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void TurnOff();
+        public static extern void TurnOff();
         
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void TurnOffKey(string key);
+        public static extern void TurnOffKey(string key);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void EnableFeedback();
+        public static extern void EnableFeedback();
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void DisableFeedback();
+        public static extern void DisableFeedback();
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static void ToggleFeedback();
+        public static extern void ToggleFeedback();
         
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static bool IsDevicePlaying(PositionType pos);
+        [return:MarshalAs(UnmanagedType.I1)]
+        public static extern bool IsDevicePlaying(PositionType pos);
 
         [DllImport("haptic_library", CallingConvention = CallingConvention.Cdecl)]
-        extern public static bool TryGetResponseForPosition(PositionType pos, out status status);
+        [return:MarshalAs(UnmanagedType.I1)]
+        public static extern bool TryGetResponseForPosition(PositionType pos, out status status);
     }
 }
